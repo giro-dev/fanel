@@ -32,5 +32,3 @@ make dev-frontend
 ```
 
 Consulta el [full de ruta](docs/ROADMAP.md) i les [regles del projecte](AGENTS.md).
-# fanel
-family organization app
