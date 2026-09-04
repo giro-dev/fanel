@@ -24,7 +24,7 @@ function MealCell({ slot, date, meal, save }: {
     aria-label={`${date} ${meal}`}
     value={text}
     onChange={(event) => setText(event.target.value)}
-    onBlur={() => save(date, meal, text)}
+    onBlur={() => { if (text.trim() !== value.trim()) save(date, meal, text) }}
     onKeyDown={(event) => { if (event.key === 'Enter') event.currentTarget.blur() }}
     maxLength={500}
   />
