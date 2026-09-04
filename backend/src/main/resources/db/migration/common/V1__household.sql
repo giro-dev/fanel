@@ -1,0 +1,1 @@
+-- Vendor migrations provide database-specific temporal column types.

@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:${FANEL_SQLITE_PATH:./data/fanel.db}
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    database-type: sqlite

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: fanel
+  profiles:
+    default: postgres
+  mvc:
+    problemdetails:
+      enabled: true
+  flyway:
+    locations: classpath:db/migration/common,classpath:db/migration/{vendor}
+  jpa:
+    open-in-view: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+fanel:
+  admin:
+    user: ${FANEL_ADMIN_USER:admin}
+    password: ${FANEL_ADMIN_PASSWORD:admin}
+  cors:
+    origins: ${FANEL_CORS_ORIGINS:http://localhost:5173}

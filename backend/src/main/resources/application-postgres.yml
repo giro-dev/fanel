@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${FANEL_DB_URL:jdbc:postgresql://localhost:5432/fanel}
+    username: ${FANEL_DB_USER:fanel}
+    password: ${FANEL_DB_PASSWORD:fanel}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    create-schemas: true
