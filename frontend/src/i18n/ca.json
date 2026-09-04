@@ -1,6 +1,11 @@
 {
   "nav": { "menu": "Menú", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
-  "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
+  "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars.", "select": "Selecciona una llar per començar." },
+  "days": { "mon": "Dl", "tue": "Dt", "wed": "Dc", "thu": "Dj", "fri": "Dv", "sat": "Ds", "sun": "Dg" },
+  "meals": { "breakfast": "Esmorzar", "lunch": "Dinar", "snack": "Berenar", "dinner": "Sopar" },
+  "months": { "1": "gen.", "2": "febr.", "3": "març", "4": "abr.", "5": "maig", "6": "juny", "7": "jul.", "8": "ag.", "9": "set.", "10": "oct.", "11": "nov.", "12": "des." },
+  "menu": { "previous": "Anterior", "today": "Avui", "next": "Següent", "week": "Setmana {{week}} · {{from}}–{{to}} {{month}}" },
+  "shopping": { "add": "Afegir", "item": "Article", "placeholder": "Què falta?", "clearDone": "Buida comprats", "delete": "Eliminar article", "empty": "La llista és buida." },
   "loading": "Carregant…",
   "error": "No s'ha pogut carregar."
 }

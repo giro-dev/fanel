@@ -1,6 +1,11 @@
 {
   "nav": { "menu": "Menú", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
-  "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
+  "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares.", "select": "Selecciona un hogar para empezar." },
+  "days": { "mon": "Lu", "tue": "Ma", "wed": "Mi", "thu": "Ju", "fri": "Vi", "sat": "Sá", "sun": "Do" },
+  "meals": { "breakfast": "Desayuno", "lunch": "Comida", "snack": "Merienda", "dinner": "Cena" },
+  "months": { "1": "ene.", "2": "feb.", "3": "mar.", "4": "abr.", "5": "may.", "6": "jun.", "7": "jul.", "8": "ago.", "9": "sept.", "10": "oct.", "11": "nov.", "12": "dic." },
+  "menu": { "previous": "Anterior", "today": "Hoy", "next": "Siguiente", "week": "Semana {{week}} · {{from}}–{{to}} {{month}}" },
+  "shopping": { "add": "Añadir", "item": "Artículo", "placeholder": "¿Qué falta?", "clearDone": "Vaciar comprados", "delete": "Eliminar artículo", "empty": "La lista está vacía." },
   "loading": "Cargando…",
   "error": "No se ha podido cargar."
 }
