@@ -24,7 +24,7 @@ public class SpaConfig implements WebMvcConfigurer {
                         }
 
                         Resource requested = location.createRelative(path);
-                               if (requested.exists() && requested.isReadable()) {
+                        if (requested.exists() && requested.isReadable()) {
                             return requested;
                         }
                         return location.createRelative("index.html");
