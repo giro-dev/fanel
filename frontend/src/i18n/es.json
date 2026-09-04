@@ -1,0 +1,6 @@
+{
+  "nav": { "menu": "Menú", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
+  "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
+  "loading": "Cargando…",
+  "error": "No se ha podido cargar."
+}

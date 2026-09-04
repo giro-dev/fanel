@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: sqlite
+      FANEL_SQLITE_PATH: /data/fanel.db
+    ports:
+      - "8080:8080"
+    volumes:
+      - fanel-data:/data
+volumes:
+  fanel-data:

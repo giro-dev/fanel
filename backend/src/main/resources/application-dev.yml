@@ -1,0 +1,7 @@
+fanel:
+  admin:
+    user: ${FANEL_ADMIN_USER:admin}
+    password: ${FANEL_ADMIN_PASSWORD:admin}
+spring:
+  jpa:
+    show-sql: false

@@ -1,0 +1,6 @@
+{
+  "nav": { "menu": "Menú", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
+  "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
+  "loading": "Carregant…",
+  "error": "No s'ha pogut carregar."
+}

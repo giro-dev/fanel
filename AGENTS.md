@@ -1,0 +1,94 @@
+# AGENTS.md — Fanel
+
+Guia per a agents de codi (Devin, Claude Code, Copilot, Cursor…) i persones que treballen en aquest repositori.
+**Les decisions d'arquitectura d'aquest fitxer són vinculants.** Si cal canviar-ne una, escriu primer un ADR nou a `docs/adr/` que la substitueixi i actualitza aquest fitxer al mateix PR.
+
+## Què és Fanel
+
+Fanel (*the family organizer panel*) és una aplicació auto-allotjable per a la gestió d'una llar: menú setmanal, receptes, llista de la compra, calendari i tasques, amb un assistent d'IA i un servidor MCP perquè agents externs hi puguin operar.
+
+Roadmap i fases: [`docs/ROADMAP.md`](docs/ROADMAP.md). Decisions: [`docs/adr/`](docs/adr/).
+
+## Decisions d'arquitectura (resum vinculant)
+
+| # | Decisió | ADR |
+|---|---|---|
+| 1 | **Monòlit modular** amb Spring Boot + Spring Modulith. Un sol procés, un sol JAR, un sol contenidor. Sense microserveis. | [0001](docs/adr/0001-monolit-modular.md) |
+| 2 | **Frontend React + TypeScript (Vite, PWA)** compilat i **servit des del mateix JAR** (`static/`). Cap lògica de negoci al frontend. | [0002](docs/adr/0002-spa-react-embeguda.md) |
+| 3 | **PostgreSQL i SQLite** suportats des del dia 1 via perfils `postgres` / `sqlite`. Migracions Flyway portables. | [0003](docs/adr/0003-postgres-i-sqlite.md) |
+| 4 | **API first**: REST `/api/v1` documentat amb OpenAPI; és el contracte per a futurs clients (Android via Capacitor, escriptori via Tauri, nadius). Errors RFC 9457. Temps real via SSE. | [0004](docs/adr/0004-api-first-clients.md) |
+| 5 | **Multi-household** al model des de l'inici: tota entitat de negoci pertany a un `Household`. | [0005](docs/adr/0005-multi-household.md) |
+| 6 | **IA amb Spring AI**, proveïdor **configurable i cap actiu per defecte**. Tools `@Tool` definides una sola vegada i reutilitzades per l'assistent intern i el **servidor MCP** (`/mcp`, Streamable HTTP). Tot aïllat al mòdul `assistant`. | [0006](docs/adr/0006-spring-ai-mcp.md) |
+| 7 | **i18n català + castellà** des del principi (`ca` per defecte). Cap text d'usuari hardcodejat: `react-i18next` al frontend, `MessageSource` al backend. | [0007](docs/adr/0007-i18n.md) |
+| 8 | Comunicació entre mòduls per **esdeveniments de domini** (Spring Modulith, registre persistit), no per crides directes a la implementació d'un altre mòdul. | [0001](docs/adr/0001-monolit-modular.md) |
+
+## Estructura del repositori
+
+```
+pom.xml                 Maven parent (mòduls: frontend, backend)
+backend/                Spring Boot; paquet base dev.agiro.fanel
+  src/main/java/dev/agiro/fanel/
+    household/ menu/ recipes/ shopping/ calendar/ chores/
+    assistant/ notifications/ automation/    ← mòduls Modulith (un paquet = un mòdul)
+    shared/                                  ← mòdul OPEN: base d'entitats, errors, auditoria
+  src/main/resources/db/migration/{common,postgresql,sqlite}
+frontend/               Vite + React + TS (PWA); el build s'empaqueta com a recurs static/
+deploy/                 Dockerfile multi-stage, docker-compose (postgres i sqlite)
+docs/                   ROADMAP.md, adr/
+.github/workflows/      CI (verify Modulith + tests + lint) i imatge a GHCR
+```
+
+### Estructura d'un mòdul
+
+```
+<modul>/
+  api/      interfície pública, DTOs (records) i esdeveniments  ← únic que altres mòduls poden importar
+  web/      controllers REST (/api/v1/<recurs>)
+  domain/   entitats JPA i serveis
+  infra/    repositoris i adaptadors
+  package-info.java  amb @ApplicationModule
+```
+
+Regles:
+- Un mòdul **només** importa `*.api.*` d'altres mòduls i `shared`. `ApplicationModules.verify()` ho comprova als tests: si falla, arregla el disseny, no el test.
+- Efectes creuats (p. ex. el menú alimenta la compra) es fan **escoltant esdeveniments** (`@ApplicationModuleListener`), no cridant serveis d'un altre mòdul.
+- Tota entitat de negoci té `householdId`; tota consulta filtra per household.
+- IDs UUID v7. Auditoria (`createdAt`, `createdBy`) a `shared`.
+- Nova taula o columna ⇒ nova migració Flyway a `common` (SQL portable) o, si no és possible, a `postgresql/` **i** `sqlite/` alhora. No modificar migracions ja publicades.
+
+## Convencions
+
+- **Java 25**, Maven, Spring Boot 4.x. Records per a DTOs, `Optional` només com a retorn. Sense `Any`/reflexió innecessària. Sense Lombok.
+- **TypeScript strict**, React amb components funcionals, TanStack Query per a dades del servidor, cap `any`.
+- Text d'usuari: sempre via i18n (`frontend/src/i18n/{ca,es}.json`, `backend/src/main/resources/messages*.properties`). Afegir la clau a **tots** els idiomes.
+- Idioma del codi i comentaris: anglès. Idioma de docs, commits i UI per defecte: català (commits en anglès també acceptats).
+- Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`…). Branques `<autor>/<slug>` o `devin/<timestamp>-<slug>`.
+- Configuració només per variables d'entorn / `application*.yml`. Cap secret al repo.
+- Docker: la imatge final ha de continuar sent **una sola** imatge que serveix API + SPA.
+
+## Comandes
+
+| Acció | Comanda |
+|---|---|
+| Build complet (frontend + backend, un JAR) | `mvn -B verify` |
+| Backend sol (salta build del frontend) | `mvn -pl backend verify -Dskip.frontend` |
+| Backend en dev (SQLite, usuari `admin/admin`) | `make dev-backend` |
+| Frontend en dev (proxy a :8080) | `make dev-frontend` |
+| Lint/typecheck frontend | `cd frontend && npm run lint && npm run typecheck` |
+| Imatge Docker | `docker build -f deploy/Dockerfile .` |
+| Execució auto-allotjada | `cd deploy && docker compose up -d` (Postgres) o `docker compose -f docker-compose.sqlite.yml up -d` |
+
+Abans d'obrir un PR: `mvn -B verify` verd (inclou `ApplicationModules.verify()` i tests amb Postgres i SQLite) i lint/typecheck del frontend verds.
+
+## Què NO fer
+
+- No afegir un segon servei/contenidor obligatori (excepte la BD Postgres opcional).
+- No introduir Spring AI fora del mòdul `assistant`.
+- No afegir lògica de negoci al frontend ni duplicar-la per a clients futurs.
+- No acoblar mòduls per `domain`/`infra` d'un altre mòdul.
+- No canviar una decisió de la taula de dalt sense ADR.
+- No modificar tests per fer-los passar; arregla el codi.
+
+## Per a agents amb MCP
+
+A partir de la Fase 3 Fanel exposa un servidor MCP a `/mcp` (Streamable HTTP, autenticació per token de household). Les eines disponibles es deriven de les `@Tool` del mòdul `assistant`; consulta `docs/ROADMAP.md` per l'estat.

@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      FANEL_DB_URL: jdbc:postgresql://postgres:5432/fanel
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: fanel
+      POSTGRES_USER: ${FANEL_DB_USER:-fanel}
+      POSTGRES_PASSWORD: ${FANEL_DB_PASSWORD:-fanel}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  postgres-data:
