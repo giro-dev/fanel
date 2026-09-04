@@ -1,3 +1,3 @@
 /** Weekly meal plans. */
-@org.springframework.modulith.ApplicationModule(type = org.springframework.modulith.ApplicationModule.Type.OPEN)
+@org.springframework.modulith.ApplicationModule
 package dev.agiro.fanel.menu;

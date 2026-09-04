@@ -12,5 +12,5 @@ USER fanel
 VOLUME /data
 ENV FANEL_SQLITE_PATH=/data/fanel.db
 EXPOSE 8080
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD wget --spider -q http://localhost:8080/actuator/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD ["bash", "-c", "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /actuator/health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
 ENTRYPOINT ["java", "-jar", "app.jar"]

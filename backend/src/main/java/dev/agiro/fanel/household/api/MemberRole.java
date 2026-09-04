@@ -1,4 +1,4 @@
-package dev.agiro.fanel.household.domain;
+package dev.agiro.fanel.household.api;
 
 public enum MemberRole {
     ADULT, CHILD

@@ -24,7 +24,7 @@
                         <configuration><nodeVersion>${node.version}</nodeVersion><npmVersion>10.8.3</npmVersion></configuration></execution>
                     <execution><id>npm-ci</id><phase>generate-resources</phase><goals><goal>npm</goal></goals>
                         <configuration><arguments>ci</arguments></configuration></execution>
-                    <execution><id>npm-build</id><phase>prepare-package</phase><goals><goal>npm</goal></goals>
+                    <execution><id>npm-build</id><phase>generate-resources</phase><goals><goal>npm</goal></goals>
                         <configuration><arguments>run build</arguments></configuration></execution>
                 </executions>
             </plugin>
@@ -50,7 +50,7 @@
     <profiles>
         <profile>
             <id>skip-frontend</id>
-            <activation><property><name>skip.frontend</name><value>true</value></property></activation>
+            <activation><property><name>skip.frontend</name></property></activation>
             <build><plugins><plugin><groupId>com.github.eirslett</groupId><artifactId>frontend-maven-plugin</artifactId><executions>
                 <execution><id>install-node</id><phase>none</phase></execution>
                 <execution><id>npm-ci</id><phase>none</phase></execution>

@@ -16,7 +16,7 @@ function Shell() {
   ]
   return (
     <div className="app-shell">
-      <header><h1>Fanel</h1><NavLink to="/households">Llars</NavLink></header>
+      <header><h1>Fanel</h1><NavLink to="/households">{t('households.title')}</NavLink></header>
       <nav>{nav.map(([path, label]) => <NavLink key={path} to={path}>{label}</NavLink>)}</nav>
       <main>
         <Routes>

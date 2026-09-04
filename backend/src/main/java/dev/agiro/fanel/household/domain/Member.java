@@ -1,5 +1,6 @@
 package dev.agiro.fanel.household.domain;
 
+import dev.agiro.fanel.household.api.MemberRole;
 import dev.agiro.fanel.shared.domain.UuidEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
