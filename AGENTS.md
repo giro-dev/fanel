@@ -28,7 +28,7 @@ Roadmap i fases: [`docs/ROADMAP.md`](docs/ROADMAP.md). Decisions: [`docs/adr/`](
 pom.xml                 Maven parent (mòduls: frontend, backend)
 backend/                Spring Boot; paquet base dev.agiro.fanel
   src/main/java/dev/agiro/fanel/
-    household/ menu/ recipes/ shopping/ calendar/ chores/
+    household/ menu/ recipes/ shopping/ calendar/ chores/ export/
     assistant/ notifications/ automation/    ← mòduls Modulith (un paquet = un mòdul)
     shared/                                  ← mòdul OPEN: base d'entitats, errors, auditoria
   src/main/resources/db/migration/{common,postgresql,sqlite}
