@@ -9,4 +9,6 @@ public interface HouseholdApi {
     HouseholdDto get(UUID id);
     MemberDto addMember(UUID householdId, String name, MemberRole role, String color);
     List<MemberDto> listMembers(UUID householdId);
+    MemberDto setMemberPin(UUID householdId, UUID memberId, String pin);
+    boolean verifyMemberPin(UUID householdId, UUID memberId, String pin);
 }

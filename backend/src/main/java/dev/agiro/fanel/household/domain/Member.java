@@ -22,6 +22,7 @@ public class Member extends UuidEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
     private String color;
+    private String pin;
     private Instant createdAt;
 
     protected Member() {}
@@ -39,4 +40,8 @@ public class Member extends UuidEntity {
     public MemberRole getRole() { return role; }
     public String getColor() { return color; }
     public Instant getCreatedAt() { return createdAt; }
+
+    public boolean hasPin() { return pin != null && !pin.isBlank(); }
+    public boolean matchesPin(String candidate) { return !hasPin() || pin.equals(candidate); }
+    public void setPin(String pin) { this.pin = pin; }
 }

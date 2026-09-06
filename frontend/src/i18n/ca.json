@@ -2,5 +2,40 @@
   "nav": { "menu": "Menú", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
   "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
   "loading": "Carregant…",
-  "error": "No s'ha pogut carregar."
+  "error": "No s'ha pogut carregar.",
+  "placeholder": { "soon": "Properament." },
+  "whoami": {
+    "prompt": "Qui ets?",
+    "switch": "Canviar de membre",
+    "pin": "PIN de {{name}}",
+    "confirm": "Entrar",
+    "wrongPin": "PIN incorrecte."
+  },
+  "menu": {
+    "title": "Menú setmanal",
+    "week": "Setmana {{week}} · {{year}}",
+    "meals": {
+      "BREAKFAST": "Esmorzar",
+      "LUNCH": "Dinar",
+      "SNACK": "Berenar",
+      "DINNER": "Sopar"
+    }
+  },
+  "shopping": {
+    "title": "Llista de la compra",
+    "clearPurchased": "Buida comprats",
+    "addPlaceholder": "Afegir ítem…",
+    "add": "Afegir"
+  },
+  "calendar": {
+    "title": "Calendari",
+    "titlePlaceholder": "Títol de l'esdeveniment",
+    "add": "Afegir"
+  },
+  "chores": {
+    "title": "Tasques",
+    "titlePlaceholder": "Títol de la tasca",
+    "unassigned": "Sense assignar",
+    "add": "Afegir"
+  }
 }
