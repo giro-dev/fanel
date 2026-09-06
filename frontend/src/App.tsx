@@ -3,6 +3,7 @@ import { NavLink, Route, Routes } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { Households } from './pages/Households'
 import { Menu } from './pages/Menu'
+import { Recipes } from './pages/Recipes'
 import { Shopping } from './pages/Shopping'
 import { Calendar } from './pages/Calendar'
 import { Chores } from './pages/Chores'
@@ -19,6 +20,7 @@ function Shell() {
   useHouseholdEvents(household?.id)
   const nav = [
     ['/menu', t('nav.menu')],
+    ['/receptes', t('nav.recipes')],
     ['/calendari', t('nav.calendar')],
     ['/compra', t('nav.shopping')],
     ['/tasques', t('nav.chores')],
@@ -35,6 +37,7 @@ function Shell() {
         <Routes>
           <Route path="/households" element={<Households />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/receptes" element={<Recipes />} />
           <Route path="/calendari" element={<Calendar />} />
           <Route path="/compra" element={<Shopping />} />
           <Route path="/tasques" element={<Chores />} />

@@ -1,5 +1,5 @@
 {
-  "nav": { "menu": "Menú", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
+  "nav": { "menu": "Menú", "recipes": "Recetas", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
   "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
   "loading": "Cargando…",
   "error": "No se ha podido cargar.",
@@ -14,12 +14,27 @@
   "menu": {
     "title": "Menú semanal",
     "week": "Semana {{week}} · {{year}}",
+    "noRecipe": "Sin receta",
+    "notesPlaceholder": "Notas (opcional)",
     "meals": {
       "BREAKFAST": "Desayuno",
       "LUNCH": "Comida",
       "SNACK": "Merienda",
       "DINNER": "Cena"
     }
+  },
+  "recipes": {
+    "title": "Recetas",
+    "namePlaceholder": "Nombre de la receta",
+    "servings": "Raciones",
+    "servingsCount_one": "{{count}} ración",
+    "servingsCount_other": "{{count}} raciones",
+    "ingredients": "Ingredientes",
+    "ingredientName": "Ingrediente",
+    "quantity": "Cantidad",
+    "unit": "Unidad",
+    "addIngredient": "Añadir ingrediente",
+    "create": "Crear receta"
   },
   "shopping": {
     "title": "Lista de la compra",

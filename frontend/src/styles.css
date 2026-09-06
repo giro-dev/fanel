@@ -20,3 +20,8 @@ input { border: 1px solid var(--line); border-radius: .4rem; padding: .55rem; }
 button { background: var(--ochre); border: 0; border-radius: .4rem; color: white; cursor: pointer; padding: .6rem 1rem; }
 .household-list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: .5rem; }
 .household-list li { border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: .75rem 0; }
+.recipe-form { flex-direction: column; align-items: stretch; }
+.recipe-form fieldset { border: 1px solid var(--line); border-radius: .5rem; padding: .75rem; }
+.ingredient-row { display: flex; gap: .5rem; margin-bottom: .5rem; }
+.ingredient-list { color: var(--ink); opacity: .75; margin: .25rem 0 0; }
+.slot-note { display: block; font-size: .8rem; opacity: .75; }

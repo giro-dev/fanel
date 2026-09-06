@@ -39,6 +39,7 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 - [x] SSE `/api/v1/events` per a actualització en temps real entre dispositius — connectat des de `App.tsx` via `useHouseholdEvents`
 - [x] Export / import JSON de tota la llar — `GET /api/v1/households/{id}/export` i `POST /api/v1/households/import` (mòdul `export`)
 - [x] UI de les 4 pestanyes en català i castellà — `Menu`, `Shopping`, `Calendar`, `Chores` enrutades i amb claus i18n completes
+- [ ] Afegir UI per al calendari, buscar i evaluar llibreries com https://www.untitledui.com/react/components/calendars i evaluarla com a adopció general
 - **Fet quan**: la família substitueix la POC. Pendent només l'autenticació per adult individual.
 
 ## Fase 2 — Valor de domini
@@ -49,7 +50,7 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 - [ ] Recurrència (RRULE) en calendari i tasques; rotació de tasques entre membres
 - [ ] `notifications`: web push per recordatoris de tasques i esdeveniments
 - [ ] PWA offline real per la llista de la compra (cache + cua de sincronització)
-- [ ] UI de `recipes` al frontend (llistat/creació de receptes, selector de recepta al `Menu`) — de moment només hi ha API; cal ampliar `Menu.tsx` i afegir una pàgina `Recipes.tsx`
+- [x] UI de `recipes` al frontend (llistat/creació de receptes, selector de recepta al `Menu`) — pàgina `Recipes.tsx` i pestanya nova; `Menu.tsx` permet triar una recepta per àpat (a més del text lliure)
 
 ## Fase 3 — IA i MCP
 

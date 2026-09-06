@@ -1,5 +1,5 @@
 {
-  "nav": { "menu": "Menú", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
+  "nav": { "menu": "Menú", "recipes": "Receptes", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
   "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
   "loading": "Carregant…",
   "error": "No s'ha pogut carregar.",
@@ -14,12 +14,27 @@
   "menu": {
     "title": "Menú setmanal",
     "week": "Setmana {{week}} · {{year}}",
+    "noRecipe": "Sense recepta",
+    "notesPlaceholder": "Notes (opcional)",
     "meals": {
       "BREAKFAST": "Esmorzar",
       "LUNCH": "Dinar",
       "SNACK": "Berenar",
       "DINNER": "Sopar"
     }
+  },
+  "recipes": {
+    "title": "Receptes",
+    "namePlaceholder": "Nom de la recepta",
+    "servings": "Racions",
+    "servingsCount_one": "{{count}} ració",
+    "servingsCount_other": "{{count}} racions",
+    "ingredients": "Ingredients",
+    "ingredientName": "Ingredient",
+    "quantity": "Quantitat",
+    "unit": "Unitat",
+    "addIngredient": "Afegir ingredient",
+    "create": "Crear recepta"
   },
   "shopping": {
     "title": "Llista de la compra",

@@ -5,8 +5,9 @@ import { api } from '../api/client'
 import { useHousehold } from '../context/HouseholdContext'
 
 type MealType = 'BREAKFAST' | 'LUNCH' | 'SNACK' | 'DINNER'
-type MealSlot = { id: string; dayOfWeek: number; mealType: MealType; text?: string }
+type MealSlot = { id: string; dayOfWeek: number; mealType: MealType; text?: string; recipeId?: string }
 type MealPlan = { id?: string; householdId: string; isoYear: number; isoWeek: number; slots: MealSlot[] }
+type Recipe = { id: string; name: string }
 
 const MEAL_TYPES: MealType[] = ['BREAKFAST', 'LUNCH', 'SNACK', 'DINNER']
 
@@ -25,6 +26,7 @@ export function Menu() {
   const [offset, setOffset] = useState(0)
   const [editing, setEditing] = useState<{ day: number; meal: MealType } | null>(null)
   const [text, setText] = useState('')
+  const [recipeId, setRecipeId] = useState('')
 
   const base = new Date()
   base.setDate(base.getDate() + offset * 7)
@@ -36,8 +38,14 @@ export function Menu() {
     enabled: !!household,
   })
 
+  const recipes = useQuery({
+    queryKey: ['recipes', household?.id],
+    queryFn: () => api<Recipe[]>(`/households/${household!.id}/recipes`),
+    enabled: !!household,
+  })
+
   const setSlot = useMutation({
-    mutationFn: (slot: { dayOfWeek: number; mealType: MealType; text: string }) =>
+    mutationFn: (slot: { dayOfWeek: number; mealType: MealType; text: string; recipeId: string | null }) =>
       api<MealSlot>(`/households/${household!.id}/menu/slots?year=${year}&week=${week}`, {
         method: 'PUT', body: JSON.stringify(slot),
       }),
@@ -52,6 +60,8 @@ export function Menu() {
 
   const slotFor = (day: number, meal: MealType) =>
     plan.data?.slots.find((s) => s.dayOfWeek === day && s.mealType === meal)
+
+  const recipeName = (id?: string) => recipes.data?.find((r) => r.id === id)?.name
 
   return (
     <section className="panel">
@@ -78,17 +88,28 @@ export function Menu() {
                   const day = i + 1
                   const slot = slotFor(day, meal)
                   const isEditing = editing?.day === day && editing.meal === meal
+                  const save = () => setSlot.mutate({
+                    dayOfWeek: day, mealType: meal, text, recipeId: recipeId || null,
+                  })
                   return (
-                    <td key={day} onClick={() => { setEditing({ day, meal }); setText(slot?.text ?? '') }}>
+                    <td key={day} onClick={() => {
+                      setEditing({ day, meal }); setText(slot?.text ?? ''); setRecipeId(slot?.recipeId ?? '')
+                    }}>
                       {isEditing ? (
-                        <form onSubmit={(e) => {
-                          e.preventDefault()
-                          setSlot.mutate({ dayOfWeek: day, mealType: meal, text })
-                        }}>
+                        <form onSubmit={(e) => { e.preventDefault(); save() }}>
+                          <select value={recipeId} onChange={(e) => setRecipeId(e.target.value)} onBlur={save}>
+                            <option value="">{t('menu.noRecipe')}</option>
+                            {recipes.data?.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                          </select>
                           <input value={text} onChange={(e) => setText(e.target.value)} autoFocus
-                                 onBlur={() => setSlot.mutate({ dayOfWeek: day, mealType: meal, text })} />
+                                 placeholder={t('menu.notesPlaceholder')} onBlur={save} />
                         </form>
-                      ) : (slot?.text || <span className="empty-slot">·</span>)}
+                      ) : (recipeName(slot?.recipeId) || slot?.text) ? (
+                        <>
+                          {recipeName(slot?.recipeId) && <strong>{recipeName(slot?.recipeId)}</strong>}
+                          {slot?.text && <span className="slot-note">{slot.text}</span>}
+                        </>
+                      ) : <span className="empty-slot">·</span>}
                     </td>
                   )
                 })}
