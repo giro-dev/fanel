@@ -25,3 +25,18 @@ button { background: var(--ochre); border: 0; border-radius: .4rem; color: white
 .ingredient-row { display: flex; gap: .5rem; margin-bottom: .5rem; }
 .ingredient-list { color: var(--ink); opacity: .75; margin: .25rem 0 0; }
 .slot-note { display: block; font-size: .8rem; opacity: .75; }
+.calendar-view {
+  margin-top: 1.5rem;
+  --fc-border-color: var(--line);
+  --fc-page-bg-color: white;
+  --fc-neutral-bg-color: var(--bg);
+  --fc-today-bg-color: rgba(217, 142, 43, .12);
+  --fc-button-bg-color: var(--tile);
+  --fc-button-border-color: var(--tile);
+  --fc-button-hover-bg-color: var(--ink);
+  --fc-button-hover-border-color: var(--ink);
+  --fc-button-active-bg-color: var(--ink);
+  --fc-event-bg-color: var(--tile);
+  --fc-event-border-color: var(--tile);
+}
+.calendar-view .fc-button { text-transform: none; }

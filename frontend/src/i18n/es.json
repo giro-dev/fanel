@@ -45,7 +45,8 @@
   "calendar": {
     "title": "Calendario",
     "titlePlaceholder": "Título del evento",
-    "add": "Añadir"
+    "add": "Añadir",
+    "confirmDelete": "¿Borrar \"{{title}}\"?"
   },
   "chores": {
     "title": "Tareas",

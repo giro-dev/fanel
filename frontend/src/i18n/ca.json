@@ -45,7 +45,8 @@
   "calendar": {
     "title": "Calendari",
     "titlePlaceholder": "Títol de l'esdeveniment",
-    "add": "Afegir"
+    "add": "Afegir",
+    "confirmDelete": "Esborrar \"{{title}}\"?"
   },
   "chores": {
     "title": "Tasques",

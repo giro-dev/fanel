@@ -1,10 +1,21 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
+import interactionPlugin from '@fullcalendar/interaction'
+import type { DateClickArg } from '@fullcalendar/interaction'
+import type { EventClickArg } from '@fullcalendar/core'
+import caLocale from '@fullcalendar/core/locales/ca'
+import esLocale from '@fullcalendar/core/locales/es'
 import { api } from '../api/client'
 import { useHousehold } from '../context/HouseholdContext'
 
 type CalEvent = { id: string; title: string; date: string; time?: string; addedBy?: string }
+
+const LOCALES = { ca: caLocale, es: esLocale }
 
 export function Calendar() {
   const { t, i18n } = useTranslation()
@@ -36,15 +47,20 @@ export function Calendar() {
   })
 
   const memberName = (id?: string) => members.find((m) => m.id === id)?.name
-  const grouped = new Map<string, CalEvent[]>()
-  for (const e of events.data ?? []) {
-    const list = grouped.get(e.date) ?? []
-    list.push(e)
-    grouped.set(e.date, list)
+
+  const calendarEvents = (events.data ?? []).map((e) => ({
+    id: e.id,
+    title: e.addedBy ? `${e.title} (${memberName(e.addedBy)})` : e.title,
+    start: e.time ? `${e.date}T${e.time}` : e.date,
+    allDay: !e.time,
+  }))
+
+  const onDateClick = (arg: DateClickArg) => setDate(arg.dateStr)
+  const onEventClick = (arg: EventClickArg) => {
+    if (window.confirm(t('calendar.confirmDelete', { title: arg.event.title }))) {
+      remove.mutate(arg.event.id)
+    }
   }
-  const formatDay = (iso: string) =>
-    new Intl.DateTimeFormat(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' })
-      .format(new Date(`${iso}T00:00:00`))
 
   return (
     <section className="panel">
@@ -57,22 +73,18 @@ export function Calendar() {
       </form>
       {events.isPending && <p>{t('loading')}</p>}
       {events.isError && <p role="alert">{t('error')}</p>}
-      {[...grouped.entries()].map(([day, dayEvents]) => (
-        <div key={day} className="day-group">
-          <h3>{formatDay(day)}</h3>
-          <ul className="item-list">
-            {dayEvents.map((e) => (
-              <li key={e.id}>
-                <span>{e.time?.slice(0, 5)} {e.title}</span>
-                <span className="meta">
-                  {e.addedBy && <em>{memberName(e.addedBy)}</em>}
-                  <button type="button" className="link" onClick={() => remove.mutate(e.id)}>✕</button>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <div className="calendar-view">
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          headerToolbar={{ left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' }}
+          locale={LOCALES[i18n.language as keyof typeof LOCALES] ?? LOCALES.ca}
+          height="auto"
+          events={calendarEvents}
+          dateClick={onDateClick}
+          eventClick={onEventClick}
+        />
+      </div>
     </section>
   )
 }

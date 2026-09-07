@@ -39,7 +39,7 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 - [x] SSE `/api/v1/events` per a actualització en temps real entre dispositius — connectat des de `App.tsx` via `useHouseholdEvents`
 - [x] Export / import JSON de tota la llar — `GET /api/v1/households/{id}/export` i `POST /api/v1/households/import` (mòdul `export`)
 - [x] UI de les 4 pestanyes en català i castellà — `Menu`, `Shopping`, `Calendar`, `Chores` enrutades i amb claus i18n completes
-- [ ] Afegir UI per al calendari, buscar i evaluar llibreries com https://www.untitledui.com/react/components/calendars i evaluarla com a adopció general
+- [x] Afegir UI per al calendari, buscar i evaluar llibreries com https://www.untitledui.com/react/components/calendars i evaluarla com a adopció general — vegeu [ADR 0008](adr/0008-llibreria-ui-calendari.md): es descarta Untitled UI (de pagament, requereix Tailwind) i qualsevol llibreria de components general; s'adopta el nucli MIT de `FullCalendar` (`@fullcalendar/react` 6.1.x) només per a `Calendar.tsx`, amb vistes mes/setmana/llista i locales ca/es
 - **Fet quan**: la família substitueix la POC. Pendent només l'autenticació per adult individual.
 
 ## Fase 2 — Valor de domini
