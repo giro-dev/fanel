@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -48,6 +49,19 @@ public class HouseholdController {
         return service.listMembers(id);
     }
 
+    @PutMapping("/{id}/members/{memberId}/pin")
+    public MemberDto setPin(@PathVariable UUID id, @PathVariable UUID memberId,
+                            @RequestBody SetPin request) {
+        return service.setMemberPin(id, memberId, request.pin());
+    }
+
+    @PostMapping("/{id}/members/{memberId}/verify-pin")
+    public Map<String, Boolean> verifyPin(@PathVariable UUID id, @PathVariable UUID memberId,
+                                          @RequestBody SetPin request) {
+        return Map.of("valid", service.verifyMemberPin(id, memberId, request.pin()));
+    }
+
     public record CreateHousehold(@NotBlank String name, @NotBlank String locale, @NotBlank String timezone) {}
     public record CreateMember(@NotBlank String name, MemberRole role, String color) {}
+    public record SetPin(String pin) {}
 }

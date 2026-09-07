@@ -1,6 +1,58 @@
 {
-  "nav": { "menu": "Menú", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
+  "nav": { "menu": "Menú", "recipes": "Recetas", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
+  "theme": { "label": "Cambiar tema", "light": "Tema claro", "dark": "Tema oscuro", "system": "Tema del sistema" },
   "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
   "loading": "Cargando…",
-  "error": "No se ha podido cargar."
+  "error": "No se ha podido cargar.",
+  "placeholder": { "soon": "Próximamente." },
+  "whoami": {
+    "prompt": "¿Quién eres?",
+    "switch": "Cambiar de miembro",
+    "pin": "PIN de {{name}}",
+    "confirm": "Entrar",
+    "wrongPin": "PIN incorrecto."
+  },
+  "menu": {
+    "title": "Menú semanal",
+    "week": "Semana {{week}} · {{year}}",
+    "noRecipe": "Sin receta",
+    "notesPlaceholder": "Notas (opcional)",
+    "meals": {
+      "BREAKFAST": "Desayuno",
+      "LUNCH": "Comida",
+      "SNACK": "Merienda",
+      "DINNER": "Cena"
+    }
+  },
+  "recipes": {
+    "title": "Recetas",
+    "namePlaceholder": "Nombre de la receta",
+    "servings": "Raciones",
+    "servingsCount_one": "{{count}} ración",
+    "servingsCount_other": "{{count}} raciones",
+    "ingredients": "Ingredientes",
+    "ingredientName": "Ingrediente",
+    "quantity": "Cantidad",
+    "unit": "Unidad",
+    "addIngredient": "Añadir ingrediente",
+    "create": "Crear receta"
+  },
+  "shopping": {
+    "title": "Lista de la compra",
+    "clearPurchased": "Vaciar comprados",
+    "addPlaceholder": "Añadir ítem…",
+    "add": "Añadir"
+  },
+  "calendar": {
+    "title": "Calendario",
+    "titlePlaceholder": "Título del evento",
+    "add": "Añadir",
+    "confirmDelete": "¿Borrar \"{{title}}\"?"
+  },
+  "chores": {
+    "title": "Tareas",
+    "titlePlaceholder": "Título de la tarea",
+    "unassigned": "Sin asignar",
+    "add": "Añadir"
+  }
 }

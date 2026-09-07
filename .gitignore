@@ -27,3 +27,9 @@ replay_pid*
 target/
 node_modules/
 data/
+
+# IDE
+.idea/
+
+# Local env overrides (docker-compose reads deploy/.env automatically)
+deploy/.env

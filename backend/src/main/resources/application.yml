@@ -25,3 +25,5 @@ fanel:
     password: ${FANEL_ADMIN_PASSWORD:admin}
   cors:
     origins: ${FANEL_CORS_ORIGINS:http://localhost:5173}
+  api:
+    token: ${FANEL_API_TOKEN:}

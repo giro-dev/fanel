@@ -61,6 +61,25 @@ public class HouseholdService implements HouseholdApi {
         return members.findAllByHouseholdId(householdId).stream().map(HouseholdService::toDto).toList();
     }
 
+    @Override
+    public MemberDto setMemberPin(UUID householdId, UUID memberId, String pin) {
+        Member member = findMember(householdId, memberId);
+        member.setPin(pin);
+        return toDto(members.save(member));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean verifyMemberPin(UUID householdId, UUID memberId, String pin) {
+        return findMember(householdId, memberId).matchesPin(pin);
+    }
+
+    private Member findMember(UUID householdId, UUID memberId) {
+        return members.findById(memberId)
+                .filter(m -> m.getHousehold().getId().equals(householdId))
+                .orElseThrow(() -> new EntityNotFoundException("Member not found: " + memberId));
+    }
+
     private Household find(UUID id) {
         return households.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Household not found: " + id));
