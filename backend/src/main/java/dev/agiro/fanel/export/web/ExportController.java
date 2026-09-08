@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /** Full-household JSON export/import, used for backups and moving a household between instances. */
@@ -93,7 +94,9 @@ public class ExportController {
         }
 
         for (CalendarEventDto event : payload.calendarEvents()) {
-            calendar.create(household.id(), event.title(), event.date(), event.time(), memberIds.get(event.addedBy()));
+            List<UUID> assigneeIds = event.assigneeIds().stream().map(memberIds::get).filter(Objects::nonNull).toList();
+            calendar.create(household.id(), event.title(), event.anchorDate(), event.time(), memberIds.get(event.addedBy()),
+                    assigneeIds, event.recurrenceFreq(), event.recurrenceInterval(), event.recurrenceUntil());
         }
 
         for (ChoreDto chore : payload.chores()) {

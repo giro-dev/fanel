@@ -20,7 +20,9 @@ docker compose -f deploy/docker-compose.sqlite.yml up --build
 ```
 
 L'aplicació queda disponible a <http://localhost:8080> (`admin` / `admin` només
-en el perfil `dev`; canvia les credencials a `.env`).
+en el perfil `dev`; canvia les credencials a `.env`). Un cop dins, cada membre
+adult pot configurar el seu propi usuari i contrasenya des de "Compte" i deixar
+d'utilitzar l'admin global pel dia a dia.
 
 ## Desenvolupament
 

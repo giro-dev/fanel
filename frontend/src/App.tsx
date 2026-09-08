@@ -7,8 +7,12 @@ import { Recipes } from './pages/Recipes'
 import { Shopping } from './pages/Shopping'
 import { Calendar } from './pages/Calendar'
 import { Chores } from './pages/Chores'
+import { Members } from './pages/Members'
+import { Account } from './pages/Account'
+import { Login } from './pages/Login'
 import { Placeholder } from './pages/Placeholder'
 import { HouseholdProvider, useHousehold } from './context/HouseholdContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { WhoAmI } from './components/WhoAmI'
 import { ThemeToggle } from './components/ThemeToggle'
 import { useHouseholdEvents } from './hooks/useHouseholdEvents'
@@ -54,11 +58,32 @@ const icons = {
       <path d="M10 20v-6h4v6" />
     </svg>
   ),
+  account: (
+    <svg viewBox="0 0 24 24" width="1.15rem" height="1.15rem" {...stroke}>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
+    </svg>
+  ),
+  members: (
+    <svg viewBox="0 0 24 24" width="1.15rem" height="1.15rem" {...stroke}>
+      <circle cx="8.5" cy="8" r="3" />
+      <path d="M2.5 20a6 6 0 0 1 12 0" />
+      <circle cx="17" cy="9" r="2.5" />
+      <path d="M14.5 20a5 5 0 0 1 7 0" />
+    </svg>
+  ),
+  logout: (
+    <svg viewBox="0 0 24 24" width="1.15rem" height="1.15rem" {...stroke}>
+      <path d="M9 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H9" />
+      <path d="M15 16l4-4-4-4M19 12H9" />
+    </svg>
+  ),
 }
 
 function Shell() {
   const { t } = useTranslation()
   const { household } = useHousehold()
+  const { logout } = useAuth()
   useHouseholdEvents(household?.id)
   const nav = [
     ['/menu', t('nav.menu'), icons.menu],
@@ -66,6 +91,7 @@ function Shell() {
     ['/calendari', t('nav.calendar'), icons.calendar],
     ['/compra', t('nav.shopping'), icons.shopping],
     ['/tasques', t('nav.chores'), icons.chores],
+    ['/membres', t('nav.members'), icons.members],
   ] as const
   return (
     <div className="app-shell">
@@ -79,6 +105,8 @@ function Shell() {
         <div className="sidebar-footer">
           <div className="footer-actions">
             <NavLink to="/households">{icons.households}<span>{t('households.title')}</span></NavLink>
+            <NavLink to="/compte" aria-label={t('account.title')} className="icon-link">{icons.account}</NavLink>
+            <button type="button" className="icon-link" aria-label={t('account.logout')} onClick={logout}>{icons.logout}</button>
             <ThemeToggle />
           </div>
           <WhoAmI />
@@ -88,6 +116,8 @@ function Shell() {
         <div className="brand">Fanel</div>
         <div className="topbar-actions">
           <NavLink to="/households" aria-label={t('households.title')} className="icon-link">{icons.households}</NavLink>
+          <NavLink to="/compte" aria-label={t('account.title')} className="icon-link">{icons.account}</NavLink>
+          <button type="button" className="icon-link" aria-label={t('account.logout')} onClick={logout}>{icons.logout}</button>
           <ThemeToggle />
           <WhoAmI />
         </div>
@@ -95,11 +125,13 @@ function Shell() {
       <main className="content">
         <Routes>
           <Route path="/households" element={<Households />} />
+          <Route path="/compte" element={<Account />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/receptes" element={<Recipes />} />
           <Route path="/calendari" element={<Calendar />} />
           <Route path="/compra" element={<Shopping />} />
           <Route path="/tasques" element={<Chores />} />
+          <Route path="/membres" element={<Members />} />
           <Route path="*" element={<Placeholder title="Fanel" />} />
         </Routes>
       </main>
@@ -107,12 +139,22 @@ function Shell() {
   )
 }
 
+function Gate() {
+  const { username } = useAuth()
+  if (!username) return <Login />
+  return (
+    <HouseholdProvider>
+      <Shell />
+    </HouseholdProvider>
+  )
+}
+
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <HouseholdProvider>
-        <Shell />
-      </HouseholdProvider>
+      <AuthProvider>
+        <Gate />
+      </AuthProvider>
     </QueryClientProvider>
   )
 }

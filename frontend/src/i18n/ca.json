@@ -1,10 +1,28 @@
 {
-  "nav": { "menu": "Menú", "recipes": "Receptes", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
+  "nav": { "menu": "Menú", "recipes": "Receptes", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques", "members": "Membres" },
   "theme": { "label": "Canviar tema", "light": "Tema clar", "dark": "Tema fosc", "system": "Tema del sistema" },
   "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
   "loading": "Carregant…",
   "error": "No s'ha pogut carregar.",
   "placeholder": { "soon": "Properament." },
+  "login": {
+    "title": "Inicia la sessió",
+    "username": "Usuari",
+    "password": "Contrasenya",
+    "submit": "Entrar",
+    "error": "Usuari o contrasenya incorrectes."
+  },
+  "account": {
+    "title": "Compte",
+    "loggedInAs": "Sessió iniciada com a {{username}}.",
+    "logout": "Tanca la sessió",
+    "setCredentialsFor": "Configura l'usuari i la contrasenya de {{name}}.",
+    "username": "Usuari",
+    "password": "Contrasenya",
+    "save": "Desa",
+    "saved": "Credencials desades.",
+    "selectAdult": "Tria \"Qui ets?\" com a persona adulta per configurar el teu usuari i contrasenya."
+  },
   "whoami": {
     "prompt": "Qui ets?",
     "switch": "Canviar de membre",
@@ -46,13 +64,57 @@
   "calendar": {
     "title": "Calendari",
     "titlePlaceholder": "Títol de l'esdeveniment",
-    "add": "Afegir",
-    "confirmDelete": "Esborrar \"{{title}}\"?"
+    "assignees": "Per a qui",
+    "confirmDelete": "Esborrar \"{{title}}\"?",
+    "newEvent": "Nou esdeveniment",
+    "editEvent": "Editar esdeveniment",
+    "addEvent": "Afegir esdeveniment",
+    "noEvents": "Cap esdeveniment aquest dia.",
+    "save": "Desa",
+    "delete": "Elimina",
+    "recurring": "Esdeveniment recurrent",
+    "repeat": "Es repeteix",
+    "repeatOptions": {
+      "none": "No es repeteix",
+      "DAILY": "Cada dia",
+      "WEEKLY": "Cada setmana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada any"
+    },
+    "repeatUnit": {
+      "DAILY": "dies",
+      "WEEKLY": "setmanes",
+      "MONTHLY": "mesos",
+      "YEARLY": "anys"
+    },
+    "every": "Cada",
+    "until": "Fins a (opcional)",
+    "recurringNote": "Els canvis i l'eliminació afecten tota la sèrie.",
+    "confirmDeleteSeries": "Esborrar tota la sèrie \"{{title}}\"?"
   },
   "chores": {
     "title": "Tasques",
     "titlePlaceholder": "Títol de la tasca",
     "unassigned": "Sense assignar",
     "add": "Afegir"
+  },
+  "members": {
+    "title": "Membres",
+    "name": "Nom",
+    "role": "Rol",
+    "color": "Color",
+    "add": "Afegir membre",
+    "edit": "Editar",
+    "save": "Desa",
+    "cancel": "Cancel·la",
+    "delete": "Elimina",
+    "confirmDelete": "Eliminar {{name}}?",
+    "guardians": "Adults responsables",
+    "noGuardianCandidates": "Encara no hi ha cap adult a la llar.",
+    "roles": {
+      "ADMIN": "Administrador",
+      "ADULT": "Adult",
+      "CHILD": "Infant"
+    }
   }
 }

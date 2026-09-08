@@ -1,10 +1,28 @@
 {
-  "nav": { "menu": "Menú", "recipes": "Recetas", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
+  "nav": { "menu": "Menú", "recipes": "Recetas", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas", "members": "Miembros" },
   "theme": { "label": "Cambiar tema", "light": "Tema claro", "dark": "Tema oscuro", "system": "Tema del sistema" },
   "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
   "loading": "Cargando…",
   "error": "No se ha podido cargar.",
   "placeholder": { "soon": "Próximamente." },
+  "login": {
+    "title": "Inicia sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Entrar",
+    "error": "Usuario o contraseña incorrectos."
+  },
+  "account": {
+    "title": "Cuenta",
+    "loggedInAs": "Sesión iniciada como {{username}}.",
+    "logout": "Cerrar sesión",
+    "setCredentialsFor": "Configura el usuario y la contraseña de {{name}}.",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "save": "Guardar",
+    "saved": "Credenciales guardadas.",
+    "selectAdult": "Elige \"¿Quién eres?\" como persona adulta para configurar tu usuario y contraseña."
+  },
   "whoami": {
     "prompt": "¿Quién eres?",
     "switch": "Cambiar de miembro",
@@ -46,13 +64,57 @@
   "calendar": {
     "title": "Calendario",
     "titlePlaceholder": "Título del evento",
-    "add": "Añadir",
-    "confirmDelete": "¿Borrar \"{{title}}\"?"
+    "assignees": "Para quién",
+    "confirmDelete": "¿Borrar \"{{title}}\"?",
+    "newEvent": "Nuevo evento",
+    "editEvent": "Editar evento",
+    "addEvent": "Añadir evento",
+    "noEvents": "No hay eventos este día.",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "recurring": "Evento recurrente",
+    "repeat": "Se repite",
+    "repeatOptions": {
+      "none": "No se repite",
+      "DAILY": "Cada día",
+      "WEEKLY": "Cada semana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada año"
+    },
+    "repeatUnit": {
+      "DAILY": "días",
+      "WEEKLY": "semanas",
+      "MONTHLY": "meses",
+      "YEARLY": "años"
+    },
+    "every": "Cada",
+    "until": "Hasta (opcional)",
+    "recurringNote": "Los cambios y la eliminación afectan a toda la serie.",
+    "confirmDeleteSeries": "¿Borrar toda la serie \"{{title}}\"?"
   },
   "chores": {
     "title": "Tareas",
     "titlePlaceholder": "Título de la tarea",
     "unassigned": "Sin asignar",
     "add": "Añadir"
+  },
+  "members": {
+    "title": "Miembros",
+    "name": "Nombre",
+    "role": "Rol",
+    "color": "Color",
+    "add": "Añadir miembro",
+    "edit": "Editar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Eliminar a {{name}}?",
+    "guardians": "Adultos responsables",
+    "noGuardianCandidates": "Todavía no hay ningún adulto en el hogar.",
+    "roles": {
+      "ADMIN": "Administrador",
+      "ADULT": "Adulto",
+      "CHILD": "Niño/a"
+    }
   }
 }

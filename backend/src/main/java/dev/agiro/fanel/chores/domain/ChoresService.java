@@ -3,8 +3,11 @@ package dev.agiro.fanel.chores.domain;
 import dev.agiro.fanel.chores.api.ChoreDto;
 import dev.agiro.fanel.chores.api.ChoresApi;
 import dev.agiro.fanel.chores.infra.ChoreRepository;
+import dev.agiro.fanel.household.api.HouseholdApi;
 import dev.agiro.fanel.shared.events.HouseholdEvent;
+import dev.agiro.fanel.shared.security.CurrentAccess;
 import dev.agiro.fanel.shared.web.EntityNotFoundException;
+import dev.agiro.fanel.shared.web.ForbiddenException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,21 +22,28 @@ public class ChoresService implements ChoresApi {
 
     private final ChoreRepository chores;
     private final ApplicationEventPublisher events;
+    private final HouseholdApi household;
+    private final CurrentAccess access;
 
-    public ChoresService(ChoreRepository chores, ApplicationEventPublisher events) {
+    public ChoresService(ChoreRepository chores, ApplicationEventPublisher events,
+                         HouseholdApi household, CurrentAccess access) {
         this.chores = chores;
         this.events = events;
+        this.household = household;
+        this.access = access;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ChoreDto> list(UUID householdId) {
         return chores.findAllByHouseholdIdOrderByCreatedAtAsc(householdId).stream()
+                .filter(chore -> canAccess(householdId, chore.getAssigneeId()))
                 .map(ChoresService::toDto).toList();
     }
 
     @Override
     public ChoreDto create(UUID householdId, String title, UUID assigneeId) {
+        requireCanManage(householdId, assigneeId);
         Chore saved = chores.save(new Chore(householdId, title, assigneeId));
         events.publishEvent(new HouseholdEvent(householdId, TOPIC));
         return toDto(saved);
@@ -42,6 +52,8 @@ public class ChoresService implements ChoresApi {
     @Override
     public ChoreDto update(UUID householdId, UUID choreId, String title, UUID assigneeId, Boolean done) {
         Chore chore = find(householdId, choreId);
+        requireCanManage(householdId, chore.getAssigneeId());
+        if (assigneeId != null) requireCanManage(householdId, assigneeId);
         if (title != null) chore.setTitle(title);
         if (assigneeId != null) chore.setAssigneeId(assigneeId);
         if (done != null) chore.setDone(done);
@@ -51,8 +63,23 @@ public class ChoresService implements ChoresApi {
 
     @Override
     public void delete(UUID householdId, UUID choreId) {
-        chores.delete(find(householdId, choreId));
+        Chore chore = find(householdId, choreId);
+        requireCanManage(householdId, chore.getAssigneeId());
+        chores.delete(chore);
         events.publishEvent(new HouseholdEvent(householdId, TOPIC));
+    }
+
+    /** Admins see/manage everything; unassigned chores are shared; others are scoped to oneself or one's children. */
+    private boolean canAccess(UUID householdId, UUID assigneeId) {
+        if (access.isAdmin() || assigneeId == null) return true;
+        return access.memberId().map(id -> id.equals(assigneeId)
+                || household.relatedChildIds(householdId, id).contains(assigneeId)).orElse(false);
+    }
+
+    private void requireCanManage(UUID householdId, UUID assigneeId) {
+        if (!canAccess(householdId, assigneeId)) {
+            throw new ForbiddenException("Not allowed to manage this chore");
+        }
     }
 
     private Chore find(UUID householdId, UUID choreId) {

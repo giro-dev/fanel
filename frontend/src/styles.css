@@ -173,6 +173,25 @@ body {
   margin: 0 auto;
 }
 
+/* ---------- Login ---------- */
+
+.login-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 22rem;
+}
+.login-form .brand { padding: 0; }
+.login-form h2 { margin: 0 0 0.25rem; color: var(--accent-strong); }
+
 /* ---------- Panels & typography ---------- */
 
 h1 { color: var(--accent-strong); font-size: 2rem; letter-spacing: -0.02em; margin: 0 0 1rem; }
@@ -408,6 +427,84 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
 .calendar-view .fc-daygrid-day-number { font-weight: 500; }
 .calendar-view .fc-toolbar-title { color: var(--accent-strong); font-size: 1.15rem; }
 
+.event-content { display: flex; align-items: center; gap: 0.3rem; overflow: hidden; }
+.event-dots { display: inline-flex; gap: 0.15rem; flex-shrink: 0; }
+.event-dots i {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- FAB ---------- */
+
+.fab {
+  position: fixed;
+  right: 1.75rem;
+  bottom: 1.75rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9rem;
+  line-height: 1;
+  padding: 0;
+  box-shadow: var(--shadow);
+  z-index: 15;
+}
+
+/* ---------- Modal / bottom sheet ---------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 23, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+}
+.modal-sheet {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 26rem;
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.modal-header h3 { margin: 0; color: var(--accent-strong); font-size: 1.15rem; }
+.modal-close {
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.1rem 0.5rem;
+}
+.modal-form { flex-direction: column; align-items: stretch; margin-bottom: 0; }
+.modal-form fieldset { margin-top: 0.25rem; }
+
+.day-event {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  color: var(--ink);
+  padding: 0.35rem 0;
+}
+.day-event:hover:not(:disabled) { background: transparent; color: var(--accent-strong); }
+
 /* ---------- Responsive: mobile bottom nav ---------- */
 
 @media (max-width: 760px) {
@@ -459,6 +556,21 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
   .main-nav a svg { width: 1.35rem; height: 1.35rem; }
 
   .content { padding: 1.25rem 1rem 5.5rem; }
+
+  .fab { right: 1.25rem; bottom: 5.5rem; }
+
+  .modal-backdrop { align-items: flex-end; padding: 0; }
+  .modal-sheet {
+    max-width: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+    max-height: 80dvh;
+    animation: sheet-up 0.2s ease-out;
+  }
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
