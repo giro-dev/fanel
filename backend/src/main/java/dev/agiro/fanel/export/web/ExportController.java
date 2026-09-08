@@ -113,7 +113,10 @@ public class ExportController {
         }
 
         for (ChoreDto chore : payload.chores()) {
-            var created = chores.create(household.id(), chore.title(), memberIds.get(chore.assigneeId()));
+            List<UUID> rotationMemberIds = chore.rotationMemberIds().stream()
+                    .map(memberIds::get).filter(Objects::nonNull).toList();
+            var created = chores.create(household.id(), chore.title(), memberIds.get(chore.assigneeId()),
+                    chore.dueDate(), chore.recurrenceFreq(), chore.recurrenceInterval(), rotationMemberIds);
             if (chore.done()) chores.update(household.id(), created.id(), null, null, true);
         }
 

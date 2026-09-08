@@ -15,4 +15,8 @@ public interface ChoreRepository extends JpaRepository<Chore, UUID> {
     @Modifying
     @Query("update Chore c set c.assigneeId = null where c.assigneeId = :memberId")
     void clearAssignee(@Param("memberId") UUID memberId);
+
+    @Modifying
+    @Query(value = "DELETE FROM chore_rotation_member WHERE member_id = :memberId", nativeQuery = true)
+    void removeFromRotation(@Param("memberId") String memberId);
 }

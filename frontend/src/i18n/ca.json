@@ -114,7 +114,27 @@
     "title": "Tasques",
     "titlePlaceholder": "Títol de la tasca",
     "unassigned": "Sense assignar",
-    "add": "Afegir"
+    "add": "Afegir",
+    "recurrence": "Recurrència i rotació",
+    "dueDate": "Data de venciment",
+    "repeat": "Es repeteix",
+    "repeatOptions": {
+      "none": "No es repeteix",
+      "DAILY": "Cada dia",
+      "WEEKLY": "Cada setmana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada any"
+    },
+    "repeatUnit": {
+      "DAILY": "dies",
+      "WEEKLY": "setmanes",
+      "MONTHLY": "mesos",
+      "YEARLY": "anys"
+    },
+    "every": "Cada",
+    "rotation": "Rotació entre membres",
+    "rotationHint": "Marca els membres pel qual vols que roti la tasca, en l'ordre en què els marquis.",
+    "save": "Desa"
   },
   "members": {
     "title": "Membres",

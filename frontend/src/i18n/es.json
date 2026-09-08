@@ -114,7 +114,27 @@
     "title": "Tareas",
     "titlePlaceholder": "Título de la tarea",
     "unassigned": "Sin asignar",
-    "add": "Añadir"
+    "add": "Añadir",
+    "recurrence": "Recurrencia y rotación",
+    "dueDate": "Fecha de vencimiento",
+    "repeat": "Se repite",
+    "repeatOptions": {
+      "none": "No se repite",
+      "DAILY": "Cada día",
+      "WEEKLY": "Cada semana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada año"
+    },
+    "repeatUnit": {
+      "DAILY": "días",
+      "WEEKLY": "semanas",
+      "MONTHLY": "meses",
+      "YEARLY": "años"
+    },
+    "every": "Cada",
+    "rotation": "Rotación entre miembros",
+    "rotationHint": "Marca los miembros por los que quieres que rote la tarea, en el orden en que los marques.",
+    "save": "Guardar"
   },
   "members": {
     "title": "Miembros",

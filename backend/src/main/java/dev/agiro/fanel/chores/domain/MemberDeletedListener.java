@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Un-assigns chores from a member once it's removed, instead of keeping a stale reference. */
+/** Un-assigns chores from a member once it's removed, instead of keeping a stale reference, and drops it
+ * from any rotation it was part of. */
 @Component("choresMemberDeletedListener")
 class MemberDeletedListener {
     private final ChoreRepository chores;
@@ -20,5 +21,6 @@ class MemberDeletedListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     void on(MemberDeleted event) {
         chores.clearAssignee(event.memberId());
+        chores.removeFromRotation(event.memberId().toString());
     }
 }
