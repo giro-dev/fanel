@@ -5,7 +5,8 @@ import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class AssistantModelConfiguration {
 
     @Bean
-    @ConditionalOnProperty("spring.ai.openai.api-key")
+    @ConditionalOnMissingBean(OpenAiChatModel.class)
+    @ConditionalOnExpression("'${spring.ai.openai.api-key:}' != ''")
     public OpenAiChatModel openAiChatModel(@Value("${spring.ai.openai.api-key}") String apiKey,
                                             @Value("${spring.ai.openai.chat.base-url:https://api.openai.com}") String baseUrl,
                                             @Value("${spring.ai.openai.chat.model:gpt-4o}") String model) {
@@ -27,7 +29,8 @@ public class AssistantModelConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty("spring.ai.anthropic.api-key")
+    @ConditionalOnMissingBean(AnthropicChatModel.class)
+    @ConditionalOnExpression("'${spring.ai.anthropic.api-key:}' != ''")
     public AnthropicChatModel anthropicChatModel(@Value("${spring.ai.anthropic.api-key}") String apiKey,
                                                   @Value("${spring.ai.anthropic.chat.base-url:https://api.anthropic.com}") String baseUrl,
                                                   @Value("${spring.ai.anthropic.chat.model:claude-3-5-sonnet-20241022}") String model) {
