@@ -11,12 +11,16 @@ import org.springframework.ai.model.chat.client.autoconfigure.ChatClientBuilderC
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.ObjectProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 public class ChatClientFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(ChatClientFactory.class);
+
     private final ChatClientBuilderConfigurer configurer;
     private final ObjectProvider<OpenAiChatModel> openAi;
     private final ObjectProvider<OllamaChatModel> ollama;
@@ -62,13 +66,20 @@ public class ChatClientFactory {
 
     private ChatModel resolve(ModelProfile profile) {
         if (profile == null || profile.provider() == null) {
+            LOG.warn("Cannot resolve ChatModel: profile or provider is null");
             return null;
         }
-        return switch (profile.provider().toLowerCase()) {
+        ChatModel model = switch (profile.provider().toLowerCase()) {
             case "openai" -> openAi.getIfAvailable();
             case "ollama" -> ollama.getIfAvailable();
             case "anthropic" -> anthropic.getIfAvailable();
             default -> null;
         };
+        if (model == null) {
+            LOG.warn("No ChatModel bean available for provider '{}'", profile.provider());
+        } else {
+            LOG.info("Resolved ChatModel for provider '{}'", profile.provider());
+        }
+        return model;
     }
 }

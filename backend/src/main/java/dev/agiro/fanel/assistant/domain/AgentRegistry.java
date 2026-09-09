@@ -6,6 +6,8 @@ import dev.agiro.fanel.assistant.domain.tools.AssistantTools;
 import dev.agiro.fanel.assistant.infra.AgentProperties;
 import dev.agiro.fanel.assistant.infra.ChatClientFactory;
 import dev.agiro.fanel.assistant.infra.PromptLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class AgentRegistry {
+    private static final Logger LOG = LoggerFactory.getLogger(AgentRegistry.class);
+
     private final Map<String, Agent> agents;
 
     private final AssistantTools assistantTools;
@@ -25,11 +29,14 @@ public class AgentRegistry {
                          PromptLoader promptLoader,
                          AssistantTools assistantTools) {
         this.assistantTools = assistantTools;
+        LOG.info("Loading {} agent configurations", properties.getAgents().size());
         this.agents = properties.getAgents().entrySet().stream()
+                .peek(e -> LOG.debug("Agent config '{}' -> model={}", e.getKey(), e.getValue().getModel()))
                 .filter(e -> e.getValue().getModel() != null)
                 .map(e -> toAgent(e.getKey(), e.getValue(), chatClientFactory, promptLoader))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .peek(a -> LOG.info("Registered agent '{}'", a.definition().id()))
                 .collect(Collectors.toMap(a -> a.definition().id(), a -> a));
     }
 
