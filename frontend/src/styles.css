@@ -703,7 +703,7 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
 
 .assistant-fab {
   position: fixed;
-  right: 1.75rem;
+  left: 1.75rem;
   bottom: 1.75rem;
   width: 3.5rem;
   height: 3.5rem;
@@ -729,7 +729,7 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
 
 .assistant-panel {
   position: fixed;
-  right: 1.5rem;
+  left: 1.5rem;
   bottom: 6rem;
   width: 24rem;
   height: 36rem;
@@ -834,7 +834,7 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
     border-radius: 0;
     border: 0;
   }
-  .assistant-fab { right: 1.25rem; bottom: 5.5rem; }
+  .assistant-fab { left: 1.25rem; right: auto; bottom: 5.5rem; }
   .assistant-header { padding: 0.75rem; }
 }
 
