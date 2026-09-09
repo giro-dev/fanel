@@ -27,3 +27,9 @@ fanel:
     origins: ${FANEL_CORS_ORIGINS:http://localhost:5173}
   api:
     token: ${FANEL_API_TOKEN:}
+  vapid:
+    subject: ${FANEL_VAPID_SUBJECT:mailto:admin@example.com}
+    public-key: ${FANEL_VAPID_PUBLIC_KEY:}
+    private-key: ${FANEL_VAPID_PRIVATE_KEY:}
+  notifications:
+    reminder-hour: ${FANEL_NOTIFICATIONS_REMINDER_HOUR:8}

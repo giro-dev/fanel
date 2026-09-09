@@ -4,6 +4,8 @@
   "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
   "loading": "Cargando…",
   "error": "No se ha podido cargar.",
+  "offline": "Sin conexión",
+  "online": "Conexión restablecida",
   "placeholder": { "soon": "Próximamente." },
   "login": {
     "title": "Inicia sesión",
@@ -21,7 +23,10 @@
     "password": "Contraseña",
     "save": "Guardar",
     "saved": "Credenciales guardadas.",
-    "selectAdult": "Elige \"¿Quién eres?\" como persona adulta para configurar tu usuario y contraseña."
+    "selectAdult": "Elige \"¿Quién eres?\" como persona adulta para configurar tu usuario y contraseña.",
+    "enableNotifications": "Activar notificaciones",
+    "disableNotifications": "Desactivar notificaciones",
+    "notificationsEnabled": "Notificaciones activadas."
   },
   "whoami": {
     "prompt": "¿Quién eres?",

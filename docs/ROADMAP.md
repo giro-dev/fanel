@@ -10,7 +10,7 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 |---|---|---|
 | 0 | Fonaments | ✅ fet |
 | 1 | Paritat amb la POC | ✅ fet |
-| 2 | Valor de domini | 🔧 en curs |
+| 2 | Valor de domini | ✅ fet |
 | 3 | IA i MCP | ⏳ |
 | 4 | Clients Android i escriptori | ⏳ |
 | 5 | Maduresa | ⏳ |
@@ -49,8 +49,8 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 - [x] Compra: categories/passadissos, múltiples llistes, ítems recurrents, quantitats — `ShoppingItem` amb `quantity`/`unit`/`category`/`recurring`; `ShoppingList` amb CRUD complet (`/api/v1/households/{id}/shopping/lists`); UI a `Shopping.tsx` amb selector de llista
 - [x] `calendar`: experiència d'edició tipus Android (botó `+` flotant, detall del dia en clicar-hi, edició/eliminació d'esdeveniments des del detall) i esdeveniments recurrents (diari/setmanal/mensual/anual, interval i fi opcional) — `CalendarEvent.recurrenceFreq/-Interval/-Until`, expansió d'ocurrències a `CalendarService.list` (`GET /calendar`), `Calendar.tsx`
 - [x] Recurrència (RRULE) en tasques; rotació de tasques entre membres — `Chore.dueDate`/`recurrenceFreq`/`recurrenceInterval`/`rotationMemberIds` (`PUT /chores/{id}/recurrence`); marcar una tasca recurrent com a feta avança la data de venciment i rota l'assignat en lloc de deixar-la marcada (`Chore#setDone`)
-- [ ] `notifications`: web push per recordatoris de tasques i esdeveniments
-- [ ] PWA offline real per la llista de la compra (cache + cua de sincronització)
+- [x] `notifications`: web push per recordatoris de tasques i esdeveniments
+- [x] PWA offline real per la llista de la compra (cache + cua de sincronització)
 - [x] UI de `recipes` al frontend (llistat/creació de receptes, selector de recepta al `Menu`) — pàgina `Recipes.tsx` i pestanya nova; `Menu.tsx` permet triar una recepta per àpat (a més del text lliure)
 
 ## Fase 3 — IA i MCP

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { api } from '../api/client'
 import { useHousehold } from '../context/HouseholdContext'
+import { useNetworkStatus } from '../hooks/useNetworkStatus'
 
 type Item = {
   id: string
@@ -36,6 +37,7 @@ const COMMON_CATEGORIES = [
 
 export function Shopping() {
   const { t } = useTranslation()
+  const online = useNetworkStatus()
   const { household } = useHousehold()
   const queryClient = useQueryClient()
 
@@ -186,6 +188,11 @@ export function Shopping() {
 
   return (
     <section className="panel">
+      {!online && (
+        <div role="status" style={{ padding: '0.5rem 0.75rem', background: 'var(--warning-bg)', borderRadius: '0.375rem', marginBottom: '0.75rem' }}>
+          {t('offline')}
+        </div>
+      )}
       <div className="shopping-header-row">
         <h2>{t('shopping.title')}</h2>
         <div className="shopping-toolbar">

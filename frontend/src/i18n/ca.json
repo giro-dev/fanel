@@ -4,6 +4,8 @@
   "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
   "loading": "Carregant…",
   "error": "No s'ha pogut carregar.",
+  "offline": "Sense connexió",
+  "online": "Connexió restablerta",
   "placeholder": { "soon": "Properament." },
   "login": {
     "title": "Inicia la sessió",
@@ -21,7 +23,10 @@
     "password": "Contrasenya",
     "save": "Desa",
     "saved": "Credencials desades.",
-    "selectAdult": "Tria \"Qui ets?\" com a persona adulta per configurar el teu usuari i contrasenya."
+    "selectAdult": "Tria \"Qui ets?\" com a persona adulta per configurar el teu usuari i contrasenya.",
+    "enableNotifications": "Activar notificacions",
+    "disableNotifications": "Desactivar notificacions",
+    "notificationsEnabled": "Notificacions activades."
   },
   "whoami": {
     "prompt": "Qui ets?",

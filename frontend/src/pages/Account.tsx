@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { api } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import { useHousehold } from '../context/HouseholdContext'
+import { subscribeToNotifications, unsubscribeFromNotifications } from '../notifications/notifications'
 
 export function Account() {
   const { t } = useTranslation()
@@ -13,6 +14,32 @@ export function Account() {
   const [newUsername, setNewUsername] = useState('')
   const [password, setPassword] = useState('')
   const [saved, setSaved] = useState(false)
+  const [pushEnabled, setPushEnabled] = useState(false)
+
+  const vapidQuery = useQuery({
+    queryKey: ['vapidPublicKey'],
+    queryFn: () => api<{ publicKey: string }>('/notifications/vapid-public-key'),
+  })
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !member) return
+    void navigator.serviceWorker.ready.then((reg) => reg.pushManager.getSubscription()).then((sub) => setPushEnabled(!!sub))
+  }, [member])
+
+  const togglePush = useMutation({
+    mutationFn: async () => {
+      if (!member || !vapidQuery.data) return
+      const current = await navigator.serviceWorker.ready.then((r) => r.pushManager.getSubscription())
+      if (pushEnabled) {
+        await unsubscribeFromNotifications(member.householdId, current?.endpoint ?? '')
+        await current?.unsubscribe()
+        setPushEnabled(false)
+      } else {
+        await subscribeToNotifications(member.householdId, vapidQuery.data.publicKey)
+        setPushEnabled(true)
+      }
+    },
+  })
 
   const mutation = useMutation({
     mutationFn: () => api(`/households/${member!.householdId}/members/${member!.id}/credentials`, {
@@ -31,6 +58,19 @@ export function Account() {
       <h2>{t('account.title')}</h2>
       <p>{t('account.loggedInAs', { username })}</p>
       <button type="button" className="link" onClick={logout}>{t('account.logout')}</button>
+
+      {'serviceWorker' in navigator && 'PushManager' in window && member?.role === 'ADULT' && (
+        <div>
+          <button
+            type="button"
+            onClick={() => togglePush.mutate()}
+            disabled={vapidQuery.isPending || togglePush.isPending}
+          >
+            {pushEnabled ? t('account.disableNotifications') : t('account.enableNotifications')}
+          </button>
+          {togglePush.isError && <p role="alert">{t('error')}</p>}
+        </div>
+      )}
 
       {member?.role === 'ADULT' ? (
         <form className="create-form" onSubmit={(event) => { event.preventDefault(); setSaved(false); mutation.mutate() }}>
