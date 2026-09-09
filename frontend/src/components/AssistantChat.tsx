@@ -84,6 +84,7 @@ export function AssistantChat() {
   const [open, setOpen] = useState(false)
   const [agents, setAgents] = useState<Agent[]>([])
   const [selectedAgent, setSelectedAgent] = useState<string>('')
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
@@ -93,13 +94,17 @@ export function AssistantChat() {
 
   useEffect(() => {
     if (!household || !open) return
+    setLoadError(null)
     api<Agent[]>(`/households/${household.id}/assistant/agents`)
       .then((list) => {
         setAgents(list)
         setSelectedAgent((prev) => prev || (list[0]?.id ?? ''))
       })
-      .catch(() => setAgents([]))
-  }, [household, open])
+      .catch((err) => {
+        setAgents([])
+        setLoadError(err instanceof Error ? err.message : t('error'))
+      })
+  }, [household, open, t])
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -212,8 +217,10 @@ export function AssistantChat() {
               </button>
             </div>
 
+            {loadError && <p className="assistant-error">{loadError}</p>}
+
             <div className="assistant-messages">
-              {messages.length === 0 && (
+              {messages.length === 0 && !loadError && (
                 <p className="assistant-empty">{t('assistant.intro')}</p>
               )}
               {messages.map((m, i) => (
