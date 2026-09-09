@@ -21,6 +21,7 @@ Roadmap i fases: [`docs/ROADMAP.md`](docs/ROADMAP.md). Decisions: [`docs/adr/`](
 | 6 | **IA amb Spring AI**, proveïdor **configurable i cap actiu per defecte**. Tools `@Tool` definides una sola vegada i reutilitzades per l'assistent intern i el **servidor MCP** (`/mcp`, Streamable HTTP). Tot aïllat al mòdul `assistant`. | [0006](docs/adr/0006-spring-ai-mcp.md) |
 | 7 | **i18n català + castellà** des del principi (`ca` per defecte). Cap text d'usuari hardcodejat: `react-i18next` al frontend, `MessageSource` al backend. | [0007](docs/adr/0007-i18n.md) |
 | 8 | Comunicació entre mòduls per **esdeveniments de domini** (Spring Modulith, registre persistit), no per crides directes a la implementació d'un altre mòdul. | [0001](docs/adr/0001-monolit-modular.md) |
+| 9 | **Assistent multiagent** amb **un model/API per funció**: cada agent té el seu `ModelProfile` (Ollama, OpenAI, Anthropic…) i les tools compartides del mòdul `assistant`. | [0009](docs/adr/0009-assistant-multiagent.md) |
 
 ## Estructura del repositori
 

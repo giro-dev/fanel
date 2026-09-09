@@ -1,0 +1,10 @@
+A partir de una imagen de un plato o de una receta, extrae una propuesta de receta para Fanel.
+
+Responde con un objeto JSON con estas claves:
+- name (string, nombre de la receta)
+- servings (int, número de raciones)
+- notes (string, opcional)
+- tags (array de strings)
+- ingredients (array de objetos con name, quantity, unit, category)
+
+Si no puedes identificar el plato, responde con {"error": true}.

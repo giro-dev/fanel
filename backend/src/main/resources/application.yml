@@ -10,6 +10,14 @@ spring:
     locations: classpath:db/migration/common,classpath:db/migration/{vendor}
   jpa:
     open-in-view: false
+  ai:
+    mcp:
+      server:
+        enabled: false
+    ollama:
+      base-url: ${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        pull-model-strategy: never
 management:
   endpoints:
     web:
