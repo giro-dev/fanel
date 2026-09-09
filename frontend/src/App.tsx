@@ -15,6 +15,7 @@ import { HouseholdProvider, useHousehold } from './context/HouseholdContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { WhoAmI } from './components/WhoAmI'
 import { ThemeToggle } from './components/ThemeToggle'
+import { AssistantChat } from './components/AssistantChat'
 import { useHouseholdEvents } from './hooks/useHouseholdEvents'
 
 const queryClient = new QueryClient()
@@ -135,6 +136,7 @@ function Shell() {
           <Route path="*" element={<Placeholder title="Fanel" />} />
         </Routes>
       </main>
+      <AssistantChat />
     </div>
   )
 }

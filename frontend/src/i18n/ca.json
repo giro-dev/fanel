@@ -7,6 +7,28 @@
   "offline": "Sense connexió",
   "online": "Connexió restablerta",
   "placeholder": { "soon": "Properament." },
+  "assistant": {
+    "open": "Assistent",
+    "title": "Assistent de Fanel",
+    "send": "Envia",
+    "placeholder": "Escriu un missatge…",
+    "intro": "Hola! Puc ajudar-te amb el menú, la compra, les receptes, el calendari i les tasques.",
+    "selectAgent": "Tria l'agent",
+    "close": "Tanca el xat",
+    "noAgents": "Cap agent disponible",
+    "imageAttached": "[Imatge adjunta]",
+    "attachImage": "Afegir imatge",
+    "createRecipe": "Crear recepta",
+    "recipeCreated": "Recepta creada correctament.",
+    "general": {
+      "name": "Assistent general",
+      "description": "Xat amb l'assistent general de la llar."
+    },
+    "recipe-from-image": {
+      "name": "Recepta des d'imatge",
+      "description": "Extreu una recepta a partir d'una fotografia."
+    }
+  },
   "login": {
     "title": "Inicia la sessió",
     "username": "Usuari",

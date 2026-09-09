@@ -7,6 +7,28 @@
   "offline": "Sin conexión",
   "online": "Conexión restablecida",
   "placeholder": { "soon": "Próximamente." },
+  "assistant": {
+    "open": "Asistente",
+    "title": "Asistente de Fanel",
+    "send": "Enviar",
+    "placeholder": "Escribe un mensaje…",
+    "intro": "¡Hola! Puedo ayudarte con el menú, la compra, las recetas, el calendario y las tareas.",
+    "selectAgent": "Elige el agente",
+    "close": "Cerrar chat",
+    "noAgents": "Ningún agente disponible",
+    "imageAttached": "[Imagen adjunta]",
+    "attachImage": "Añadir imagen",
+    "createRecipe": "Crear receta",
+    "recipeCreated": "Receta creada correctamente.",
+    "general": {
+      "name": "Asistente general",
+      "description": "Chat con el asistente general del hogar."
+    },
+    "recipe-from-image": {
+      "name": "Receta desde imagen",
+      "description": "Extrae una receta a partir de una fotografía."
+    }
+  },
   "login": {
     "title": "Inicia sesión",
     "username": "Usuario",
