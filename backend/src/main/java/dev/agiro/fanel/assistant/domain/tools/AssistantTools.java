@@ -43,6 +43,15 @@ public class AssistantTools {
         this.household = household;
     }
 
+    @Tool(description = "Return current year week in ISO yyyy-ww")
+    public String getCurrentIsoWeek() {
+        LocalDate now = LocalDate.now();
+        int week = now.get(java.time.temporal.IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        int year = now.get(java.time.temporal.IsoFields.WEEK_BASED_YEAR);
+        return String.format("%04d-W%02d", year, week);
+    }
+
+
     @Tool(description = "List all recipes in the household")
     public List<RecipeDto> listRecipes(UUID householdId) {
         return recipes.list(householdId);

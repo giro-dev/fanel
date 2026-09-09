@@ -40,10 +40,15 @@ public class DefaultAgent implements Agent {
                 : UUID.randomUUID().toString();
 
         String systemPrompt = promptLoader.load(definition.id(), locale);
+        String context = "\n\nYou are assisting household " + householdId + " and member " + memberId
+                + ". When calling tools that require a householdId, always use " + householdId
+                + ". When a tool needs year and week, prefer getCurrentIsoWeek().";
 
         var prompt = chatClient.prompt();
         if (systemPrompt != null && !systemPrompt.isBlank()) {
-            prompt.system(systemPrompt);
+            prompt.system(systemPrompt + context);
+        } else {
+            prompt.system(context.trim());
         }
         String response = prompt
                 .user(user -> {
