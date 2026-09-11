@@ -13,7 +13,7 @@ class AuthStore {
     }
 
     fun setBearerToken(token: String) {
-        authHeader = "Bear" + "er " + token
+        authHeader = "Bearer " + token
     }
 
     fun clear() {
