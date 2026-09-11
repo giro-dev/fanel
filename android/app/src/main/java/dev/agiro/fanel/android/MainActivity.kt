@@ -45,7 +45,13 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     statusView.text = buildString {
-                        appendLine(getString(R.string.household_status, state.householdId.ifBlank { getString(R.string.configure_household_id) }))
+                        appendLine(
+                            if (state.householdId.isBlank()) {
+                                getString(R.string.household_unconfigured_status)
+                            } else {
+                                getString(R.string.household_status, state.householdId)
+                            }
+                        )
                         appendLine(getString(R.string.visible_events_status, state.events.size))
                         appendLine(getString(R.string.last_sync_status, state.lastSyncLabel))
                     }
