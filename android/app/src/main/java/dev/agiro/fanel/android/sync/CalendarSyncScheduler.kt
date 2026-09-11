@@ -3,6 +3,7 @@ package dev.agiro.fanel.android.sync
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
@@ -33,7 +34,11 @@ object CalendarSyncScheduler {
             .setConstraints(defaultConstraints())
             .setInputData(defaultInputData(householdId))
             .build()
-        WorkManager.getInstance(context).enqueue(request)
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            uniqueImmediateWorkName(householdId),
+            ExistingWorkPolicy.REPLACE,
+            request
+        )
     }
 
     private fun defaultConstraints(): Constraints = Constraints.Builder()
@@ -50,4 +55,6 @@ object CalendarSyncScheduler {
     }
 
     private fun uniqueWorkName(householdId: String): String = "calendar_sync_$householdId"
+
+    private fun uniqueImmediateWorkName(householdId: String): String = "calendar_sync_now_$householdId"
 }
