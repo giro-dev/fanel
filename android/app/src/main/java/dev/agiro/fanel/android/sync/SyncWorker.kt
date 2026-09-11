@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dev.agiro.fanel.android.FanelApplication
+import kotlinx.coroutines.CancellationException
 
 class SyncWorker(
     appContext: Context,
@@ -19,6 +20,8 @@ class SyncWorker(
             val repository = (applicationContext as FanelApplication).appContainer.calendarRepository
             repository.fullSync(householdId, from, to)
             Result.success()
+        } catch (exception: CancellationException) {
+            throw exception
         } catch (_: Exception) {
             Result.retry()
         }

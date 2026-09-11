@@ -3,6 +3,7 @@ package dev.agiro.fanel.android
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
             addView(refreshButton)
             addView(sampleButton)
         }
-        setContentView(container)
+        setContentView(ScrollView(this).apply { addView(container) })
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

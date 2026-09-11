@@ -21,7 +21,7 @@ object CalendarSyncScheduler {
             .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "calendar_sync",
+            uniqueWorkName(householdId),
             ExistingPeriodicWorkPolicy.KEEP,
             request
         )
@@ -48,4 +48,6 @@ object CalendarSyncScheduler {
             .putString(SyncWorker.KEY_TO, today.plusMonths(3).toString())
             .build()
     }
+
+    private fun uniqueWorkName(householdId: String): String = "calendar_sync_$householdId"
 }

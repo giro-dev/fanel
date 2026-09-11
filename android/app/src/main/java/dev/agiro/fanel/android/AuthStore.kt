@@ -1,14 +1,17 @@
 package dev.agiro.fanel.android
 
+import android.util.Base64
 import okhttp3.Request
-import java.util.Base64
 
 class AuthStore {
     @Volatile
     private var authHeader: String? = null
 
     fun setBasicCredentials(username: String, password: String) {
-        val encoded = Base64.getEncoder().encodeToString("$username:$password".toByteArray())
+        val encoded = Base64.encodeToString(
+            "$username:$password".toByteArray(),
+            Base64.NO_WRAP
+        )
         authHeader = "Basic $encoded"
     }
 

@@ -13,7 +13,7 @@ Skeleton d'un client Android nadiu per al calendari, alineat amb el backend actu
 ## Configuració ràpida
 
 1. Edita `app/build.gradle.kts` si vols canviar `API_BASE_URL` o `DEFAULT_HOUSEHOLD_ID`.
-2. Defineix credencials amb `AuthStore` abans de fer peticions reals; l'esquelet les manté només en memòria.
+2. Defineix credencials amb `AuthStore` abans de fer peticions reals; l'esquelet les manté només en memòria i s'hi accedeix via `(application as FanelApplication).appContainer.authStore`.
 3. Executa `./gradlew assembleDebug` dins d'`android/`.
 
 ## Limitació actual
