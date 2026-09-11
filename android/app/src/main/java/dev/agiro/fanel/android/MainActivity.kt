@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import dev.agiro.fanel.android.sync.CalendarSyncScheduler
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +19,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        CalendarSyncScheduler.enqueuePeriodic(this, BuildConfig.DEFAULT_HOUSEHOLD_ID)
 
         val statusView = TextView(this)
         val refreshButton = Button(this).apply {
@@ -34,7 +31,8 @@ class MainActivity : ComponentActivity() {
         }
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(32, 32, 32, 32)
+            val padding = resources.getDimensionPixelSize(R.dimen.screen_padding)
+            setPadding(padding, padding, padding, padding)
             addView(statusView)
             addView(refreshButton)
             addView(sampleButton)

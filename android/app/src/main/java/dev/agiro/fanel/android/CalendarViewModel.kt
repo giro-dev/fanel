@@ -7,42 +7,66 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.agiro.fanel.android.data.CalendarDraft
 import dev.agiro.fanel.android.data.local.CalendarEventEntity
+import dev.agiro.fanel.android.sync.CalendarSyncScheduler
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = (application as FanelApplication).appContainer.calendarRepository
-    private val householdId = BuildConfig.DEFAULT_HOUSEHOLD_ID
+    private val householdId = MutableStateFlow("")
     private val visibleRange = VisibleRange.default()
+    private val events = householdId.flatMapLatest { repository.observeEvents(it, visibleRange.from, visibleRange.to) }
 
     val uiState: StateFlow<CalendarUiState> = combine(
-        repository.observeEvents(householdId, visibleRange.from, visibleRange.to),
+        householdId,
+        events,
         repository.lastSuccessfulSync().map { lastSync ->
-            if (lastSync <= 0L) "—" else java.time.Instant.ofEpochMilli(lastSync).toString()
+            if (lastSync <= 0L) {
+                getApplication<Application>().getString(R.string.last_sync_never)
+            } else {
+                timestampFormatter
+                    .withLocale(Locale.getDefault())
+                    .format(java.time.Instant.ofEpochMilli(lastSync))
+            }
         }
-    ) { events, lastSyncLabel ->
-        CalendarUiState(householdId = householdId, events = events, lastSyncLabel = lastSyncLabel)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CalendarUiState(householdId, emptyList(), "—"))
+    ) { currentHouseholdId, events, lastSyncLabel ->
+        CalendarUiState(householdId = currentHouseholdId, events = events, lastSyncLabel = lastSyncLabel)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CalendarUiState("", emptyList(), ""))
 
     init {
+        activateHousehold(BuildConfig.DEFAULT_HOUSEHOLD_ID)
+    }
+
+    fun activateHousehold(newHouseholdId: String) {
+        householdId.value = newHouseholdId
+        if (newHouseholdId.isBlank()) return
+        CalendarSyncScheduler.enqueuePeriodic(getApplication(), newHouseholdId)
         syncNow()
     }
 
     fun syncNow() {
-        if (householdId.isBlank()) return
+        val currentHouseholdId = householdId.value
+        if (currentHouseholdId.isBlank()) return
         viewModelScope.launch {
-            repository.fullSync(householdId, visibleRange.from, visibleRange.to)
+            repository.fullSync(currentHouseholdId, visibleRange.from, visibleRange.to)
         }
     }
 
     fun createSampleEvent() {
-        if (householdId.isBlank()) return
+        val currentHouseholdId = householdId.value
+        if (currentHouseholdId.isBlank()) return
         viewModelScope.launch {
             repository.createEvent(
                 draft = CalendarDraft(
@@ -55,7 +79,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                     recurrenceInterval = null,
                     recurrenceUntil = null
                 ),
-                householdId = householdId
+                householdId = currentHouseholdId
             )
         }
     }
@@ -80,3 +104,6 @@ data class VisibleRange(val from: String, val to: String) {
         }
     }
 }
+
+private val timestampFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+    .withZone(ZoneId.systemDefault())

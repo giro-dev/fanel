@@ -2,6 +2,7 @@ package dev.agiro.fanel.android
 
 import android.util.Base64
 import okhttp3.Request
+import java.nio.charset.StandardCharsets
 
 class AuthStore {
     @Volatile
@@ -9,7 +10,7 @@ class AuthStore {
 
     fun setBasicCredentials(username: String, password: String) {
         val encoded = Base64.encodeToString(
-            "$username:$password".toByteArray(),
+            "$username:$password".toByteArray(StandardCharsets.UTF_8),
             Base64.NO_WRAP
         )
         authHeader = "Basic $encoded"

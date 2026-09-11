@@ -6,6 +6,7 @@
     <string name="household_status">Hogar: %1$s</string>
     <string name="visible_events_status">Eventos visibles: %1$d</string>
     <string name="last_sync_status">Última sincronización: %1$s</string>
+    <string name="last_sync_never">Todavía no se ha sincronizado</string>
     <string name="household_unconfigured_status">No hay ningún hogar configurado para sincronizar</string>
     <string name="sample_event_title">Muestra sin conexión</string>
 </resources>
