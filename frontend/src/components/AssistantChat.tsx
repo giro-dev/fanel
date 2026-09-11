@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useHousehold } from '../context/HouseholdContext'
 import { api } from '../api/client'
@@ -13,20 +14,24 @@ type Agent = {
 
 type Attachment = { mimeType: string; data: string }
 
+type RecipeSuggestion = {
+  name: string
+  servings: number
+  notes?: string
+  description?: string
+  steps?: string[]
+  imageMimeType?: string
+  imageData?: string
+  tags: string[]
+  ingredients: { name: string; quantity?: number; unit?: string; category?: string }[]
+}
+
 type Message = {
   role: 'user' | 'assistant'
   text: string
   attachments?: Attachment[]
   recipe?: RecipeSuggestion
   error?: boolean
-}
-
-type RecipeSuggestion = {
-  name: string
-  servings: number
-  notes?: string
-  tags: string[]
-  ingredients: { name: string; quantity?: number; unit?: string; category?: string }[]
 }
 
 type AgentResponse = {
@@ -41,6 +46,10 @@ type CreatedRecipe = {
   name: string
   servings: number
   notes?: string
+  description?: string
+  steps?: string[]
+  imageMimeType?: string
+  imageData?: string
   tags: string[]
   ingredients: { name: string; quantity?: number; unit?: string; category?: string }[]
 }
@@ -67,13 +76,48 @@ function fileToBase64(file: File): Promise<string> {
   })
 }
 
+function normalizeForMatch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+}
+
+function wantsCreate(text: string): boolean {
+  const normalized = normalizeForMatch(text)
+  const triggers = ['crea', 'crear', 'crei', 'creï', 'afegeix', 'guarda', 'desa', 'fes-la', 'añadir', 'agrega', 'guardar', 'salvar', 'hazla']
+  return triggers.some((t) => normalized.includes(t))
+}
+
+function extractJson(text: string): string | null {
+  const trimmed = text.trim()
+  const codeBlock = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
+  if (codeBlock) return codeBlock[1]!.trim()
+  const first = trimmed.indexOf('{')
+  const last = trimmed.lastIndexOf('}')
+  if (first >= 0 && last > first) return trimmed.slice(first, last + 1)
+  return null
+}
+
 function tryParseRecipe(text: string): RecipeSuggestion | undefined {
+  console.debug('[AssistantChat] parsing response:', text)
+  const json = extractJson(text)
+  if (!json) {
+    console.debug('[AssistantChat] no JSON found in response')
+    return undefined
+  }
   try {
-    const parsed = JSON.parse(text) as RecipeSuggestion & { error?: boolean }
-    if (parsed.error) return undefined
-    if (parsed.name && Array.isArray(parsed.ingredients)) return parsed
-  } catch {
-    // not a JSON response
+    const parsed = JSON.parse(json) as RecipeSuggestion & { error?: boolean }
+    if (parsed.error) {
+      console.debug('[AssistantChat] parsed error flag')
+      return undefined
+    }
+    if (parsed.name && Array.isArray(parsed.ingredients)) {
+      console.debug('[AssistantChat] parsed recipe:', parsed)
+      return parsed
+    }
+  } catch (err) {
+    console.debug('[AssistantChat] not a JSON response', err)
   }
   return undefined
 }
@@ -81,6 +125,7 @@ function tryParseRecipe(text: string): RecipeSuggestion | undefined {
 export function AssistantChat() {
   const { t } = useTranslation()
   const { household } = useHousehold()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [agents, setAgents] = useState<Agent[]>([])
   const [selectedAgent, setSelectedAgent] = useState<string>('')
@@ -89,6 +134,7 @@ export function AssistantChat() {
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  const [pendingImage, setPendingImage] = useState<Attachment | null>(null)
   const [conversationIds, setConversationIds] = useState<Record<string, string>>({})
   const endRef = useRef<HTMLDivElement>(null)
 
@@ -118,13 +164,20 @@ export function AssistantChat() {
     if (!selectedAgent || (!input.trim() && !file)) return
     setPending(true)
 
+    const userMessage = input.trim()
+    const shouldCreate = wantsCreate(userMessage)
+
     const attachments: Attachment[] = []
     if (file) {
       const data = await fileToBase64(file)
+      console.debug('[AssistantChat] attached image:', file.type, data.length)
       attachments.push({ mimeType: file.type, data })
+      setPendingImage({ mimeType: file.type, data })
     }
 
-    const userText = input.trim() || (file ? t('assistant.imageAttached') : '')
+    console.debug('[AssistantChat] sending message:', { agent: selectedAgent, message: input, attachments: attachments.length, shouldCreate })
+
+    const userText = userMessage || (file ? t('assistant.imageAttached') : '')
     setMessages((prev) => [...prev, { role: 'user', text: userText, attachments }])
     setInput('')
     setFile(null)
@@ -135,9 +188,19 @@ export function AssistantChat() {
         method: 'POST',
         body: JSON.stringify({ agentId: selectedAgent, conversationId, message: input, attachments }),
       })
+      console.debug('[AssistantChat] agent response:', response)
       setConversationIds((prev) => ({ ...prev, [selectedAgent]: response.conversationId }))
       const recipe = tryParseRecipe(response.text)
+      if (recipe && pendingImage) {
+        recipe.imageMimeType = pendingImage.mimeType
+        recipe.imageData = pendingImage.data
+        console.debug('[AssistantChat] attached image to recipe:', pendingImage.mimeType, pendingImage.data.length)
+      }
       setMessages((prev) => [...prev, { role: 'assistant', text: response.text, recipe }])
+      if (recipe && shouldCreate) {
+        console.debug('[AssistantChat] auto-creating recipe because user asked')
+        void createRecipe(recipe, true)
+      }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -148,7 +211,8 @@ export function AssistantChat() {
     }
   }
 
-  const createRecipe = async (recipe: RecipeSuggestion) => {
+  const createRecipe = async (recipe: RecipeSuggestion, redirect = false) => {
+    console.debug('[AssistantChat] creating recipe:', recipe)
     try {
       await api<CreatedRecipe>(`/households/${household.id}/recipes`, {
         method: 'POST',
@@ -156,6 +220,8 @@ export function AssistantChat() {
           name: recipe.name,
           servings: recipe.servings,
           notes: recipe.notes,
+          description: recipe.description,
+          steps: recipe.steps,
           tags: recipe.tags,
           ingredients: recipe.ingredients.map((i) => ({
             name: i.name,
@@ -163,9 +229,16 @@ export function AssistantChat() {
             unit: i.unit,
             category: i.category,
           })),
+          imageMimeType: recipe.imageMimeType,
+          imageData: recipe.imageData,
         }),
       })
+      setPendingImage(null)
       setMessages((prev) => [...prev, { role: 'assistant', text: t('assistant.recipeCreated') }])
+      if (redirect) {
+        setOpen(false)
+        navigate('/receptes')
+      }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -243,7 +316,22 @@ export function AssistantChat() {
                   {m.recipe && (
                     <div className="assistant-recipe">
                       <h4>{m.recipe.name}</h4>
+                      {m.recipe.imageMimeType && m.recipe.imageData && (
+                        <img
+                          src={`data:${m.recipe.imageMimeType};base64,${m.recipe.imageData}`}
+                          alt={m.recipe.name}
+                          className="recipe-thumb"
+                        />
+                      )}
                       <p>{t('recipes.servings')}: {m.recipe.servings}</p>
+                      {m.recipe.description && (
+                        <p className="recipe-description">{m.recipe.description}</p>
+                      )}
+                      {m.recipe.steps && m.recipe.steps.length > 0 && (
+                        <ol className="steps-list">
+                          {m.recipe.steps.map((s, k) => <li key={k}>{s}</li>)}
+                        </ol>
+                      )}
                       {m.recipe.ingredients.length > 0 && (
                         <ul>
                           {m.recipe.ingredients.map((ing, k) => (

@@ -6,6 +6,8 @@ import dev.agiro.fanel.assistant.api.AgentResponse;
 import dev.agiro.fanel.assistant.api.Attachment;
 import dev.agiro.fanel.assistant.domain.Agent;
 import dev.agiro.fanel.assistant.infra.PromptLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.content.Media;
@@ -18,6 +20,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class DefaultAgent implements Agent {
+    private static final Logger log = LoggerFactory.getLogger(DefaultAgent.class);
     private final AgentDefinition definition;
     private final ChatClient chatClient;
     private final PromptLoader promptLoader;
@@ -44,6 +47,16 @@ public class DefaultAgent implements Agent {
                 + ". When calling tools that require a householdId, always use " + householdId
                 + ". When a tool needs year and week, prefer getCurrentIsoWeek().";
 
+        log.debug("Agent {} executing for household {} with conversationId {}, prompt length {}",
+                definition.id(), householdId, conversationId,
+                systemPrompt != null ? systemPrompt.length() : 0);
+        log.debug("User message: {}", request.message());
+        if (request.attachments() != null) {
+            for (Attachment attachment : request.attachments()) {
+                log.debug("Attachment: mimeType={}, dataLength={}", attachment.mimeType(), attachment.data().length());
+            }
+        }
+
         var prompt = chatClient.prompt();
         if (systemPrompt != null && !systemPrompt.isBlank()) {
             prompt.system(systemPrompt + context);
@@ -65,6 +78,7 @@ public class DefaultAgent implements Agent {
                 .call()
                 .content();
 
+        log.debug("Agent {} response: {}", definition.id(), response);
         return new AgentResponse(definition.id(), conversationId, response != null ? response : "", List.of());
     }
 }

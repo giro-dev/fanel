@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -27,6 +28,12 @@ public class Recipe extends UuidEntity {
     private String name;
     private int servings;
     private String notes;
+    @Column(name = "description", length = 4000)
+    private String description;
+    @Column(name = "image_mime_type", length = 100)
+    private String imageMimeType;
+    @Column(name = "image_data", length = 4194304)
+    private String imageData;
     private Instant createdAt;
 
     @ElementCollection
@@ -34,18 +41,29 @@ public class Recipe extends UuidEntity {
     @Column(name = "tag")
     private List<String> tags = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "recipe_step", joinColumns = @JoinColumn(name = "recipe_id"))
+    @OrderColumn(name = "step_order")
+    @Column(name = "step")
+    private List<String> steps = new ArrayList<>();
+
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt ASC")
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     protected Recipe() {}
 
-    public Recipe(UUID householdId, String name, int servings, String notes, List<String> tags) {
+    public Recipe(UUID householdId, String name, int servings, String notes, String description,
+                  List<String> steps, List<String> tags, String imageMimeType, String imageData) {
         this.householdId = householdId;
         this.name = name;
         this.servings = servings;
         this.notes = notes;
+        this.description = description;
+        this.steps = steps == null ? new ArrayList<>() : new ArrayList<>(steps);
         this.tags = tags == null ? new ArrayList<>() : new ArrayList<>(tags);
+        this.imageMimeType = imageMimeType;
+        this.imageData = imageData;
         this.createdAt = Instant.now();
     }
 
@@ -53,7 +71,11 @@ public class Recipe extends UuidEntity {
     public String getName() { return name; }
     public int getServings() { return servings; }
     public String getNotes() { return notes; }
+    public String getDescription() { return description; }
+    public String getImageMimeType() { return imageMimeType; }
+    public String getImageData() { return imageData; }
     public Instant getCreatedAt() { return createdAt; }
     public List<String> getTags() { return tags; }
+    public List<String> getSteps() { return steps; }
     public List<RecipeIngredient> getIngredients() { return ingredients; }
 }

@@ -17,7 +17,7 @@ public class AssistantModelConfiguration {
     @ConditionalOnMissingBean(OpenAiChatModel.class)
     @ConditionalOnExpression("'${spring.ai.openai.api-key:}' != ''")
     public OpenAiChatModel openAiChatModel(@Value("${spring.ai.openai.api-key}") String apiKey,
-                                            @Value("${spring.ai.openai.chat.base-url:https://api.openai.com}") String baseUrl,
+                                            @Value("${spring.ai.openai.chat.base-url:https://api.openai.com/v1}") String baseUrl,
                                             @Value("${spring.ai.openai.chat.model:gpt-4o}") String model) {
         return OpenAiChatModel.builder()
                 .options(OpenAiChatOptions.builder()

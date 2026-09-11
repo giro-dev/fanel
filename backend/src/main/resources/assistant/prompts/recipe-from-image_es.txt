@@ -3,8 +3,11 @@ A partir de una imagen de un plato o de una receta, extrae una propuesta de rece
 Responde con un objeto JSON con estas claves:
 - name (string, nombre de la receta)
 - servings (int, número de raciones)
-- notes (string, opcional)
-- tags (array de strings)
 - ingredients (array de objetos con name, quantity, unit, category)
+- description (string, opcional; descripción de la preparación si no se puede separar en pasos numerados)
+- steps (array de strings, opcional; pasos enumerados de la preparación)
+- notes (string, opcional; otra información: tiempos, consejos, variaciones...)
+- tags (array de strings, opcional)
 
+La preparación es importante: si la imagen incluye una lista numerada de pasos, devuélvelos en el campo `steps`; si solo hay un texto de preparación, ponlo en `description`.
 Si no puedes identificar el plato, responde con {"error": true}.

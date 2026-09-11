@@ -5,5 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record RecipeDto(UUID id, UUID householdId, String name, int servings, String notes,
-                        List<String> tags, List<IngredientDto> ingredients, Instant createdAt) {
+                        String description, List<String> steps, List<String> tags,
+                        String imageMimeType, String imageData,
+                        List<IngredientDto> ingredients, Instant createdAt) {
 }

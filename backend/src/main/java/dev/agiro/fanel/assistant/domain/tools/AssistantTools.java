@@ -15,6 +15,8 @@ import dev.agiro.fanel.recipes.api.RecipesApi;
 import dev.agiro.fanel.shopping.api.ShoppingApi;
 import dev.agiro.fanel.shopping.api.ShoppingItemDto;
 import dev.agiro.fanel.shopping.api.ShoppingListDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import java.util.UUID;
 
 @Component
 public class AssistantTools {
+    private static final Logger log = LoggerFactory.getLogger(AssistantTools.class);
+
     private final RecipesApi recipes;
     private final ShoppingApi shopping;
     private final MenuApi menu;
@@ -62,11 +66,21 @@ public class AssistantTools {
                                   @ToolParam(description = "Recipe name") String name,
                                   @ToolParam(description = "Number of servings") int servings,
                                   @ToolParam(description = "Optional notes") String notes,
-                                  @ToolParam(description = "List of ingredients") List<IngredientInput> ingredients) {
+                                  @ToolParam(description = "Optional preparation description") String description,
+                                  @ToolParam(description = "Optional numbered preparation steps") List<String> steps,
+                                  @ToolParam(description = "List of ingredients") List<IngredientInput> ingredients,
+                                  @ToolParam(description = "Optional image mime type") String imageMimeType,
+                                  @ToolParam(description = "Optional base64 image data") String imageData) {
+        log.debug("Tool createRecipe called for household {}: name={}, servings={}, ingredients={}, steps={}, hasImage={}",
+                householdId, name, servings,
+                ingredients == null ? 0 : ingredients.size(),
+                steps == null ? 0 : steps.size(),
+                imageData != null && !imageData.isBlank());
         List<IngredientDto> dtoIngredients = ingredients == null ? List.of() : ingredients.stream()
                 .map(i -> new IngredientDto(null, i.name(), i.quantity(), i.unit(), i.category()))
                 .toList();
-        return recipes.create(householdId, name, servings, notes, List.of(), dtoIngredients);
+        return recipes.create(householdId, name, servings, notes, description, steps,
+                List.of(), dtoIngredients, imageMimeType, imageData);
     }
 
     @Tool(description = "List shopping lists in the household")
