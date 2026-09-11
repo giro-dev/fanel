@@ -37,8 +37,8 @@ object CalendarSyncScheduler {
             .setInputData(defaultInputData(householdId))
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
-            uniqueImmediateWorkName(householdId),
-            ExistingWorkPolicy.REPLACE,
+            uniqueWorkName(householdId),
+            ExistingWorkPolicy.KEEP,
             request
         )
     }
@@ -57,8 +57,6 @@ object CalendarSyncScheduler {
     }
 
     private fun uniqueWorkName(householdId: String): String = "calendar_sync_${householdKey(householdId)}"
-
-    private fun uniqueImmediateWorkName(householdId: String): String = "calendar_sync_now_${householdKey(householdId)}"
 
     private fun householdKey(householdId: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
