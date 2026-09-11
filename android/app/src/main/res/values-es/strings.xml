@@ -6,6 +6,6 @@
     <string name="household_status">Hogar: %1$s</string>
     <string name="visible_events_status">Eventos visibles: %1$d</string>
     <string name="last_sync_status">Última sincronización: %1$s</string>
-    <string name="configure_household_id">configura DEFAULT_HOUSEHOLD_ID</string>
+    <string name="configure_household_id">hay que configurar un hogar para sincronizar</string>
     <string name="sample_event_title">Muestra sin conexión</string>
 </resources>

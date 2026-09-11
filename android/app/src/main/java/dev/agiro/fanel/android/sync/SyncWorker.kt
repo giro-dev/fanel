@@ -13,7 +13,7 @@ class SyncWorker(
         val householdId = inputData.getString(KEY_HOUSEHOLD_ID).orEmpty()
         val from = inputData.getString(KEY_FROM).orEmpty()
         val to = inputData.getString(KEY_TO).orEmpty()
-        if (householdId.isBlank() || from.isBlank() || to.isBlank()) return Result.success()
+        if (householdId.isBlank() || from.isBlank() || to.isBlank()) return Result.failure()
 
         return try {
             val repository = (applicationContext as FanelApplication).appContainer.calendarRepository

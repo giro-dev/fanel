@@ -6,6 +6,6 @@
     <string name="household_status">Llar: %1$s</string>
     <string name="visible_events_status">Esdeveniments visibles: %1$d</string>
     <string name="last_sync_status">Darrera sincronització: %1$s</string>
-    <string name="configure_household_id">configura DEFAULT_HOUSEHOLD_ID</string>
+    <string name="configure_household_id">cal configurar una llar per sincronitzar</string>
     <string name="sample_event_title">Mostra offline</string>
 </resources>
