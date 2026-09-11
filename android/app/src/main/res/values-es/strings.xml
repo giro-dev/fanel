@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fanel Android</string>
+    <string name="sync_now">Sincronizar ahora</string>
+    <string name="create_sample_event">Crear un evento de ejemplo</string>
+    <string name="household_status">Hogar: %1$s</string>
+    <string name="visible_events_status">Eventos visibles: %1$d</string>
+    <string name="last_sync_status">Última sincronización: %1$s</string>
+    <string name="configure_household_id">configura DEFAULT_HOUSEHOLD_ID</string>
+    <string name="sample_event_title">Muestra sin conexión</string>
+</resources>
