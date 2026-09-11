@@ -13,7 +13,7 @@ class AppContainer(context: Context) {
         "fanel-android.db"
     ).build()
 
-    private val authStore = AuthStore(context.applicationContext)
+    private val authStore = AuthStore()
     private val syncPreferences = SyncPreferences(context.applicationContext)
     private val calendarApi = CalendarApiFactory.create(authStore)
 

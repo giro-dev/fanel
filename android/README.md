@@ -13,9 +13,9 @@ Skeleton d'un client Android nadiu per al calendari, alineat amb el backend actu
 ## Configuració ràpida
 
 1. Edita `app/build.gradle.kts` si vols canviar `API_BASE_URL` o `DEFAULT_HOUSEHOLD_ID`.
-2. Defineix credencials amb `AuthStore` abans de fer peticions reals.
+2. Defineix credencials amb `AuthStore` abans de fer peticions reals; l'esquelet les manté només en memòria.
 3. Executa `./gradlew assembleDebug` dins d'`android/`.
 
 ## Limitació actual
 
-El backend encara no exposa un endpoint de delta sync ni versions/tombstones. Per això aquest esquelet fa servir outbox local + refresc per rang visible.
+El backend encara no exposa un endpoint de delta sync ni versions/tombstones. Per això aquest esquelet fa servir outbox local + refresc per rang visible. Si més endavant es vol persistir autenticació, caldrà usar emmagatzematge xifrat basat en Keystore.

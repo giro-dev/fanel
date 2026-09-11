@@ -1,49 +1,39 @@
 package dev.agiro.fanel.android
 
-import android.content.Context
 import okhttp3.Request
 import java.util.Base64
 
-class AuthStore(context: Context) {
-    private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+class AuthStore {
+    private var username: String? = null
+    private var password: String? = null
+    private var bearerToken: String? = null
 
     fun setBasicCredentials(username: String, password: String) {
-        prefs.edit()
-            .putString(KEY_USERNAME, username)
-            .putString(KEY_PASSWORD, password)
-            .remove(KEY_BEARER)
-            .apply()
+        this.username = username
+        this.password = password
+        this.bearerToken = null
     }
 
     fun setBearerToken(token: String) {
-        prefs.edit()
-            .putString(KEY_BEARER, token)
-            .remove(KEY_USERNAME)
-            .remove(KEY_PASSWORD)
-            .apply()
+        this.bearerToken = token
+        this.username = null
+        this.password = null
     }
 
     fun clear() {
-        prefs.edit().clear().apply()
+        username = null
+        password = null
+        bearerToken = null
     }
 
     fun apply(builder: Request.Builder) {
-        val bearer = prefs.getString(KEY_BEARER, null)
-        if (!bearer.isNullOrBlank()) {
-            builder.header("Authorization", "Bearer " + bearer)
+        if (!bearerToken.isNullOrBlank()) {
+            builder.header("Authorization", "Bearer " + bearerToken)
             return
         }
-        val username = prefs.getString(KEY_USERNAME, null)
-        val password = prefs.getString(KEY_PASSWORD, null)
         if (!username.isNullOrBlank() && password != null) {
             val encoded = Base64.getEncoder().encodeToString("$username:$password".toByteArray())
             builder.header("Authorization", "Basic $encoded")
         }
-    }
-
-    private companion object {
-        const val KEY_USERNAME = "username"
-        const val KEY_PASSWORD = "password"
-        const val KEY_BEARER = "bearer"
     }
 }

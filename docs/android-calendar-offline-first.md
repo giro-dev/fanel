@@ -10,7 +10,7 @@ El backend del mòdul `calendar` ja exposa CRUD sota `'/api/v1/households/{house
 - `POST /api/v1/households/{householdId}/calendar` crea una sèrie d'esdeveniment i el servidor genera l'UUID v7.
 - `PATCH /api/v1/households/{householdId}/calendar/{eventId}` actualitza la sèrie.
 - `DELETE /api/v1/households/{householdId}/calendar/{eventId}` fa **esborrat físic**.
-- Autenticació disponible per a clients via **Basic auth** o token d'API a l'header `Authorization`.
+- Autenticació disponible per a clients via **Basic auth** o token d'API a l'header `Authorization`; a Android és preferible token d'API i qualsevol persistència futura s'hauria de fer amb emmagatzematge xifrat basat en Keystore.
 
 DTO actual del backend:
 
