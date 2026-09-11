@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Fanel Android</string>
+    <string name="calendar_screen_title">Calendario</string>
     <string name="sync_now">Sincronizar ahora</string>
     <string name="create_sample_event">Crear un evento de ejemplo</string>
     <string name="household_status">Hogar: %1$s</string>

@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        title = getString(R.string.calendar_screen_title)
 
         val statusView = TextView(this)
         val refreshButton = Button(this).apply {

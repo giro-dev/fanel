@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Fanel Android</string>
+    <string name="calendar_screen_title">Calendari</string>
     <string name="sync_now">Sincronitza ara</string>
     <string name="create_sample_event">Crea un esdeveniment de mostra</string>
     <string name="household_status">Llar: %1$s</string>

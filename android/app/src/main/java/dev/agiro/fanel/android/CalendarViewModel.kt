@@ -27,17 +27,18 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     private val householdId = MutableStateFlow("")
     private val visibleRange = VisibleRange.default()
     private val events = householdId.flatMapLatest { repository.observeEvents(it, visibleRange.from, visibleRange.to) }
+    private val lastSync = householdId.flatMapLatest { repository.lastSuccessfulSync(it) }
 
     val uiState: StateFlow<CalendarUiState> = combine(
         householdId,
         events,
-        repository.lastSuccessfulSync().map { lastSync ->
-            if (lastSync <= 0L) {
+        lastSync.map { timestamp ->
+            if (timestamp <= 0L) {
                 getApplication<Application>().getString(R.string.last_sync_never)
             } else {
                 timestampFormatter
                     .withLocale(Locale.getDefault())
-                    .format(java.time.Instant.ofEpochMilli(lastSync))
+                    .format(java.time.Instant.ofEpochMilli(timestamp))
             }
         }
     ) { currentHouseholdId, events, lastSyncLabel ->
