@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fanel Android</string>
+    <string name="sync_now">Sincronitza ara</string>
+    <string name="create_sample_event">Crea un esdeveniment de mostra</string>
+    <string name="household_status">Llar: %1$s</string>
+    <string name="visible_events_status">Esdeveniments visibles: %1$d</string>
+    <string name="last_sync_status">Darrera sincronització: %1$s</string>
+    <string name="last_sync_never">Encara no s&apos;ha sincronitzat</string>
+    <string name="household_unconfigured_status">No hi ha cap llar configurada per sincronitzar</string>
+    <string name="sample_event_title">Mostra offline</string>
+</resources>

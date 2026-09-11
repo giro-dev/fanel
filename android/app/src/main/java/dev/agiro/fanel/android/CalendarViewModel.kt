@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -59,9 +58,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     fun syncNow() {
         val currentHouseholdId = householdId.value
         if (currentHouseholdId.isBlank()) return
-        viewModelScope.launch {
-            repository.fullSync(currentHouseholdId, visibleRange.from, visibleRange.to)
-        }
+        CalendarSyncScheduler.enqueueImmediate(getApplication(), currentHouseholdId)
     }
 
     fun createSampleEvent() {

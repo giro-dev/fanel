@@ -1,17 +1,17 @@
 package dev.agiro.fanel.android
 
 import android.content.Context
+import java.io.File
 
 class SyncPreferences(context: Context) {
-    private val prefs = context.getSharedPreferences("sync", Context.MODE_PRIVATE)
+    private val file = File(context.noBackupFilesDir, "last-successful-sync.txt")
 
-    fun getLastSuccessfulSync(): Long = prefs.getLong(KEY_LAST_SYNC, 0L)
+    fun getLastSuccessfulSync(): Long = file.takeIf(File::exists)
+        ?.readText()
+        ?.toLongOrNull()
+        ?: 0L
 
     fun setLastSuccessfulSync(timestampMillis: Long) {
-        prefs.edit().putLong(KEY_LAST_SYNC, timestampMillis).apply()
-    }
-
-    private companion object {
-        const val KEY_LAST_SYNC = "last_successful_sync"
+        file.writeText(timestampMillis.toString())
     }
 }
