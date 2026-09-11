@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.agiro.fanel.android.data.CalendarDraft
+import dev.agiro.fanel.android.data.CalendarRepositoryContract
 import dev.agiro.fanel.android.data.local.CalendarEventEntity
 import dev.agiro.fanel.android.sync.CalendarSyncScheduler
+import dev.agiro.fanel.android.sync.SyncSchedulerContract
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -22,8 +25,11 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 
-class CalendarViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = (application as FanelApplication).appContainer.calendarRepository
+class CalendarViewModel(
+    application: Application,
+    private val repository: CalendarRepositoryContract = (application as FanelApplication).appContainer.calendarRepository,
+    private val syncScheduler: SyncSchedulerContract = CalendarSyncScheduler
+) : AndroidViewModel(application) {
     private val householdId = MutableStateFlow("")
     private val visibleRange = VisibleRange.default()
     private val events = householdId.flatMapLatest { repository.observeEvents(it, visibleRange.from, visibleRange.to) }
@@ -50,16 +56,17 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun activateHousehold(newHouseholdId: String) {
+        if (householdId.value == newHouseholdId) return
         householdId.value = newHouseholdId
         if (newHouseholdId.isBlank()) return
-        CalendarSyncScheduler.enqueuePeriodic(getApplication(), newHouseholdId)
+        syncScheduler.enqueuePeriodic(getApplication(), newHouseholdId)
         syncNow()
     }
 
     fun syncNow() {
         val currentHouseholdId = householdId.value
         if (currentHouseholdId.isBlank()) return
-        CalendarSyncScheduler.enqueueImmediate(getApplication(), currentHouseholdId)
+        syncScheduler.enqueueImmediate(getApplication(), currentHouseholdId)
     }
 
     fun createSampleEvent() {

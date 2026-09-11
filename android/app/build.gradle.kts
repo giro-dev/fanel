@@ -59,5 +59,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.1")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.work:work-testing:2.10.2")
     testImplementation("org.robolectric:robolectric:4.13.1")
 }
