@@ -38,7 +38,7 @@ object CalendarSyncScheduler {
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
             uniqueImmediateWorkName(householdId),
-            ExistingWorkPolicy.KEEP,
+            ExistingWorkPolicy.REPLACE,
             request
         )
     }

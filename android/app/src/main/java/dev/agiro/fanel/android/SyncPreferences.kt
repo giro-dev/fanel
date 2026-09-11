@@ -1,24 +1,30 @@
 package dev.agiro.fanel.android
 
 import android.content.Context
+import android.util.AtomicFile
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 class SyncPreferences(context: Context) {
-    private val file = File(context.noBackupFilesDir, "last-successful-sync.txt")
-    private val tempFile = File(context.noBackupFilesDir, "last-successful-sync.txt.tmp")
+    private val atomicFile = AtomicFile(File(context.noBackupFilesDir, "last-successful-sync.txt"))
 
     @Synchronized
-    fun getLastSuccessfulSync(): Long = file.takeIf(File::exists)
-        ?.readText()
-        ?.toLongOrNull()
-        ?: 0L
+    fun getLastSuccessfulSync(): Long {
+        if (!atomicFile.baseFile.exists()) return 0L
+        return atomicFile.openRead().use { input ->
+            input.readBytes().toString(StandardCharsets.UTF_8).toLongOrNull()
+        } ?: 0L
+    }
 
     @Synchronized
     fun setLastSuccessfulSync(timestampMillis: Long) {
-        tempFile.writeText(timestampMillis.toString())
-        if (!tempFile.renameTo(file)) {
-            file.writeText(timestampMillis.toString())
-            tempFile.delete()
+        val output = atomicFile.startWrite()
+        try {
+            output.write(timestampMillis.toString().toByteArray(StandardCharsets.UTF_8))
+            atomicFile.finishWrite(output)
+        } catch (exception: Exception) {
+            atomicFile.failWrite(output)
+            throw exception
         }
     }
 }
