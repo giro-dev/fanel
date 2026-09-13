@@ -63,10 +63,13 @@ abstract class MemberLifecycleIT {
                 .andReturn().getResponse().getContentAsString();
         String choreId = JsonPath.read(choreResponse, "$.id");
 
+        // The event must fall inside the default listing window ([now-1mo, now+12mo]).
         String eventResponse = mvc.perform(post("/api/v1/households/" + householdId + "/calendar")
                         .with(httpBasic("admin", "admin"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"Esdeveniment\",\"date\":\"2026-01-10\",\"assigneeIds\":[\"" + memberId + "\"]}"))
+                        .content("{\"title\":\"Esdeveniment\",\"date\":\""
+                                + java.time.LocalDate.now().plusDays(7)
+                                + "\",\"assigneeIds\":[\"" + memberId + "\"]}"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         String eventId = JsonPath.read(eventResponse, "$.id");
