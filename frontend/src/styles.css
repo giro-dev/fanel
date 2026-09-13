@@ -397,7 +397,7 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
 .menu-grid tr:last-child td, .menu-grid tr:last-child th { border-bottom: 0; }
 .slot-note { display: block; font-size: 0.78rem; color: var(--muted); }
 .empty-slot { color: var(--line); font-size: 1.2rem; }
-.menu-grid select, .menu-grid input { width: 100%; margin-bottom: 0.35rem; }
+.menu-grid input { width: 100%; }
 
 /* ---------- Calendar ---------- */
 

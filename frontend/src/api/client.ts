@@ -15,5 +15,6 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const problem = await response.json() as ProblemDetail
     throw new Error(problem.detail ?? problem.title ?? `Request failed (${response.status})`)
   }
-  return response.json() as Promise<T>
+  const body = await response.text()
+  return (body ? JSON.parse(body) : undefined) as T
 }

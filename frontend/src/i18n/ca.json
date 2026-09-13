@@ -71,8 +71,7 @@
   "menu": {
     "title": "Menú setmanal",
     "week": "Setmana {{week}} · {{year}}",
-    "noRecipe": "Sense recepta",
-    "notesPlaceholder": "Notes (opcional)",
+    "slotPlaceholder": "Recepta o text lliure…",
     "meals": {
       "BREAKFAST": "Esmorzar",
       "LUNCH": "Dinar",

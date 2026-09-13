@@ -25,8 +25,7 @@ export function Menu() {
   const queryClient = useQueryClient()
   const [offset, setOffset] = useState(0)
   const [editing, setEditing] = useState<{ day: number; meal: MealType } | null>(null)
-  const [text, setText] = useState('')
-  const [recipeId, setRecipeId] = useState('')
+  const [value, setValue] = useState('')
 
   const base = new Date()
   base.setDate(base.getDate() + offset * 7)
@@ -44,13 +43,27 @@ export function Menu() {
     enabled: !!household,
   })
 
+  const closeIfSame = (vars: { dayOfWeek: number; mealType: MealType }) =>
+    setEditing((cur) => (cur?.day === vars.dayOfWeek && cur?.meal === vars.mealType ? null : cur))
+
   const setSlot = useMutation({
-    mutationFn: (slot: { dayOfWeek: number; mealType: MealType; text: string; recipeId: string | null }) =>
+    mutationFn: (slot: { dayOfWeek: number; mealType: MealType; text: string | null; recipeId: string | null }) =>
       api<MealSlot>(`/households/${household!.id}/menu/slots?year=${year}&week=${week}`, {
         method: 'PUT', body: JSON.stringify(slot),
       }),
-    onSuccess: async () => {
-      setEditing(null)
+    onSuccess: async (_d, vars) => {
+      closeIfSame(vars)
+      await queryClient.invalidateQueries({ queryKey: ['menu'] })
+    },
+  })
+
+  const clearSlot = useMutation({
+    mutationFn: (slot: { dayOfWeek: number; mealType: MealType }) =>
+      api<void>(`/households/${household!.id}/menu/slots?year=${year}&week=${week}&dayOfWeek=${slot.dayOfWeek}&mealType=${slot.mealType}`, {
+        method: 'DELETE',
+      }),
+    onSuccess: async (_d, vars) => {
+      closeIfSame(vars)
       await queryClient.invalidateQueries({ queryKey: ['menu'] })
     },
   })
@@ -75,6 +88,9 @@ export function Menu() {
       </div>
       {plan.isPending && <p>{t('loading')}</p>}
       {plan.isError && <p role="alert">{t('error')}</p>}
+      <datalist id="menu-recipes">
+        {recipes.data?.map((r) => <option key={r.id} value={r.name} />)}
+      </datalist>
       {plan.data && (
         <table className="menu-grid">
           <thead>
@@ -88,21 +104,30 @@ export function Menu() {
                   const day = i + 1
                   const slot = slotFor(day, meal)
                   const isEditing = editing?.day === day && editing.meal === meal
-                  const save = () => setSlot.mutate({
-                    dayOfWeek: day, mealType: meal, text, recipeId: recipeId || null,
-                  })
+                  const save = () => {
+                    const trimmed = value.trim()
+                    if (!trimmed) {
+                      if (slot) clearSlot.mutate({ dayOfWeek: day, mealType: meal })
+                      else setEditing(null)
+                      return
+                    }
+                    const match = recipes.data?.find((r) => r.name.toLowerCase() === trimmed.toLowerCase())
+                    setSlot.mutate({
+                      dayOfWeek: day, mealType: meal,
+                      text: match ? null : trimmed, recipeId: match?.id ?? null,
+                    })
+                  }
                   return (
                     <td key={day} onClick={() => {
-                      setEditing({ day, meal }); setText(slot?.text ?? ''); setRecipeId(slot?.recipeId ?? '')
+                      if (isEditing) return
+                      setEditing({ day, meal })
+                      setValue(slot?.recipeId ? (recipeName(slot.recipeId) ?? '') : (slot?.text ?? ''))
                     }}>
                       {isEditing ? (
                         <form onSubmit={(e) => { e.preventDefault(); save() }}>
-                          <select value={recipeId} onChange={(e) => setRecipeId(e.target.value)} onBlur={save}>
-                            <option value="">{t('menu.noRecipe')}</option>
-                            {recipes.data?.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-                          </select>
-                          <input value={text} onChange={(e) => setText(e.target.value)} autoFocus
-                                 placeholder={t('menu.notesPlaceholder')} onBlur={save} />
+                          <input list="menu-recipes" value={value} onChange={(e) => setValue(e.target.value)}
+                                 onKeyDown={(e) => { if (e.key === 'Escape') setEditing(null) }}
+                                 autoFocus placeholder={t('menu.slotPlaceholder')} onBlur={save} />
                         </form>
                       ) : (recipeName(slot?.recipeId) || slot?.text) ? (
                         <>

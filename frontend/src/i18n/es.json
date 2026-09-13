@@ -71,8 +71,7 @@
   "menu": {
     "title": "Menú semanal",
     "week": "Semana {{week}} · {{year}}",
-    "noRecipe": "Sin receta",
-    "notesPlaceholder": "Notas (opcional)",
+    "slotPlaceholder": "Receta o texto libre…",
     "meals": {
       "BREAKFAST": "Desayuno",
       "LUNCH": "Comida",
