@@ -64,10 +64,14 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 
 ## Fase 4 — Clients Android i escriptori
 
-- [ ] Client TypeScript generat des d'OpenAPI, compartit per web / Capacitor / Tauri
-- [ ] Capacitor → APK Android (push natiu, compartir text a la llista, widget bàsic)
+- [x] Client Android natiu (Kotlin/Jetpack Compose, `android/`) amb calendari, receptes,
+  menú, compra, tasques, xat amb l'assistent i sync offline — vegeu `android/README.md`
+- [x] Distribució: lloc de documentació (Hugo + Docsy) a GitHub Pages, imatge Docker
+  versionada i APK de debug com a adjunts de cada GitHub Release amb tag `vX.Y.Z` —
+  [ADR 0010](adr/0010-distribucio-i-releases.md)
+- [ ] Client TypeScript generat des d'OpenAPI, compartit per web / Tauri
 - [ ] Tauri → escriptori Linux / Windows / macOS
-- [ ] (Opcional) client Kotlin generat si es fa app nativa
+- [ ] APK Android signat / publicació a Google Play (quan hi hagi usuaris externs a la llar)
 
 ## Fase 5 — Maduresa
 

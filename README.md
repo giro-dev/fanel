@@ -35,6 +35,21 @@ make dev-frontend
 
 Consulta el [full de ruta](docs/ROADMAP.md) i les [regles del projecte](AGENTS.md).
 
+## Documentació
+
+Documentació completa (guia d'usuari, referència API, guia de contribució,
+ADRs i full de ruta) a **<https://giro-dev.github.io/fanel/>**.
+
+## Distribució
+
+Cada release es marca amb un tag `vX.Y.Z` i publica (vegeu
+[ADR 0010](docs/adr/0010-distribucio-i-releases.md)):
+
+- Una imatge Docker multi-arquitectura a `ghcr.io/giro-dev/fanel:vX.Y.Z`
+  (l'última versió de `main` sempre és `ghcr.io/giro-dev/fanel:latest`).
+- Un APK d'Android (debug, sense signar) com a adjunt de la
+  [release corresponent a GitHub](https://github.com/giro-dev/fanel/releases).
+
 ## Configuració de la intel·ligència artificial
 
 Per defecte cap proveïdor d'IA està actiu. Pots activar-ne tants com vulguis i

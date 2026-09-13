@@ -13,3 +13,4 @@ Format: [MADR](https://adr.github.io/madr/) reduït. Un fitxer per decisió, num
 | [0007](0007-i18n.md) | i18n català + castellà des de l'inici | Acceptat |
 | [0008](0008-llibreria-ui-calendari.md) | Cap llibreria de components UI general; `FullCalendar` només per al calendari | Acceptat |
 || [0009](0009-assistant-multiagent.md) | Assistent multiagent: un model/API per funció | Acceptat |
+| [0010](0010-distribucio-i-releases.md) | Distribució i estratègia de releases (Docker versionat, APK sense signar, docs a GitHub Pages) | Acceptat |
