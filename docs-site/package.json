@@ -1,0 +1,15 @@
+{
+  "name": "fanel-docs",
+  "version": "1.0.0",
+  "scripts": {
+    "hugo": "hugo",
+    "postinstall": "ln -sf ../sass-embedded/dist/bin/sass.js node_modules/.bin/sass"
+  },
+  "devDependencies": {
+    "sass-embedded": "1.102.0"
+  },
+  "workspaces": [
+    "packages/hugoautogen"
+  ],
+  "private": true
+}

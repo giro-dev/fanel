@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!**/gradle-wrapper.jar
 *.war
 *.nar
 *.ear
@@ -27,9 +28,15 @@ replay_pid*
 target/
 node_modules/
 data/
+!**/src/**/data/
 
 # IDE
 .idea/
 
 # Local env overrides (docker-compose reads deploy/.env automatically)
 deploy/.env
+
+# Hugo docs site build output
+docs-site/public/
+docs-site/resources/_gen/
+docs-site/.hugo_build.lock
