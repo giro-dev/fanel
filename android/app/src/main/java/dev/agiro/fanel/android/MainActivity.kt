@@ -1,61 +1,201 @@
 package dev.agiro.fanel.android
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.agiro.fanel.android.ui.FanelTheme
+import dev.agiro.fanel.android.ui.assistant.AssistantScreen
+import dev.agiro.fanel.android.ui.calendar.CalendarScreen
+import dev.agiro.fanel.android.ui.chores.ChoresScreen
+import dev.agiro.fanel.android.ui.menu.MenuScreen
+import dev.agiro.fanel.android.ui.recipes.RecipesScreen
+import dev.agiro.fanel.android.ui.settings.SettingsDialog
+import dev.agiro.fanel.android.ui.shopping.ShoppingScreen
+import dev.agiro.fanel.android.ui.setup.SetupScreen
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<CalendarViewModel> {
-        CalendarViewModel.Factory(application)
+    private val sessionViewModel by viewModels<SessionViewModel> {
+        SessionViewModel.Factory(application)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = getString(R.string.calendar_screen_title)
+        setContent {
+            FanelTheme {
+                FanelApp(sessionViewModel)
+            }
+        }
+    }
 
-        val statusView = TextView(this)
-        val refreshButton = Button(this).apply {
-            text = getString(R.string.sync_now)
-            setOnClickListener { viewModel.syncNow() }
-        }
-        val sampleButton = Button(this).apply {
-            text = getString(R.string.create_sample_event)
-            setOnClickListener { viewModel.createSampleEvent() }
-        }
-        val container = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            val padding = resources.getDimensionPixelSize(R.dimen.screen_padding)
-            setPadding(padding, padding, padding, padding)
-            addView(statusView)
-            addView(refreshButton)
-            addView(sampleButton)
-        }
-        setContentView(ScrollView(this).apply { addView(container) })
+    @Composable
+    private fun FanelApp(sessionViewModel: SessionViewModel) {
+        val session by sessionViewModel.uiState.collectAsStateWithLifecycle()
+        var showSettings by remember { mutableStateOf(false) }
+        var section by remember { mutableStateOf(AppSection.CALENDAR) }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    statusView.text = buildString {
-                        appendLine(
-                            if (state.householdId.isBlank()) {
-                                getString(R.string.household_unconfigured_status)
-                            } else {
-                                getString(R.string.household_status, state.householdId)
-                            }
-                        )
-                        appendLine(getString(R.string.visible_events_status, state.events.size))
-                        appendLine(getString(R.string.last_sync_status, state.lastSyncLabel))
+        if (!session.configured) {
+            SetupScreen(sessionViewModel)
+        } else {
+            key(session.sessionKey) {
+                val calendarViewModel: CalendarViewModel = viewModel(
+                    key = "calendar|${session.sessionKey}",
+                    factory = CalendarViewModel.Factory(application)
+                )
+                val recipesViewModel: RecipesViewModel = viewModel(
+                    key = "recipes|${session.sessionKey}",
+                    factory = RecipesViewModel.Factory(application)
+                )
+                val menuViewModel: MenuViewModel = viewModel(
+                    key = "menu|${session.sessionKey}",
+                    factory = MenuViewModel.Factory(application)
+                )
+                val shoppingViewModel: ShoppingViewModel = viewModel(
+                    key = "shopping|${session.sessionKey}",
+                    factory = ShoppingViewModel.Factory(application)
+                )
+                val choresViewModel: ChoresViewModel = viewModel(
+                    key = "chores|${session.sessionKey}",
+                    factory = ChoresViewModel.Factory(application)
+                )
+                val assistantViewModel: AssistantViewModel = viewModel(
+                    key = "assistant|${session.sessionKey}",
+                    factory = AssistantViewModel.Factory(application)
+                )
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                selected = section == AppSection.CALENDAR,
+                                onClick = { section = AppSection.CALENDAR },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.DateRange,
+                                        contentDescription = stringResource(R.string.nav_calendar)
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.nav_calendar)) }
+                            )
+                            NavigationBarItem(
+                                selected = section == AppSection.MENU,
+                                onClick = { section = AppSection.MENU },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.Restaurant,
+                                        contentDescription = stringResource(R.string.nav_menu)
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.nav_menu)) }
+                            )
+                            NavigationBarItem(
+                                selected = section == AppSection.RECIPES,
+                                onClick = { section = AppSection.RECIPES },
+                                icon = {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.List,
+                                        contentDescription = stringResource(R.string.nav_recipes)
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.nav_recipes)) }
+                            )
+                            NavigationBarItem(
+                                selected = section == AppSection.SHOPPING,
+                                onClick = { section = AppSection.SHOPPING },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.ShoppingCart,
+                                        contentDescription = stringResource(R.string.nav_shopping)
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.nav_shopping)) }
+                            )
+                            NavigationBarItem(
+                                selected = section == AppSection.CHORES,
+                                onClick = { section = AppSection.CHORES },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.CheckCircle,
+                                        contentDescription = stringResource(R.string.nav_chores)
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.nav_chores)) }
+                            )
+                            NavigationBarItem(
+                                selected = section == AppSection.ASSISTANT,
+                                onClick = { section = AppSection.ASSISTANT },
+                                icon = {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.Chat,
+                                        contentDescription = stringResource(R.string.nav_assistant)
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.nav_assistant)) }
+                            )
+                        }
+                    }
+                ) { padding ->
+                    Box(modifier = Modifier.padding(padding)) {
+                        when (section) {
+                            AppSection.CALENDAR -> CalendarScreen(
+                                viewModel = calendarViewModel,
+                                onOpenSettings = { showSettings = true }
+                            )
+                            AppSection.MENU -> MenuScreen(
+                                viewModel = menuViewModel,
+                                onOpenSettings = { showSettings = true }
+                            )
+                            AppSection.RECIPES -> RecipesScreen(
+                                viewModel = recipesViewModel,
+                                onOpenSettings = { showSettings = true }
+                            )
+                            AppSection.SHOPPING -> ShoppingScreen(
+                                viewModel = shoppingViewModel,
+                                onOpenSettings = { showSettings = true }
+                            )
+                            AppSection.CHORES -> ChoresScreen(
+                                viewModel = choresViewModel,
+                                onOpenSettings = { showSettings = true }
+                            )
+                            AppSection.ASSISTANT -> AssistantScreen(
+                                viewModel = assistantViewModel,
+                                onOpenSettings = { showSettings = true }
+                            )
+                        }
                     }
                 }
             }
         }
+
+        if (showSettings) {
+            SettingsDialog(sessionViewModel) { showSettings = false }
+        }
     }
+}
+
+private enum class AppSection {
+    CALENDAR, MENU, RECIPES, SHOPPING, CHORES, ASSISTANT
 }

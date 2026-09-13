@@ -28,11 +28,17 @@ object CalendarSyncScheduler : SyncSchedulerContract {
         )
     }
 
-    override fun enqueueImmediate(context: Context, householdId: String) {
-        if (householdId.isBlank()) return
+    override fun enqueueImmediate(context: Context, householdId: String, from: String, to: String) {
+        if (householdId.isBlank() || from.isBlank() || to.isBlank()) return
         val request = OneTimeWorkRequestBuilder<SyncWorker>()
             .setConstraints(defaultConstraints())
-            .setInputData(defaultInputData(householdId))
+            .setInputData(
+                Data.Builder()
+                    .putString(SyncWorker.KEY_HOUSEHOLD_ID, householdId)
+                    .putString(SyncWorker.KEY_FROM, from)
+                    .putString(SyncWorker.KEY_TO, to)
+                    .build()
+            )
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
             uniqueImmediateWorkName(householdId),
@@ -49,8 +55,8 @@ object CalendarSyncScheduler : SyncSchedulerContract {
         val today = LocalDate.now()
         return Data.Builder()
             .putString(SyncWorker.KEY_HOUSEHOLD_ID, householdId)
-            .putString(SyncWorker.KEY_FROM, today.minusMonths(1).toString())
-            .putString(SyncWorker.KEY_TO, today.plusMonths(3).toString())
+            .putString(SyncWorker.KEY_FROM, today.minusMonths(3).toString())
+            .putString(SyncWorker.KEY_TO, today.plusMonths(12).toString())
             .build()
     }
 

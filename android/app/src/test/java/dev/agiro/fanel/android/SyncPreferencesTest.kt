@@ -2,9 +2,12 @@ package dev.agiro.fanel.android
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import java.util.UUID
 
+@RunWith(RobolectricTestRunner::class)
 class SyncPreferencesTest {
     private val context = RuntimeEnvironment.getApplication()
 

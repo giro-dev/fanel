@@ -20,12 +20,12 @@ class SyncWorker(
             val repository = (applicationContext as FanelApplication).appContainer.calendarRepository
             repository.fullSync(householdId, from, to)
             Result.success()
+        } catch (exception: CancellationException) {
+            throw exception
         } catch (_: IllegalArgumentException) {
             Result.failure()
         } catch (_: IllegalStateException) {
             Result.failure()
-        } catch (exception: CancellationException) {
-            throw exception
         } catch (_: Exception) {
             Result.retry()
         }
