@@ -1,7 +1,17 @@
 {
   "nav": { "menu": "Menú", "recipes": "Receptes", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques", "members": "Membres" },
   "theme": { "label": "Canviar tema", "light": "Tema clar", "dark": "Tema fosc", "system": "Tema del sistema" },
-  "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
+  "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars.", "mine": "La meva llar", "switch": "Llar activa", "open": "Obrir", "current": "Activa", "memberCount_one": "{{count}} membre", "memberCount_other": "{{count}} membres" },
+  "setup": {
+    "title": "Benvingut a Fanel",
+    "subtitle": "Crea la teva llar per començar.",
+    "householdName": "Nom de la llar",
+    "memberName": "El teu nom",
+    "username": "Usuari",
+    "password": "Contrasenya",
+    "submit": "Crear la llar",
+    "error": "No s'ha pogut crear la llar."
+  },
   "loading": "Carregant…",
   "error": "No s'ha pogut carregar.",
   "offline": "Sense connexió",
@@ -16,6 +26,7 @@
     "selectAgent": "Tria l'agent",
     "close": "Tanca el xat",
     "noAgents": "Cap agent disponible",
+    "pickMember": "Tria el teu perfil a \"Qui ets?\" per parlar amb l'assistent.",
     "imageAttached": "[Imatge adjunta]",
     "attachImage": "Afegir imatge",
     "createRecipe": "Crear recepta",
@@ -60,8 +71,7 @@
   "menu": {
     "title": "Menú setmanal",
     "week": "Setmana {{week}} · {{year}}",
-    "noRecipe": "Sense recepta",
-    "notesPlaceholder": "Notes (opcional)",
+    "slotPlaceholder": "Recepta o text lliure…",
     "meals": {
       "BREAKFAST": "Esmorzar",
       "LUNCH": "Dinar",
@@ -190,6 +200,13 @@
     "confirmDelete": "Eliminar {{name}}?",
     "guardians": "Adults responsables",
     "noGuardianCandidates": "Encara no hi ha cap adult a la llar.",
+    "pin": "PIN (opcional)",
+    "newPin": "PIN nou (en blanc per mantenir-lo)",
+    "username": "Usuari (opcional)",
+    "password": "Contrasenya",
+    "newPassword": "Contrasenya nova (en blanc per mantenir-la)",
+    "hasPin": "PIN",
+    "hasCredentials": "Accés",
     "roles": {
       "ADMIN": "Administrador",
       "ADULT": "Adult",

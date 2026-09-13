@@ -37,7 +37,7 @@ fanel:
   cors:
     origins: ${FANEL_CORS_ORIGINS:http://localhost:5173}
   api:
-    token: ${FANEL_API_TOKEN:}
+    token: ${FANEL_API_TOKEN:f47ac10b-58cc-4372-a567-0e02b2c3d479}
   vapid:
     subject: ${FANEL_VAPID_SUBJECT:mailto:admin@example.com}
     public-key: ${FANEL_VAPID_PUBLIC_KEY:}

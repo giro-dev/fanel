@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import dev.agiro.fanel.shared.security.HouseholdScopeFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +40,7 @@ import java.util.List;
 public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, OncePerRequestFilter apiTokenFilter,
+                                            HouseholdScopeFilter householdScopeFilter,
                                             AuthenticationManager authenticationManager) throws Exception {
         http.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
@@ -47,12 +49,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index.html", "/assets/**", "/manifest.webmanifest", "/sw.js",
                                 "/actuator/health/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/v1/setup").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(apiTokenFilter, BasicAuthenticationFilter.class);
+                .addFilterBefore(apiTokenFilter, BasicAuthenticationFilter.class)
+                .addFilterAfter(householdScopeFilter, BasicAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    HouseholdScopeFilter householdScopeFilter() {
+        return new HouseholdScopeFilter();
     }
 
     @Bean

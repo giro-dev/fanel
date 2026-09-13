@@ -1,0 +1,70 @@
+baseURL = "https://giro-dev.github.io/fanel/"
+title = "Fanel"
+enableRobotsTXT = true
+enableGitInfo = true
+
+# Language configuration -----------------------------------------------------
+locale = "ca"
+defaultContentLanguage = "ca"
+defaultContentLanguageInSubdir = false
+
+[languages]
+  [languages.ca]
+    label = "Català"
+    title = "Fanel"
+    weight = 1
+    contentDir = "content/ca"
+  [languages.es]
+    label = "Español"
+    title = "Fanel"
+    weight = 2
+    contentDir = "content/es"
+
+# Docsy module ----------------------------------------------------------------
+[module]
+  proxy = "direct"
+  [module.hugoVersion]
+    extended = true
+    min = "0.160.1"
+  [[module.imports]]
+    path = "github.com/google/docsy/theme"
+    disable = false
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    style = "tango"
+
+[params]
+  copyright = "Fanel"
+  github_repo = "https://github.com/giro-dev/fanel"
+  github_subdir = "docs-site"
+  github_branch = "main"
+  # ADRs and roadmap are the binding source of truth; this site republishes them.
+  offlineSearch = false
+  prism_syntax_highlighting = true
+
+  [params.ui]
+    breadcrumb_disable = false
+    sidebar_menu_compact = true
+    navbar_logo = false
+    sidebar_search_disable = false
+
+  [[params.links.user]]
+    name = "Codi font"
+    url = "https://github.com/giro-dev/fanel"
+    icon = "fa-brands fa-github"
+    desc = "Repositori a GitHub"
+
+[[menu.main]]
+  name = "Documentació"
+  weight = 10
+  url = "/docs/"
+
+[[menu.main]]
+  name = "GitHub"
+  weight = 20
+  url = "https://github.com/giro-dev/fanel"
+  pre = "<i class='fa-brands fa-github'></i>"

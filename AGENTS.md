@@ -22,6 +22,7 @@ Roadmap i fases: [`docs/ROADMAP.md`](docs/ROADMAP.md). Decisions: [`docs/adr/`](
 | 7 | **i18n català + castellà** des del principi (`ca` per defecte). Cap text d'usuari hardcodejat: `react-i18next` al frontend, `MessageSource` al backend. | [0007](docs/adr/0007-i18n.md) |
 | 8 | Comunicació entre mòduls per **esdeveniments de domini** (Spring Modulith, registre persistit), no per crides directes a la implementació d'un altre mòdul. | [0001](docs/adr/0001-monolit-modular.md) |
 | 9 | **Assistent multiagent** amb **un model/API per funció**: cada agent té el seu `ModelProfile` (Ollama, OpenAI, Anthropic…) i les tools compartides del mòdul `assistant`. | [0009](docs/adr/0009-assistant-multiagent.md) |
+| 10 | **Distribució**: tag únic `vX.Y.Z` per a tot el monorepo; imatge Docker versionada a GHCR; APK Android de debug sense signar com a adjunt de la GitHub Release; documentació pública amb Hugo + Docsy a GitHub Pages. | [0010](docs/adr/0010-distribucio-i-releases.md) |
 
 ## Estructura del repositori
 
@@ -34,9 +35,14 @@ backend/                Spring Boot; paquet base dev.agiro.fanel
     shared/                                  ← mòdul OPEN: base d'entitats, errors, auditoria
   src/main/resources/db/migration/{common,postgresql,sqlite}
 frontend/               Vite + React + TS (PWA); el build s'empaqueta com a recurs static/
+android/                Client Android natiu (Kotlin, Jetpack Compose)
 deploy/                 Dockerfile multi-stage, docker-compose (postgres i sqlite)
-docs/                   ROADMAP.md, adr/
-.github/workflows/      CI (verify Modulith + tests + lint) i imatge a GHCR
+docs/                   ROADMAP.md, adr/                        ← font de veritat
+docs-site/              Lloc de documentació (Hugo + Docsy) publicat a GitHub Pages;
+                        content/ca/docs/{adr,roadmap}/ es genera amb scripts/sync-docs.sh
+scripts/                sync-docs.sh, generate-openapi.sh (usats per make docs-* i CI)
+.github/workflows/      CI (verify Modulith + tests + lint), imatge :latest a GHCR (docker.yml),
+                        docs a GitHub Pages (docs.yml), release amb tag vX.Y.Z (release.yml)
 ```
 
 ### Estructura d'un mòdul
@@ -78,6 +84,9 @@ Regles:
 | Lint/typecheck frontend | `cd frontend && npm run lint && npm run typecheck` |
 | Imatge Docker | `docker build -f deploy/Dockerfile .` |
 | Execució auto-allotjada | `cd deploy && docker compose up -d` (Postgres) o `docker compose -f docker-compose.sqlite.yml up -d` |
+| Documentació en local | `make docs-serve` (Hugo a `http://localhost:1313/fanel/`) |
+| Build de la documentació | `make docs-build` (genera `docs-site/public/`) |
+| Release | crear tag `vX.Y.Z` sobre `main` i `git push --tags` (vegeu [ADR 0010](docs/adr/0010-distribucio-i-releases.md)) |
 
 Abans d'obrir un PR: `mvn -B verify` verd (inclou `ApplicationModules.verify()` i tests amb Postgres i SQLite) i lint/typecheck del frontend verds.
 

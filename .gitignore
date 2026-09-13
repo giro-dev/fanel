@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!**/gradle-wrapper.jar
 *.war
 *.nar
 *.ear
@@ -27,6 +28,7 @@ replay_pid*
 target/
 node_modules/
 data/
+!**/src/**/data/
 
 # IDE
 .idea/
