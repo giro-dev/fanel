@@ -34,7 +34,9 @@ backend/                Spring Boot; paquet base dev.agiro.fanel
   src/main/resources/db/migration/{common,postgresql,sqlite}
 frontend/               Vite + React + TS (PWA); el build s'empaqueta com a recurs static/
 deploy/                 Dockerfile multi-stage, docker-compose (postgres i sqlite)
-docs/                   ROADMAP.md, adr/
+docs/                   ROADMAP.md, adr/   ← fonts de veritat; NO editar docs-site/content (es regenera)
+docs-site/              Lloc Hugo (Docsy) per a GitHub Pages; content/ el genera scripts/sync-docs.sh
+scripts/                sync-docs.sh: sincronitza docs/ → docs-site/content/ca/docs/
 .github/workflows/      CI (verify Modulith + tests + lint) i imatge a GHCR
 ```
 
@@ -75,6 +77,7 @@ Regles:
 | Backend en dev (SQLite, usuari `admin/admin`) | `make dev-backend` |
 | Frontend en dev (proxy a :8080) | `make dev-frontend` |
 | Lint/typecheck frontend | `cd frontend && npm run lint && npm run typecheck` |
+| Preview del lloc de docs | `make dev-docs` (Hugo server a :1313) |
 | Imatge Docker | `docker build -f deploy/Dockerfile .` |
 | Execució auto-allotjada | `cd deploy && docker compose up -d` (Postgres) o `docker compose -f docker-compose.sqlite.yml up -d` |
 
