@@ -983,3 +983,26 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
   gap: 0.5rem;
   color: var(--accent);
 }
+
+.household-switcher {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.topbar .household-switcher { width: auto; max-width: 12rem; }
+
+.member-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.assistant-hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 0.5rem; }
