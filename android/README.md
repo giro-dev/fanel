@@ -8,7 +8,8 @@ Skeleton d'un client Android nadiu per al calendari, alineat amb el backend actu
 - cua outbox per a mutacions offline
 - client Retrofit per al calendari actual (`/api/v1/households/{householdId}/calendar`)
 - `CalendarRepository` per a pujada i refresc del rang visible
-- `WorkManager` per al sync periòdic amb xarxa
+- offline-first genèric (`data/offline/`) per a membres, receptes, menú, compra i tasques: snapshots JSON a `cached_snapshots` + cua `pending_operations` amb replay i remapatge d'IDs temporals
+- `WorkManager` per al sync periòdic amb xarxa de tots els dominis (`HouseholdSync`)
 - UI en Jetpack Compose amb vistes de dia, setmana i mes, creació i esborrat d'esdeveniments
 - vista de receptes (`/api/v1/households/{householdId}/recipes`) amb cerca, detall, creació i esborrat
 - vista de menú setmanal (`/api/v1/households/{householdId}/menu`) amb edició d'àpats i enllaç a receptes
@@ -24,6 +25,18 @@ Skeleton d'un client Android nadiu per al calendari, alineat amb el backend actu
 1. A la primera arrencada, la pantalla de setup demana la URL del servidor i credencials (usuari + contrasenya, o token d'API) i després deixa triar la llar.
 2. Les credencials es guarden xifrades amb Android Keystore (`CredentialCipher`); la sessió (URL + llar) a `SessionStore`.
 3. Executa `./gradlew assembleDebug` dins d'`android/`. `API_BASE_URL` a `app/build.gradle.kts` només és la URL per defecte del formulari de setup.
+
+## Offline-first
+
+Totes les vistes llegeixen de Room (`Flow`) i mai directament de la xarxa:
+
+- **Lectura**: cada domini guarda un snapshot JSON per llar (`SnapshotRepository`). `sync()` fa `pull` del servidor i substitueix el snapshot; si la xarxa falla, es manté el snapshot anterior.
+- **Escriptura**: les mutacions s'apliquen primer al snapshot local (IDs temporals `local-…` per a elements creats) i s'encuen a `pending_operations`. S'intenta un `push` immediat; si falla, `HouseholdSyncScheduler` programa un `SyncWorker` amb restricció de xarxa.
+- **Replay**: `OutboxPusher` executa les operacions pendents en ordre per domini. Els errors HTTP 400/404/409/410/422 descarten l'operació; la resta es reintenta. Quan el servidor retorna un ID nou, es remapen els IDs temporals de les operacions posteriors (p. ex. ítems d'una llista de la compra creada offline).
+- **Membres**: `MembersRepository` és la font compartida per calendari, tasques, configuració i sessió; només lectura, però disponible sense connexió.
+- El calendari manté el seu repositori propi (sync per rang visible); la resta de dominis fan sync de snapshot complet.
+
+Per afegir un domini nou: crea un `SnapshotRepository` amb `pull`, aplica les mutacions localment + `enqueue`, registra un `OperationHandler` a `OutboxPusher` i afegeix-lo a `HouseholdSync`.
 
 ## Limitació actual
 

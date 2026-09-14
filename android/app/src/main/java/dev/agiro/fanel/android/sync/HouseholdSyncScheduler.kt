@@ -12,7 +12,7 @@ import androidx.work.WorkManager
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
-object CalendarSyncScheduler : SyncSchedulerContract {
+object HouseholdSyncScheduler : SyncSchedulerContract {
     override fun enqueuePeriodic(context: Context, householdId: String) {
         if (householdId.isBlank()) return
         val inputData = defaultInputData(householdId)
@@ -28,21 +28,29 @@ object CalendarSyncScheduler : SyncSchedulerContract {
         )
     }
 
+    override fun enqueueImmediate(context: Context, householdId: String) {
+        if (householdId.isBlank()) return
+        enqueueImmediate(context, householdId, defaultInputData(householdId))
+    }
+
     override fun enqueueImmediate(context: Context, householdId: String, from: String, to: String) {
         if (householdId.isBlank() || from.isBlank() || to.isBlank()) return
+        val inputData = Data.Builder()
+            .putString(SyncWorker.KEY_HOUSEHOLD_ID, householdId)
+            .putString(SyncWorker.KEY_FROM, from)
+            .putString(SyncWorker.KEY_TO, to)
+            .build()
+        enqueueImmediate(context, householdId, inputData)
+    }
+
+    private fun enqueueImmediate(context: Context, householdId: String, inputData: Data) {
         val request = OneTimeWorkRequestBuilder<SyncWorker>()
             .setConstraints(defaultConstraints())
-            .setInputData(
-                Data.Builder()
-                    .putString(SyncWorker.KEY_HOUSEHOLD_ID, householdId)
-                    .putString(SyncWorker.KEY_FROM, from)
-                    .putString(SyncWorker.KEY_TO, to)
-                    .build()
-            )
+            .setInputData(inputData)
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
             uniqueImmediateWorkName(householdId),
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
             request
         )
     }
@@ -60,7 +68,7 @@ object CalendarSyncScheduler : SyncSchedulerContract {
             .build()
     }
 
-    private fun uniqueWorkName(householdId: String): String = "calendar_sync_${HouseholdSyncKey.opaqueKey(householdId)}"
+    private fun uniqueWorkName(householdId: String): String = "household_sync_${HouseholdSyncKey.opaqueKey(householdId)}"
 
-    private fun uniqueImmediateWorkName(householdId: String): String = "calendar_sync_now_${HouseholdSyncKey.opaqueKey(householdId)}"
+    private fun uniqueImmediateWorkName(householdId: String): String = "household_sync_now_${HouseholdSyncKey.opaqueKey(householdId)}"
 }

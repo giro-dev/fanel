@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import dev.agiro.fanel.android.data.offline.RecipesRepository
 import dev.agiro.fanel.android.data.remote.AgentDto
 import dev.agiro.fanel.android.data.remote.AgentRequest
 import dev.agiro.fanel.android.data.remote.AssistantApi
@@ -13,7 +14,6 @@ import dev.agiro.fanel.android.data.remote.Attachment
 import dev.agiro.fanel.android.data.remote.CreateRecipeRequest
 import dev.agiro.fanel.android.data.remote.IngredientDto
 import dev.agiro.fanel.android.data.remote.RecipeSuggestion
-import dev.agiro.fanel.android.data.remote.RecipesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +37,7 @@ data class ChatMessage(
 class AssistantViewModel(
     application: Application,
     private val assistantApi: AssistantApi = (application as FanelApplication).appContainer.assistantApi,
-    private val recipesApi: RecipesApi = (application as FanelApplication).appContainer.recipesApi,
+    private val recipesRepository: RecipesRepository = (application as FanelApplication).appContainer.recipesRepository,
     private val sessionStore: SessionStore = (application as FanelApplication).appContainer.sessionStore
 ) : AndroidViewModel(application) {
     private val householdId = MutableStateFlow("")
@@ -149,7 +149,7 @@ class AssistantViewModel(
         if (currentHouseholdId.isBlank() || name.isNullOrBlank()) return
         viewModelScope.launch {
             runCatching {
-                recipesApi.create(
+                recipesRepository.create(
                     currentHouseholdId,
                     CreateRecipeRequest(
                         name = name,
@@ -165,6 +165,7 @@ class AssistantViewModel(
                         imageData = recipe.imageData
                     )
                 )
+                runCatching { recipesRepository.sync(currentHouseholdId) }
             }
                 .onSuccess {
                     pendingImage = null

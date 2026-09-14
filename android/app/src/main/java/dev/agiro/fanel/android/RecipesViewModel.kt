@@ -6,31 +6,41 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.agiro.fanel.android.data.RecipeDraft
+import dev.agiro.fanel.android.data.offline.RecipesRepository
 import dev.agiro.fanel.android.data.remote.CreateRecipeRequest
 import dev.agiro.fanel.android.data.remote.RecipeDto
-import dev.agiro.fanel.android.data.remote.RecipesApi
+import dev.agiro.fanel.android.sync.HouseholdSyncScheduler
+import dev.agiro.fanel.android.sync.SyncSchedulerContract
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.Normalizer
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class RecipesViewModel(
     application: Application,
-    private val recipesApi: RecipesApi = (application as FanelApplication).appContainer.recipesApi,
-    private val sessionStore: SessionStore = (application as FanelApplication).appContainer.sessionStore
+    private val repository: RecipesRepository = (application as FanelApplication).appContainer.recipesRepository,
+    private val sessionStore: SessionStore = (application as FanelApplication).appContainer.sessionStore,
+    private val syncScheduler: SyncSchedulerContract = HouseholdSyncScheduler
 ) : AndroidViewModel(application) {
     private val householdId = MutableStateFlow("")
-    private val _recipes = MutableStateFlow<List<RecipeDto>>(emptyList())
     private val _query = MutableStateFlow("")
     private val _loading = MutableStateFlow(false)
     private val _errorRes = MutableStateFlow<Int?>(null)
 
+    private val recipes: Flow<List<RecipeDto>> = householdId.flatMapLatest { id ->
+        if (id.isBlank()) flowOf(emptyList()) else repository.observeRecipes(id)
+    }
+
     val uiState: StateFlow<RecipesUiState> = combine(
-        householdId, _recipes, _query, _loading, _errorRes
+        householdId, recipes, _query, _loading, _errorRes
     ) { currentHouseholdId, recipes, query, loading, errorRes ->
         RecipesUiState(
             householdId = currentHouseholdId,
@@ -60,33 +70,33 @@ class RecipesViewModel(
         if (currentHouseholdId.isBlank()) return
         _loading.value = true
         viewModelScope.launch {
-            runCatching { recipesApi.list(currentHouseholdId) }
-                .onSuccess { result ->
-                    _recipes.value = result
-                    _errorRes.value = null
+            runCatching { repository.sync(currentHouseholdId) }
+                .onSuccess { _errorRes.value = null }
+                .onFailure {
+                    if (repository.cached(currentHouseholdId) == null) _errorRes.value = R.string.recipes_load_error
                 }
-                .onFailure { _errorRes.value = R.string.recipes_load_error }
             _loading.value = false
         }
     }
 
     fun createRecipe(draft: RecipeDraft) {
-        val currentHouseholdId = householdId.value
-        if (currentHouseholdId.isBlank()) return
-        viewModelScope.launch {
-            runCatching {
-                recipesApi.create(currentHouseholdId, CreateRecipeRequest.from(draft))
-            }
-                .onSuccess { refresh() }
-                .onFailure { _errorRes.value = R.string.recipes_save_error }
-        }
+        mutate(householdId.value) { repository.create(it, CreateRecipeRequest.from(draft)) }
     }
 
     fun deleteRecipe(recipe: RecipeDto) {
+        mutate(recipe.householdId) { repository.delete(it, recipe.id) }
+    }
+
+    /** Applies the change to the local cache, then tries to push it; if offline, WorkManager retries later. */
+    private fun mutate(currentHouseholdId: String, block: suspend (String) -> Unit) {
+        if (currentHouseholdId.isBlank()) return
         viewModelScope.launch {
-            runCatching { recipesApi.delete(recipe.householdId, recipe.id) }
-                .onSuccess { refresh() }
+            runCatching { block(currentHouseholdId) }
                 .onFailure { _errorRes.value = R.string.recipes_save_error }
+                .onSuccess {
+                    runCatching { repository.sync(currentHouseholdId) }
+                        .onFailure { syncScheduler.enqueueImmediate(getApplication(), currentHouseholdId) }
+                }
         }
     }
 

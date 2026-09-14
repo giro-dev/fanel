@@ -2,6 +2,7 @@ package dev.agiro.fanel.android
 
 import dev.agiro.fanel.android.data.IngredientDraft
 import dev.agiro.fanel.android.data.RecipeDraft
+import dev.agiro.fanel.android.data.offline.RecipesRepository
 import dev.agiro.fanel.android.data.remote.CreateRecipeRequest
 import dev.agiro.fanel.android.data.remote.RecipeDto
 import dev.agiro.fanel.android.data.remote.RecipesApi
@@ -36,10 +37,12 @@ class RecipesViewModelTest {
     private fun viewModel(api: FakeRecipesApi, householdId: String = "household-1"): RecipesViewModel {
         val context = RuntimeEnvironment.getApplication()
         val sessionStore = SessionStore(context).apply { this.householdId = householdId }
+        val store = OfflineTestStore(context)
         return RecipesViewModel(
             application = context,
-            recipesApi = api,
-            sessionStore = sessionStore
+            repository = RecipesRepository(api, store.snapshotDao, store.pendingDao, store.pusher),
+            sessionStore = sessionStore,
+            syncScheduler = FakeSyncScheduler()
         )
     }
 

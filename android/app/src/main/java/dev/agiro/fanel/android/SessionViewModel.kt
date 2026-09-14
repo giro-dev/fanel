@@ -105,7 +105,7 @@ class SessionViewModel(
     suspend fun listMembers(): List<MemberDto> {
         val householdId = container.sessionStore.householdId
         if (householdId.isBlank()) return emptyList()
-        return container.householdApi.members(householdId)
+        return container.membersRepository.members(householdId)
     }
 
     suspend fun pickMember(member: MemberDto, pin: String?): Boolean {

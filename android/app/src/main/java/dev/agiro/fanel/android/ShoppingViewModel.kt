@@ -5,20 +5,23 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dev.agiro.fanel.android.data.offline.ShoppingRepository
 import dev.agiro.fanel.android.data.remote.AddItemRequest
-import dev.agiro.fanel.android.data.remote.ListNameRequest
-import dev.agiro.fanel.android.data.remote.ShoppingApi
 import dev.agiro.fanel.android.data.remote.ShoppingItemDto
 import dev.agiro.fanel.android.data.remote.ShoppingListDto
 import dev.agiro.fanel.android.data.remote.UpdateItemRequest
 import dev.agiro.fanel.android.sync.HouseholdEvents
+import dev.agiro.fanel.android.sync.HouseholdSyncScheduler
+import dev.agiro.fanel.android.sync.SyncSchedulerContract
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -27,22 +30,27 @@ data class ShoppingCategoryGroup(
     val items: List<ShoppingItemDto>
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ShoppingViewModel(
     application: Application,
-    private val shoppingApi: ShoppingApi = (application as FanelApplication).appContainer.shoppingApi,
+    private val repository: ShoppingRepository = (application as FanelApplication).appContainer.shoppingRepository,
     private val sessionStore: SessionStore = (application as FanelApplication).appContainer.sessionStore,
-    private val householdEvents: HouseholdEvents = (application as FanelApplication).appContainer.householdEvents
+    private val householdEvents: HouseholdEvents = (application as FanelApplication).appContainer.householdEvents,
+    private val syncScheduler: SyncSchedulerContract = HouseholdSyncScheduler
 ) : AndroidViewModel(application) {
     private val householdId = MutableStateFlow("")
-    private val _lists = MutableStateFlow<List<ShoppingListDto>>(emptyList())
     private val _selectedListId = MutableStateFlow<String?>(null)
     private val _groupByCategory = MutableStateFlow(true)
     private val _loading = MutableStateFlow(false)
     private val _errorRes = MutableStateFlow<Int?>(null)
 
+    private val lists: Flow<List<ShoppingListDto>> = householdId.flatMapLatest { id ->
+        if (id.isBlank()) flowOf(emptyList()) else repository.observeLists(id)
+    }
+
     @Suppress("UNCHECKED_CAST")
     val uiState: StateFlow<ShoppingUiState> = combine(
-        householdId, _lists, _selectedListId, _groupByCategory, _loading, _errorRes
+        householdId, lists, _selectedListId, _groupByCategory, _loading, _errorRes
     ) { values ->
         val currentHouseholdId = values[0] as String
         val lists = values[1] as List<ShoppingListDto>
@@ -76,7 +84,6 @@ class ShoppingViewModel(
         subscribeToEvents()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun subscribeToEvents() {
         viewModelScope.launch {
             householdId
@@ -98,18 +105,13 @@ class ShoppingViewModel(
         if (currentHouseholdId.isBlank()) return
         _loading.value = true
         viewModelScope.launch {
-            runCatching {
-                var lists = shoppingApi.listLists(currentHouseholdId)
-                if (lists.isEmpty()) {
-                    lists = listOf(shoppingApi.defaultList(currentHouseholdId))
+            runCatching { repository.sync(currentHouseholdId) }
+                .onSuccess { _errorRes.value = null }
+                .onFailure {
+                    if (repository.cached(currentHouseholdId).isNullOrEmpty()) {
+                        _errorRes.value = R.string.shopping_load_error
+                    }
                 }
-                lists
-            }
-                .onSuccess { lists ->
-                    _lists.value = lists
-                    _errorRes.value = null
-                }
-                .onFailure { _errorRes.value = R.string.shopping_load_error }
             _loading.value = false
         }
     }
@@ -123,50 +125,51 @@ class ShoppingViewModel(
     }
 
     fun createList(name: String) {
-        mutate {
-            val created = shoppingApi.createList(it, ListNameRequest(name))
-            _selectedListId.value = created.id
-        }
+        mutate { _selectedListId.value = repository.createList(it, name) }
     }
 
     fun renameList(listId: String, name: String) {
-        mutate { shoppingApi.updateList(it, listId, ListNameRequest(name)) }
+        mutate { repository.renameList(it, listId, name) }
     }
 
     fun deleteList(listId: String) {
         mutate {
-            shoppingApi.deleteList(it, listId)
+            repository.deleteList(it, listId)
             _selectedListId.value = null
         }
     }
 
     fun addItem(listId: String, request: AddItemRequest) {
-        mutate { shoppingApi.addItem(it, listId, request) }
+        mutate { repository.addItem(it, listId, request) }
     }
 
     fun toggleDone(item: ShoppingItemDto) {
-        mutate { shoppingApi.updateItem(it, item.id, UpdateItemRequest(done = !item.done)) }
+        mutate { repository.updateItem(it, item.id, UpdateItemRequest(done = !item.done)) }
     }
 
     fun toggleRecurring(item: ShoppingItemDto) {
-        mutate { shoppingApi.updateItem(it, item.id, UpdateItemRequest(recurring = !item.recurring)) }
+        mutate { repository.updateItem(it, item.id, UpdateItemRequest(recurring = !item.recurring)) }
     }
 
     fun removeItem(item: ShoppingItemDto) {
-        mutate { shoppingApi.removeItem(it, item.id) }
+        mutate { repository.removeItem(it, item.id) }
     }
 
     fun clearPurchased(listId: String) {
-        mutate { shoppingApi.clearPurchased(it, listId) }
+        mutate { repository.clearPurchased(it, listId) }
     }
 
+    /** Applies the change to the local cache, then tries to push it; if offline, WorkManager retries later. */
     private fun mutate(block: suspend (String) -> Unit) {
         val currentHouseholdId = householdId.value
         if (currentHouseholdId.isBlank()) return
         viewModelScope.launch {
             runCatching { block(currentHouseholdId) }
-                .onSuccess { refresh() }
                 .onFailure { _errorRes.value = R.string.shopping_save_error }
+                .onSuccess {
+                    runCatching { repository.sync(currentHouseholdId) }
+                        .onFailure { syncScheduler.enqueueImmediate(getApplication(), currentHouseholdId) }
+                }
         }
     }
 

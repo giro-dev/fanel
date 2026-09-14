@@ -17,8 +17,7 @@ class SyncWorker(
         if (householdId.isBlank() || from.isBlank() || to.isBlank()) return Result.failure()
 
         return try {
-            val repository = (applicationContext as FanelApplication).appContainer.calendarRepository
-            repository.fullSync(householdId, from, to)
+            (applicationContext as FanelApplication).appContainer.householdSync.syncAll(householdId, from, to)
             Result.success()
         } catch (exception: CancellationException) {
             throw exception

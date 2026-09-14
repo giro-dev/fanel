@@ -1,5 +1,7 @@
 package dev.agiro.fanel.android
 
+import dev.agiro.fanel.android.data.offline.MenuRepository
+import dev.agiro.fanel.android.data.offline.RecipesRepository
 import dev.agiro.fanel.android.data.remote.CreateRecipeRequest
 import dev.agiro.fanel.android.data.remote.MealPlanDto
 import dev.agiro.fanel.android.data.remote.MealSlotDto
@@ -42,12 +44,14 @@ class MenuViewModelTest {
     private fun viewModel(menuApi: FakeMenuApi, recipesApi: RecipesApi = EmptyRecipesApi): MenuViewModel {
         val context = RuntimeEnvironment.getApplication()
         val sessionStore = SessionStore(context).apply { householdId = "household-1" }
+        val store = OfflineTestStore(context)
         return MenuViewModel(
             application = context,
-            menuApi = menuApi,
-            recipesApi = recipesApi,
+            repository = MenuRepository(menuApi, store.snapshotDao, store.pendingDao, store.pusher),
+            recipesRepository = RecipesRepository(recipesApi, store.snapshotDao, store.pendingDao, store.pusher),
             sessionStore = sessionStore,
-            householdEvents = EmptyHouseholdEvents
+            householdEvents = EmptyHouseholdEvents,
+            syncScheduler = FakeSyncScheduler()
         )
     }
 
