@@ -1,14 +1,19 @@
 package dev.agiro.fanel.calendar.domain;
 
 import dev.agiro.fanel.shared.domain.UuidEntity;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +31,12 @@ public class CalendarEvent extends UuidEntity {
     @JdbcTypeCode(SqlTypes.CHAR)
     private UUID addedBy;
 
+    @ElementCollection
+    @CollectionTable(name = "calendar_event_assignee", joinColumns = @JoinColumn(name = "event_id"))
+    @Column(name = "member_id")
+    @JdbcTypeCode(SqlTypes.CHAR)
+    private List<UUID> assigneeIds = new ArrayList<>();
+
     protected CalendarEvent() {}
 
     public CalendarEvent(UUID householdId, String title, LocalDate date, LocalTime time, UUID addedBy) {
@@ -41,4 +52,12 @@ public class CalendarEvent extends UuidEntity {
     public LocalDate getDate() { return date; }
     public LocalTime getTime() { return time; }
     public UUID getAddedBy() { return addedBy; }
+    public List<UUID> getAssigneeIds() { return assigneeIds; }
+
+    public void setTitle(String title) { this.title = title; }
+    public void setDate(LocalDate date) { this.date = date; }
+    public void setTime(LocalTime time) { this.time = time; }
+    public void setAssigneeIds(List<UUID> assigneeIds) {
+        this.assigneeIds = assigneeIds == null ? new ArrayList<>() : new ArrayList<>(assigneeIds);
+    }
 }

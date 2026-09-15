@@ -33,7 +33,15 @@ public class CalendarController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CalendarEventDto create(@PathVariable UUID householdId, @Valid @RequestBody CreateEvent request) {
-        return calendar.create(householdId, request.title(), request.date(), request.time(), request.addedBy());
+        return calendar.create(householdId, request.title(), request.date(), request.time(),
+                request.addedBy(), request.assigneeIds());
+    }
+
+    @PatchMapping("/{eventId}")
+    public CalendarEventDto update(@PathVariable UUID householdId, @PathVariable UUID eventId,
+                                   @Valid @RequestBody UpdateEvent request) {
+        return calendar.update(householdId, eventId, request.title(), request.date(), request.time(),
+                request.assigneeIds());
     }
 
     @DeleteMapping("/{eventId}")
@@ -42,6 +50,11 @@ public class CalendarController {
         calendar.delete(householdId, eventId);
     }
 
-    public record CreateEvent(@NotBlank String title, @NotNull LocalDate date, LocalTime time, UUID addedBy) {
+    public record CreateEvent(@NotBlank String title, @NotNull LocalDate date, LocalTime time,
+                              UUID addedBy, List<UUID> assigneeIds) {
+    }
+
+    public record UpdateEvent(@NotBlank String title, @NotNull LocalDate date, LocalTime time,
+                              List<UUID> assigneeIds) {
     }
 }

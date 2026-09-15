@@ -15,9 +15,13 @@
     <string name="no_events">Cap esdeveniment</string>
     <string name="create_event">Nou esdeveniment</string>
     <string name="event_title">Títol</string>
-    <string name="event_date">Data (aaaa-mm-dd)</string>
+    <string name="event_date">Data</string>
     <string name="event_time_optional">Hora (opcional)</string>
+    <string name="event_pick_time">Tria l\'hora</string>
+    <string name="event_clear_time">Treu l\'hora</string>
+    <string name="event_clear_until">Treu la data de fi</string>
     <string name="event_invalid_input">Revisa el títol, la data i l\'hora</string>
+    <string name="ok">D\'acord</string>
     <string name="save">Desa</string>
     <string name="cancel">Cancel·la</string>
     <string name="delete">Suprimeix</string>
@@ -40,7 +44,7 @@
     <string name="event_members">Membres</string>
     <string name="event_recurrence">Repetició</string>
     <string name="event_recurrence_interval">Cada quants</string>
-    <string name="event_recurrence_until">Fins a (opcional, aaaa-mm-dd)</string>
+    <string name="event_recurrence_until">Fins a (opcional)</string>
     <string name="recurrence_none">No es repeteix</string>
     <string name="recurrence_daily">Diària</string>
     <string name="recurrence_weekly">Setmanal</string>
