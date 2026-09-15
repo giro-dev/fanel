@@ -66,7 +66,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pom.xml backend/pom.xml frontend/pom.xml android/app/build.gradle.kts
-          git commit -m "chore: release $TAG"
+          git diff --cached --quiet || git commit -m "chore: release $TAG"
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "HEAD:refs/heads/$BRANCH" "refs/tags/$TAG"
 
@@ -105,7 +105,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: android-actions/setup-android@v3
+      # ubuntu-latest ships a full Android SDK ($ANDROID_HOME, sdkmanager on PATH).
       - run: |
           yes | sdkmanager --licenses >/dev/null
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
@@ -211,5 +211,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin "$BRANCH"
           git add pom.xml backend/pom.xml frontend/pom.xml android/app/build.gradle.kts
-          git commit -m "chore: prepare next development iteration ($NEXT-SNAPSHOT)"
+          git diff --cached --quiet || git commit -m "chore: prepare next development iteration ($NEXT-SNAPSHOT)"
           git push origin "HEAD:refs/heads/$BRANCH"
