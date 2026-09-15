@@ -25,6 +25,10 @@ Skeleton d'un client Android nadiu per al calendari, alineat amb el backend actu
 2. Les credencials es guarden xifrades amb Android Keystore (`CredentialCipher`); la sessió (URL + llar) a `SessionStore`.
 3. Executa `./gradlew assembleDebug` dins d'`android/`. `API_BASE_URL` a `app/build.gradle.kts` només és la URL per defecte del formulari de setup.
 
+## Build de release
+
+`./gradlew assembleRelease` genera un APK signat amb la clau self-signed de dev (`app/selfsigned.jks`). Per signar amb una clau pròpia, defineix les variables d'entorn `FANEL_KEYSTORE`, `FANEL_KEYSTORE_PASSWORD`, `FANEL_KEY_ALIAS` i `FANEL_KEY_PASSWORD`. La pipeline de release (`release.yml`) fa el mateix via secrets de GitHub.
+
 ## Limitació actual
 
 El backend encara no exposa un endpoint de delta sync ni versions/tombstones. Per això aquest esquelet fa servir outbox local + refresc per rang visible. Si més endavant es vol persistir autenticació, caldrà usar emmagatzematge xifrat basat en Keystore.

@@ -19,9 +19,24 @@ android {
         buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
     }
 
+    signingConfigs {
+        create("release") {
+            fun envOr(name: String, fallback: String) =
+                System.getenv(name)?.takeIf { it.isNotBlank() } ?: fallback
+            // Self-signed dev key committed at android/app/selfsigned.jks.
+            // CI can override all of it via FANEL_KEYSTORE* env vars/secrets.
+            storeFile = envOr("FANEL_KEYSTORE", "").takeIf { it.isNotBlank() }
+                ?.let(::File) ?: file("selfsigned.jks")
+            storePassword = envOr("FANEL_KEYSTORE_PASSWORD", "fanel-selfsigned")
+            keyAlias = envOr("FANEL_KEY_ALIAS", "fanel")
+            keyPassword = envOr("FANEL_KEY_PASSWORD", "fanel-selfsigned")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
