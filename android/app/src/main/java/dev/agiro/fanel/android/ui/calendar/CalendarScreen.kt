@@ -170,6 +170,12 @@ fun CalendarScreen(viewModel: CalendarViewModel, onOpenSettings: () -> Unit) {
                 showCreateDialog = false
                 editCandidate = null
             },
+            onDelete = editing?.let { event ->
+                {
+                    editCandidate = null
+                    deleteCandidate = event
+                }
+            },
             onConfirm = { draft ->
                 if (editing == null) {
                     viewModel.createEvent(draft)

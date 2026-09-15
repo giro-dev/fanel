@@ -1,15 +1,11 @@
 package dev.agiro.fanel.android
 
 import android.app.Application
+import com.google.gson.Gson
 import dev.agiro.fanel.android.data.CalendarDraft
 import dev.agiro.fanel.android.data.CalendarRepositoryContract
 import dev.agiro.fanel.android.data.local.CalendarEventEntity
-import dev.agiro.fanel.android.data.remote.HouseholdApi
-import dev.agiro.fanel.android.data.remote.HouseholdDto
-import dev.agiro.fanel.android.data.remote.VerifyPinRequest
-import dev.agiro.fanel.android.data.remote.VerifyPinResponse
-import dev.agiro.fanel.android.data.remote.MemberDto
-import dev.agiro.fanel.android.sync.SyncSchedulerContract
+import dev.agiro.fanel.android.data.offline.MembersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +38,11 @@ class CalendarViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun membersRepository(): MembersRepository {
+        val store = OfflineTestStore(RuntimeEnvironment.getApplication())
+        return MembersRepository(FakeHouseholdApi(), store.snapshotDao, store.pendingDao, store.pusher, Gson())
+    }
+
     @Test
     fun createEventDelegatesToRepository() = runBlocking {
         val repository = FakeCalendarRepository()
@@ -50,7 +51,7 @@ class CalendarViewModelTest {
             application = RuntimeEnvironment.getApplication(),
             repository = repository,
             syncScheduler = scheduler,
-            householdApi = FakeHouseholdApi,
+            membersRepository = membersRepository(),
             householdEvents = EmptyHouseholdEvents
         )
 
@@ -79,7 +80,7 @@ class CalendarViewModelTest {
             application = RuntimeEnvironment.getApplication(),
             repository = repository,
             syncScheduler = FakeSyncScheduler(),
-            householdApi = FakeHouseholdApi,
+            membersRepository = membersRepository(),
             householdEvents = EmptyHouseholdEvents
         )
         val event = CalendarEventEntity(
@@ -111,7 +112,7 @@ class CalendarViewModelTest {
             application = RuntimeEnvironment.getApplication(),
             repository = repository,
             syncScheduler = FakeSyncScheduler(),
-            householdApi = FakeHouseholdApi,
+            membersRepository = membersRepository(),
             householdEvents = EmptyHouseholdEvents
         )
         val event = CalendarEventEntity(
@@ -153,7 +154,7 @@ class CalendarViewModelTest {
             application = RuntimeEnvironment.getApplication(),
             repository = FakeCalendarRepository(),
             syncScheduler = FakeSyncScheduler(),
-            householdApi = FakeHouseholdApi,
+            membersRepository = membersRepository(),
             householdEvents = EmptyHouseholdEvents
         )
 
@@ -193,23 +194,13 @@ class CalendarViewModelTest {
             application = RuntimeEnvironment.getApplication(),
             repository = FakeCalendarRepository(),
             syncScheduler = scheduler,
-            householdApi = FakeHouseholdApi,
+            membersRepository = membersRepository(),
             householdEvents = EmptyHouseholdEvents
         )
 
         viewModel.syncNow()
         assertNull(scheduler.immediateHouseholdId)
     }
-}
-
-private object FakeHouseholdApi : HouseholdApi {
-    override suspend fun list(): List<HouseholdDto> = emptyList()
-    override suspend fun members(householdId: String): List<MemberDto> = emptyList()
-    override suspend fun verifyPin(
-        householdId: String,
-        memberId: String,
-        request: VerifyPinRequest
-    ): VerifyPinResponse = VerifyPinResponse(true)
 }
 
 private class FakeCalendarRepository : CalendarRepositoryContract {
@@ -238,18 +229,4 @@ private class FakeCalendarRepository : CalendarRepositoryContract {
     }
 
     override suspend fun fullSync(householdId: String, from: String, to: String) = Unit
-}
-
-private class FakeSyncScheduler : SyncSchedulerContract {
-    var immediateHouseholdId: String? = null
-    var immediateFrom: String? = null
-    var immediateTo: String? = null
-
-    override fun enqueuePeriodic(context: android.content.Context, householdId: String) = Unit
-
-    override fun enqueueImmediate(context: android.content.Context, householdId: String, from: String, to: String) {
-        immediateHouseholdId = householdId
-        immediateFrom = from
-        immediateTo = to
-    }
 }

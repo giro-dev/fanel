@@ -8,6 +8,9 @@ import java.util.UUID;
 public interface CalendarApi {
     List<CalendarEventDto> list(UUID householdId, LocalDate from, LocalDate to);
     List<CalendarEventDto> listAll(UUID householdId);
-    CalendarEventDto create(UUID householdId, String title, LocalDate date, LocalTime time, UUID addedBy);
+    CalendarEventDto create(UUID householdId, String title, LocalDate date, LocalTime time,
+                            UUID addedBy, List<UUID> assigneeIds);
+    CalendarEventDto update(UUID householdId, UUID eventId, String title, LocalDate date,
+                            LocalTime time, List<UUID> assigneeIds);
     void delete(UUID householdId, UUID eventId);
 }

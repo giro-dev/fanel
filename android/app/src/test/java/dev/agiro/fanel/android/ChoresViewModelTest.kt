@@ -1,12 +1,10 @@
 package dev.agiro.fanel.android
 
+import dev.agiro.fanel.android.data.offline.ChoresRepository
+import dev.agiro.fanel.android.data.offline.MembersRepository
 import dev.agiro.fanel.android.data.remote.ChoreDto
 import dev.agiro.fanel.android.data.remote.ChoresApi
 import dev.agiro.fanel.android.data.remote.CreateChoreRequest
-import dev.agiro.fanel.android.data.remote.HouseholdApi
-import dev.agiro.fanel.android.data.remote.HouseholdDto
-import dev.agiro.fanel.android.data.remote.VerifyPinRequest
-import dev.agiro.fanel.android.data.remote.VerifyPinResponse
 import dev.agiro.fanel.android.data.remote.MemberDto
 import dev.agiro.fanel.android.data.remote.RecurrenceFrequency
 import dev.agiro.fanel.android.data.remote.UpdateChoreRequest
@@ -43,12 +41,17 @@ class ChoresViewModelTest {
     private fun viewModel(api: FakeChoresApi): Pair<ChoresViewModel, MutableList<ChoresUiState>> {
         val context = RuntimeEnvironment.getApplication()
         val sessionStore = SessionStore(context).apply { householdId = "household-1" }
+        val store = OfflineTestStore(context)
+        val members = FakeHouseholdApi(
+            listOf(MemberDto("member-1", "household-1", "Albert", null, "#ff0000", null, null, false, false))
+        )
         val vm = ChoresViewModel(
             application = context,
-            choresApi = api,
-            householdApi = FakeChoresHouseholdApi,
+            repository = ChoresRepository(api, store.snapshotDao, store.pendingDao, store.pusher),
+            membersRepository = MembersRepository(members, store.snapshotDao, store.pendingDao, store.pusher),
             sessionStore = sessionStore,
-            householdEvents = EmptyHouseholdEvents
+            householdEvents = EmptyHouseholdEvents,
+            syncScheduler = FakeSyncScheduler()
         )
         return vm to mutableListOf()
     }
@@ -126,18 +129,6 @@ class ChoresViewModelTest {
         recurrenceInterval = null,
         rotationMemberIds = emptyList()
     )
-}
-
-private object FakeChoresHouseholdApi : HouseholdApi {
-    override suspend fun list(): List<HouseholdDto> = emptyList()
-    override suspend fun members(householdId: String): List<MemberDto> = listOf(
-        MemberDto("member-1", householdId, "Albert", null, "#ff0000", null, null, false, false)
-    )
-    override suspend fun verifyPin(
-        householdId: String,
-        memberId: String,
-        request: VerifyPinRequest
-    ): VerifyPinResponse = VerifyPinResponse(true)
 }
 
 private class FakeChoresApi : ChoresApi {

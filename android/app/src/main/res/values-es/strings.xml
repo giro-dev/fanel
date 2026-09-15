@@ -15,9 +15,13 @@
     <string name="no_events">Ningún evento</string>
     <string name="create_event">Nuevo evento</string>
     <string name="event_title">Título</string>
-    <string name="event_date">Fecha (aaaa-mm-dd)</string>
+    <string name="event_date">Fecha</string>
     <string name="event_time_optional">Hora (opcional)</string>
+    <string name="event_pick_time">Elige la hora</string>
+    <string name="event_clear_time">Quitar la hora</string>
+    <string name="event_clear_until">Quitar la fecha de fin</string>
     <string name="event_invalid_input">Revisa el título, la fecha y la hora</string>
+    <string name="ok">De acuerdo</string>
     <string name="save">Guardar</string>
     <string name="cancel">Cancelar</string>
     <string name="delete">Eliminar</string>
@@ -40,7 +44,7 @@
     <string name="event_members">Miembros</string>
     <string name="event_recurrence">Repetición</string>
     <string name="event_recurrence_interval">Cada cuántos</string>
-    <string name="event_recurrence_until">Hasta (opcional, aaaa-mm-dd)</string>
+    <string name="event_recurrence_until">Hasta (opcional)</string>
     <string name="recurrence_none">No se repite</string>
     <string name="recurrence_daily">Diaria</string>
     <string name="recurrence_weekly">Semanal</string>

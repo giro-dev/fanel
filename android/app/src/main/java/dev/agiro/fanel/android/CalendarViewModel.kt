@@ -8,9 +8,9 @@ import androidx.lifecycle.viewModelScope
 import dev.agiro.fanel.android.data.CalendarDraft
 import dev.agiro.fanel.android.data.CalendarRepositoryContract
 import dev.agiro.fanel.android.data.local.CalendarEventEntity
-import dev.agiro.fanel.android.data.remote.HouseholdApi
+import dev.agiro.fanel.android.data.offline.MembersRepository
 import dev.agiro.fanel.android.data.remote.MemberDto
-import dev.agiro.fanel.android.sync.CalendarSyncScheduler
+import dev.agiro.fanel.android.sync.HouseholdSyncScheduler
 import dev.agiro.fanel.android.sync.HouseholdEvents
 import dev.agiro.fanel.android.sync.SyncSchedulerContract
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -38,17 +39,20 @@ enum class CalendarViewMode {
 class CalendarViewModel(
     application: Application,
     private val repository: CalendarRepositoryContract = (application as FanelApplication).appContainer.calendarRepository,
-    private val syncScheduler: SyncSchedulerContract = CalendarSyncScheduler,
-    private val householdApi: HouseholdApi = (application as FanelApplication).appContainer.householdApi,
+    private val syncScheduler: SyncSchedulerContract = HouseholdSyncScheduler,
+    private val membersRepository: MembersRepository = (application as FanelApplication).appContainer.membersRepository,
     private val householdEvents: HouseholdEvents = (application as FanelApplication).appContainer.householdEvents
 ) : AndroidViewModel(application) {
     private val householdId = MutableStateFlow("")
     private val _viewMode = MutableStateFlow(CalendarViewMode.MONTH)
     private val _referenceDate = MutableStateFlow(LocalDate.now())
-    private val _members = MutableStateFlow<List<MemberDto>>(emptyList())
     val viewMode: StateFlow<CalendarViewMode> = _viewMode
     val referenceDate: StateFlow<LocalDate> = _referenceDate
-    val members: StateFlow<List<MemberDto>> = _members
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val members: StateFlow<List<MemberDto>> = householdId
+        .flatMapLatest { id -> if (id.isBlank()) flowOf(emptyList()) else membersRepository.observeMembers(id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val visibleRange = combine(_viewMode, _referenceDate) { mode, date ->
         rangeFor(mode, date)
@@ -110,9 +114,7 @@ class CalendarViewModel(
         if (newHouseholdId.isBlank()) return
         syncScheduler.enqueuePeriodic(getApplication(), newHouseholdId)
         syncVisibleRange()
-        viewModelScope.launch {
-            _members.value = runCatching { householdApi.members(newHouseholdId) }.getOrDefault(emptyList())
-        }
+        viewModelScope.launch { runCatching { membersRepository.sync(newHouseholdId) } }
     }
 
     fun setViewMode(mode: CalendarViewMode) {

@@ -5,40 +5,52 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dev.agiro.fanel.android.data.offline.ChoresRepository
+import dev.agiro.fanel.android.data.offline.MembersRepository
 import dev.agiro.fanel.android.data.remote.ChoreDto
-import dev.agiro.fanel.android.data.remote.ChoresApi
 import dev.agiro.fanel.android.data.remote.CreateChoreRequest
-import dev.agiro.fanel.android.data.remote.HouseholdApi
 import dev.agiro.fanel.android.data.remote.MemberDto
 import dev.agiro.fanel.android.data.remote.RecurrenceFrequency
 import dev.agiro.fanel.android.data.remote.UpdateChoreRequest
 import dev.agiro.fanel.android.data.remote.UpdateRecurrenceRequest
 import dev.agiro.fanel.android.sync.HouseholdEvents
+import dev.agiro.fanel.android.sync.HouseholdSyncScheduler
+import dev.agiro.fanel.android.sync.SyncSchedulerContract
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ChoresViewModel(
     application: Application,
-    private val choresApi: ChoresApi = (application as FanelApplication).appContainer.choresApi,
-    private val householdApi: HouseholdApi = (application as FanelApplication).appContainer.householdApi,
+    private val repository: ChoresRepository = (application as FanelApplication).appContainer.choresRepository,
+    private val membersRepository: MembersRepository = (application as FanelApplication).appContainer.membersRepository,
     private val sessionStore: SessionStore = (application as FanelApplication).appContainer.sessionStore,
-    private val householdEvents: HouseholdEvents = (application as FanelApplication).appContainer.householdEvents
+    private val householdEvents: HouseholdEvents = (application as FanelApplication).appContainer.householdEvents,
+    private val syncScheduler: SyncSchedulerContract = HouseholdSyncScheduler
 ) : AndroidViewModel(application) {
     private val householdId = MutableStateFlow("")
-    private val _chores = MutableStateFlow<List<ChoreDto>>(emptyList())
-    private val _members = MutableStateFlow<List<MemberDto>>(emptyList())
     private val _loading = MutableStateFlow(false)
     private val _errorRes = MutableStateFlow<Int?>(null)
 
+    private val chores: Flow<List<ChoreDto>> = householdId.flatMapLatest { id ->
+        if (id.isBlank()) flowOf(emptyList()) else repository.observeChores(id)
+    }
+
+    private val members: Flow<List<MemberDto>> = householdId.flatMapLatest { id ->
+        if (id.isBlank()) flowOf(emptyList()) else membersRepository.observeMembers(id)
+    }
+
     val uiState: StateFlow<ChoresUiState> = combine(
-        householdId, _chores, _members, _loading, _errorRes
+        householdId, chores, members, _loading, _errorRes
     ) { currentHouseholdId, chores, members, loading, errorRes ->
         ChoresUiState(
             householdId = currentHouseholdId,
@@ -54,7 +66,6 @@ class ChoresViewModel(
         subscribeToEvents()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun subscribeToEvents() {
         viewModelScope.launch {
             householdId
@@ -69,9 +80,7 @@ class ChoresViewModel(
         if (householdId.value == newHouseholdId) return
         householdId.value = newHouseholdId
         if (newHouseholdId.isBlank()) return
-        viewModelScope.launch {
-            _members.value = runCatching { householdApi.members(newHouseholdId) }.getOrDefault(emptyList())
-        }
+        viewModelScope.launch { runCatching { membersRepository.sync(newHouseholdId) } }
         refresh()
     }
 
@@ -80,30 +89,29 @@ class ChoresViewModel(
         if (currentHouseholdId.isBlank()) return
         _loading.value = true
         viewModelScope.launch {
-            runCatching { choresApi.list(currentHouseholdId) }
-                .onSuccess { chores ->
-                    _chores.value = chores
-                    _errorRes.value = null
+            runCatching { repository.sync(currentHouseholdId) }
+                .onSuccess { _errorRes.value = null }
+                .onFailure {
+                    if (repository.cached(currentHouseholdId) == null) _errorRes.value = R.string.chores_load_error
                 }
-                .onFailure { _errorRes.value = R.string.chores_load_error }
             _loading.value = false
         }
     }
 
     fun createChore(title: String, assigneeId: String?) {
-        mutate { choresApi.create(it, CreateChoreRequest(title, assigneeId)) }
+        mutate { repository.create(it, CreateChoreRequest(title, assigneeId)) }
     }
 
     fun toggleDone(chore: ChoreDto) {
-        mutate { choresApi.update(it, chore.id, UpdateChoreRequest(done = !chore.done)) }
+        mutate { repository.update(it, chore.id, UpdateChoreRequest(done = !chore.done)) }
     }
 
     fun setAssignee(chore: ChoreDto, assigneeId: String) {
-        mutate { choresApi.update(it, chore.id, UpdateChoreRequest(assigneeId = assigneeId)) }
+        mutate { repository.update(it, chore.id, UpdateChoreRequest(assigneeId = assigneeId)) }
     }
 
     fun deleteChore(chore: ChoreDto) {
-        mutate { choresApi.delete(it, chore.id) }
+        mutate { repository.delete(it, chore.id) }
     }
 
     fun updateRecurrence(
@@ -114,20 +122,24 @@ class ChoresViewModel(
         rotationMemberIds: List<String>
     ) {
         mutate {
-            choresApi.updateRecurrence(
+            repository.updateRecurrence(
                 it, chore.id,
                 UpdateRecurrenceRequest(dueDate, recurrenceFreq, recurrenceInterval, rotationMemberIds)
             )
         }
     }
 
+    /** Applies the change to the local cache, then tries to push it; if offline, WorkManager retries later. */
     private fun mutate(block: suspend (String) -> Unit) {
         val currentHouseholdId = householdId.value
         if (currentHouseholdId.isBlank()) return
         viewModelScope.launch {
             runCatching { block(currentHouseholdId) }
-                .onSuccess { refresh() }
                 .onFailure { _errorRes.value = R.string.chores_save_error }
+                .onSuccess {
+                    runCatching { repository.sync(currentHouseholdId) }
+                        .onFailure { syncScheduler.enqueueImmediate(getApplication(), currentHouseholdId) }
+                }
         }
     }
 

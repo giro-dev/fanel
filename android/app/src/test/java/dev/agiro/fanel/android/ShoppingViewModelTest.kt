@@ -1,5 +1,6 @@
 package dev.agiro.fanel.android
 
+import dev.agiro.fanel.android.data.offline.ShoppingRepository
 import dev.agiro.fanel.android.data.remote.AddItemRequest
 import dev.agiro.fanel.android.data.remote.ListNameRequest
 import dev.agiro.fanel.android.data.remote.ShoppingApi
@@ -38,11 +39,13 @@ class ShoppingViewModelTest {
     private fun viewModel(api: FakeShoppingApi): Pair<ShoppingViewModel, MutableList<ShoppingUiState>> {
         val context = RuntimeEnvironment.getApplication()
         val sessionStore = SessionStore(context).apply { householdId = "household-1" }
+        val store = OfflineTestStore(context)
         val vm = ShoppingViewModel(
             application = context,
-            shoppingApi = api,
+            repository = ShoppingRepository(api, store.snapshotDao, store.pendingDao, store.pusher),
             sessionStore = sessionStore,
-            householdEvents = EmptyHouseholdEvents
+            householdEvents = EmptyHouseholdEvents,
+            syncScheduler = FakeSyncScheduler()
         )
         return vm to mutableListOf()
     }

@@ -43,23 +43,42 @@ public class CalendarService implements CalendarApi {
     }
 
     @Override
-    public CalendarEventDto create(UUID householdId, String title, LocalDate date, LocalTime time, UUID addedBy) {
-        CalendarEvent saved = events.save(new CalendarEvent(householdId, title, date, time, addedBy));
+    public CalendarEventDto create(UUID householdId, String title, LocalDate date, LocalTime time,
+                                   UUID addedBy, List<UUID> assigneeIds) {
+        CalendarEvent event = new CalendarEvent(householdId, title, date, time, addedBy);
+        event.setAssigneeIds(assigneeIds);
+        CalendarEvent saved = events.save(event);
         publisher.publishEvent(new HouseholdEvent(householdId, TOPIC));
         return toDto(saved);
     }
 
     @Override
+    public CalendarEventDto update(UUID householdId, UUID eventId, String title, LocalDate date,
+                                   LocalTime time, List<UUID> assigneeIds) {
+        CalendarEvent event = find(householdId, eventId);
+        if (title != null) event.setTitle(title);
+        if (date != null) event.setDate(date);
+        event.setTime(time);
+        event.setAssigneeIds(assigneeIds);
+        publisher.publishEvent(new HouseholdEvent(householdId, TOPIC));
+        return toDto(events.save(event));
+    }
+
+    @Override
     public void delete(UUID householdId, UUID eventId) {
-        CalendarEvent event = events.findById(eventId)
+        events.delete(find(householdId, eventId));
+        publisher.publishEvent(new HouseholdEvent(householdId, TOPIC));
+    }
+
+    private CalendarEvent find(UUID householdId, UUID eventId) {
+        return events.findById(eventId)
                 .filter(e -> e.getHouseholdId().equals(householdId))
                 .orElseThrow(() -> new EntityNotFoundException("Calendar event not found: " + eventId));
-        events.delete(event);
-        publisher.publishEvent(new HouseholdEvent(householdId, TOPIC));
     }
 
     private static CalendarEventDto toDto(CalendarEvent event) {
         return new CalendarEventDto(event.getId(), event.getHouseholdId(), event.getTitle(),
-                event.getDate(), event.getTime(), event.getAddedBy());
+                event.getDate(), event.getTime(), event.getAddedBy(),
+                List.copyOf(event.getAssigneeIds()));
     }
 }

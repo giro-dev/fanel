@@ -1,5 +1,7 @@
 package dev.agiro.fanel.android
 
+import android.content.Context
+import dev.agiro.fanel.android.data.offline.RecipesRepository
 import dev.agiro.fanel.android.data.remote.AgentDto
 import dev.agiro.fanel.android.data.remote.AgentRequest
 import dev.agiro.fanel.android.data.remote.AgentResponse
@@ -80,13 +82,18 @@ class AssistantViewModelTest {
         assertFalse(AssistantViewModel.wantsCreate("Què porten els canelons?"))
     }
 
+    private fun recipesRepository(context: Context, api: RecipesApi): RecipesRepository {
+        val store = OfflineTestStore(context)
+        return RecipesRepository(api, store.snapshotDao, store.pendingDao, store.pusher)
+    }
+
     @Test
     fun sendPostsMessageAndAppendsReply() = runBlocking {
         val assistantApi = FakeAssistantApi()
         val recipesApi = RecordingRecipesApi()
         val context = RuntimeEnvironment.getApplication()
         val sessionStore = SessionStore(context).apply { householdId = "household-1" }
-        val vm = AssistantViewModel(context, assistantApi, recipesApi, sessionStore)
+        val vm = AssistantViewModel(context, assistantApi, recipesRepository(context, recipesApi), sessionStore)
         val states = mutableListOf<AssistantUiState>()
         val job = launch(UnconfinedTestDispatcher()) { vm.uiState.collect { states.add(it) } }
 
@@ -112,7 +119,7 @@ class AssistantViewModelTest {
             householdId = "household-1"
             memberId = "member-9"
         }
-        val vm = AssistantViewModel(context, assistantApi, recipesApi, sessionStore)
+        val vm = AssistantViewModel(context, assistantApi, recipesRepository(context, recipesApi), sessionStore)
 
         vm.send("Hola", null)
 
@@ -134,7 +141,7 @@ class AssistantViewModelTest {
         val recipesApi = RecordingRecipesApi()
         val context = RuntimeEnvironment.getApplication()
         val sessionStore = SessionStore(context).apply { householdId = "household-1" }
-        val vm = AssistantViewModel(context, assistantApi, recipesApi, sessionStore)
+        val vm = AssistantViewModel(context, assistantApi, recipesRepository(context, recipesApi), sessionStore)
 
         vm.send("Crea aquesta recepta", null)
 

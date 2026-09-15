@@ -1,19 +1,10 @@
 package dev.agiro.fanel.android
 
-import dev.agiro.fanel.android.data.CalendarRepositoryContract
-import dev.agiro.fanel.android.data.remote.AssistantApi
-import dev.agiro.fanel.android.data.remote.ChoresApi
 import dev.agiro.fanel.android.data.remote.HouseholdApi
 import dev.agiro.fanel.android.data.remote.HouseholdDto
 import dev.agiro.fanel.android.data.remote.MemberDto
-import dev.agiro.fanel.android.data.remote.MenuApi
-import dev.agiro.fanel.android.data.remote.RecipesApi
-import dev.agiro.fanel.android.data.remote.ShoppingApi
 import dev.agiro.fanel.android.data.remote.VerifyPinRequest
 import dev.agiro.fanel.android.data.remote.VerifyPinResponse
-import dev.agiro.fanel.android.sync.HouseholdEvents
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -36,7 +27,8 @@ class SessionViewModelTest {
             householdId = household.id
             householdName = household.name
         }
-        val container = FakeSessionContainer(
+        val container = FakeAppContainer(
+            context,
             sessionStore = sessionStore,
             householdApi = object : HouseholdApi {
                 override suspend fun list() = listOf(household)
@@ -109,24 +101,4 @@ class SessionViewModelTest {
     private fun member(id: String, name: String, hasPin: Boolean) = MemberDto(
         id, household.id, name, "ADULT", null, null, null, hasPin, false
     )
-}
-
-private class FakeSessionContainer(
-    override val sessionStore: SessionStore,
-    override val householdApi: HouseholdApi
-) : AppContainerContract {
-    override val authStore = AuthStore()
-    override val recipesApi: RecipesApi get() = throw UnsupportedOperationException()
-    override val menuApi: MenuApi get() = throw UnsupportedOperationException()
-    override val shoppingApi: ShoppingApi get() = throw UnsupportedOperationException()
-    override val choresApi: ChoresApi get() = throw UnsupportedOperationException()
-    override val assistantApi: AssistantApi get() = throw UnsupportedOperationException()
-    override val householdEvents: HouseholdEvents
-        get() = object : HouseholdEvents {
-            override fun observe(householdId: String): Flow<String> = emptyFlow()
-        }
-    override val calendarRepository: CalendarRepositoryContract
-        get() = throw UnsupportedOperationException()
-
-    override fun refreshConnection() = Unit
 }

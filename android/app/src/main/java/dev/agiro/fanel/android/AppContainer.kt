@@ -5,6 +5,12 @@ import androidx.room.Room
 import dev.agiro.fanel.android.data.CalendarRepository
 import dev.agiro.fanel.android.data.CalendarRepositoryContract
 import dev.agiro.fanel.android.data.local.FanelDatabase
+import dev.agiro.fanel.android.data.offline.ChoresRepository
+import dev.agiro.fanel.android.data.offline.MembersRepository
+import dev.agiro.fanel.android.data.offline.MenuRepository
+import dev.agiro.fanel.android.data.offline.OutboxPusher
+import dev.agiro.fanel.android.data.offline.RecipesRepository
+import dev.agiro.fanel.android.data.offline.ShoppingRepository
 import dev.agiro.fanel.android.data.remote.ApiFactory
 import dev.agiro.fanel.android.data.remote.AssistantApi
 import dev.agiro.fanel.android.data.remote.ChoresApi
@@ -13,6 +19,8 @@ import dev.agiro.fanel.android.data.remote.MenuApi
 import dev.agiro.fanel.android.data.remote.RecipesApi
 import dev.agiro.fanel.android.data.remote.ShoppingApi
 import dev.agiro.fanel.android.sync.HouseholdEvents
+import dev.agiro.fanel.android.sync.HouseholdSync
+import dev.agiro.fanel.android.sync.HouseholdSyncContract
 import dev.agiro.fanel.android.sync.SseHouseholdEvents
 
 class AppContainer(context: Context) : AppContainerContract {
@@ -23,7 +31,7 @@ class AppContainer(context: Context) : AppContainerContract {
         context.applicationContext,
         FanelDatabase::class.java,
         "fanel-android.db"
-    ).build()
+    ).addMigrations(FanelDatabase.MIGRATION_1_2).build()
 
     private val syncPreferences = SyncPreferences(context.applicationContext)
 
@@ -59,6 +67,20 @@ class AppContainer(context: Context) : AppContainerContract {
     override val calendarRepository: CalendarRepositoryContract
         get() = _calendarRepository
 
+    private var offline: OfflineRepositories = buildOfflineRepositories()
+    override val membersRepository: MembersRepository
+        get() = offline.members
+    override val recipesRepository: RecipesRepository
+        get() = offline.recipes
+    override val menuRepository: MenuRepository
+        get() = offline.menu
+    override val shoppingRepository: ShoppingRepository
+        get() = offline.shopping
+    override val choresRepository: ChoresRepository
+        get() = offline.chores
+    override val householdSync: HouseholdSyncContract
+        get() = offline.sync
+
     override fun refreshConnection() {
         _householdApi = buildHouseholdApi()
         _recipesApi = buildRecipesApi()
@@ -68,6 +90,31 @@ class AppContainer(context: Context) : AppContainerContract {
         _assistantApi = buildAssistantApi()
         _householdEvents = buildHouseholdEvents()
         _calendarRepository = buildCalendarRepository()
+        offline = buildOfflineRepositories()
+    }
+
+    private class OfflineRepositories(
+        val members: MembersRepository,
+        val recipes: RecipesRepository,
+        val menu: MenuRepository,
+        val shopping: ShoppingRepository,
+        val chores: ChoresRepository,
+        val sync: HouseholdSyncContract
+    )
+
+    private fun buildOfflineRepositories(): OfflineRepositories {
+        val snapshotDao = database.cachedSnapshotDao()
+        val pendingDao = database.pendingOperationDao()
+        val pusher = OutboxPusher(pendingDao)
+        val members = MembersRepository(_householdApi, snapshotDao, pendingDao, pusher)
+        val recipes = RecipesRepository(_recipesApi, snapshotDao, pendingDao, pusher)
+        val menu = MenuRepository(_menuApi, snapshotDao, pendingDao, pusher)
+        val shopping = ShoppingRepository(_shoppingApi, snapshotDao, pendingDao, pusher)
+        val chores = ChoresRepository(_choresApi, snapshotDao, pendingDao, pusher)
+        return OfflineRepositories(
+            members, recipes, menu, shopping, chores,
+            HouseholdSync(_calendarRepository, listOf(members, recipes, menu, shopping, chores))
+        )
     }
 
     private fun buildHouseholdApi(): HouseholdApi =
