@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version (semver X.Y.Z, e.g. 0.2.0)"
-        required: true
+        description: "Release version (semver X.Y.Z). Empty = pom version without -SNAPSHOT"
+        required: false
         type: string
 
 concurrency:
@@ -39,6 +39,15 @@ jobs:
         run: |
           VERSION="${{ inputs.version }}"
           VERSION="${VERSION#v}"
+          if [ -z "$VERSION" ]; then
+            CURRENT=$(mvn -B -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
+            if [[ "$CURRENT" != *-SNAPSHOT ]]; then
+              echo "::error::No version input and project version '$CURRENT' is not a -SNAPSHOT"
+              exit 1
+            fi
+            VERSION="${CURRENT%-SNAPSHOT}"
+            echo "Derived version $VERSION from pom ($CURRENT)"
+          fi
           if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::Invalid version '$VERSION' (expected semver X.Y.Z)"
             exit 1
