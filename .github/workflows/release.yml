@@ -175,6 +175,13 @@ jobs:
           tags: |
             ${{ env.DOCKER_IMAGE }}:${{ needs.prepare.outputs.version }}
             ${{ env.DOCKER_IMAGE }}:latest
+      # Keep the Docker Hub overview in sync with DOCKERHUB.md
+      - uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ env.DOCKER_IMAGE }}
+          readme-filepath: ./DOCKERHUB.md
 
   publish:
     needs: [prepare, jar, apk]
