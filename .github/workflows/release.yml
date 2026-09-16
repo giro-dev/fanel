@@ -37,9 +37,9 @@ jobs:
           cache: maven
       - id: vars
         run: |
-          VERSION="${{ inputs.version }}"
-          VERSION="${VERSION#v}"
-          if [ -z "$VERSION" ]; then
+          INPUT="${{ inputs.version }}"
+          VERSION="${INPUT#v}"
+          if [ -z "$INPUT" ]; then
             CURRENT=$(mvn -B -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
             if [[ "$CURRENT" != *-SNAPSHOT ]]; then
               echo "::error::No version input and project version '$CURRENT' is not a -SNAPSHOT"
