@@ -197,7 +197,9 @@ jobs:
   # After a successful release, bump everything to the next -SNAPSHOT on the
   # source branch so the repository is ready for the following release.
   bump:
-    needs: publish
+    # needs prepare too: needs.* context only exposes jobs listed here,
+    # and this job reads needs.prepare.outputs.version.
+    needs: [prepare, publish]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -228,7 +230,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin "$BRANCH"
           git add pom.xml backend/pom.xml frontend/pom.xml android/app/build.gradle.kts
           git diff --cached --quiet || git commit -m "chore: prepare next development iteration ($NEXT-SNAPSHOT)"
           git push origin "HEAD:refs/heads/$BRANCH"
