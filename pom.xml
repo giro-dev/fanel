@@ -19,6 +19,8 @@
     </modules>
     <properties>
         <java.version>25</java.version>
+        <!-- Override Spring Boot's managed Tomcat (11.0.24) to pick up CVE fixes -->
+        <tomcat.version>11.0.26</tomcat.version>
         <spring-modulith.version>2.1.1</spring-modulith.version>
         <spring-ai.version>2.0.1</spring-ai.version>
         <testcontainers.version>1.20.4</testcontainers.version>
