@@ -171,6 +171,10 @@ jobs:
     needs: [prepare, jar, apk]
     runs-on: ubuntu-latest
     steps:
+      # gh release create --generate-notes needs a local git repo.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
       - uses: actions/download-artifact@v4
         with:
           name: jar
