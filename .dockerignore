@@ -1,0 +1,11 @@
+.git
+.idea
+**/node_modules
+**/.gradle
+android/build
+android/app/build
+frontend/target
+docs-site/public
+docs-site/resources/_gen
+data
+deploy/data

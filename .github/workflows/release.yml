@@ -128,12 +128,22 @@ jobs:
           path: fanel-*.apk
 
   docker:
-    needs: prepare
+    needs: [prepare, jar]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare.outputs.tag }}
+      # Reuse the jar built by the jar job: the Dockerfile skips the Maven
+      # build when backend/target/fanel-backend-*.jar is present.
+      - uses: actions/download-artifact@v4
+        with:
+          name: jar
+          path: dist
+      - run: |
+          mkdir -p backend/target
+          cp "dist/fanel-${{ needs.prepare.outputs.version }}.jar" \
+             "backend/target/fanel-backend-${{ needs.prepare.outputs.version }}.jar"
       - name: Resolve image name
         env:
           DOCKERHUB_IMAGE: ${{ vars.DOCKERHUB_IMAGE }}
