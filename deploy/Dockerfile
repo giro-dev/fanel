@@ -6,7 +6,7 @@ COPY . .
 RUN ls backend/target/fanel-backend-*.jar >/dev/null 2>&1 || mvn -B -ntp package -DskipTests
 
 FROM eclipse-temurin:25-jre-alpine
-RUN adduser -S -D -h /app fanel
+RUN addgroup -S fanel && adduser -S -D -h /app -G fanel fanel
 WORKDIR /app
 COPY --from=build /build/backend/target/fanel-backend-*.jar app.jar
 RUN mkdir /data && chown fanel:fanel /data /app
