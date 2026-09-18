@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       manifest: {
         name: 'Fanel',
         short_name: 'Fanel',
@@ -19,7 +22,10 @@ export default defineConfig({
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,ico,png,svg}'] },
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+      },
+      devOptions: { enabled: true, type: 'classic' },
     }),
   ],
   server: {

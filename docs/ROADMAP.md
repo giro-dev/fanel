@@ -9,8 +9,8 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 | Fase | Nom | Estat |
 |---|---|---|
 | 0 | Fonaments | ✅ fet |
-| 1 | Paritat amb la POC | 🔧 en curs |
-| 2 | Valor de domini | 🔧 en curs |
+| 1 | Paritat amb la POC | ✅ fet |
+| 2 | Valor de domini | ✅ fet |
 | 3 | IA i MCP | ⏳ |
 | 4 | Clients Android i escriptori | ⏳ |
 | 5 | Maduresa | ⏳ |
@@ -35,21 +35,22 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 - [x] `calendar`: esdeveniments amb data (+hora opcional), agrupats per dia, `addedBy`
 - [x] `chores`: tasques amb assignat (membre) i `done`
 - [x] Membres reals amb color; selector "qui sóc" i **mode tauleta** (dispositiu compartit, canvi de membre amb PIN) — `WhoAmI` i `HouseholdProvider` ja muntats a `App.tsx`
-- [ ] Autenticació: usuari/contrasenya per adults + token d'API per a clients — només hi ha un usuari admin global (Basic auth) i un token d'API per a clients; falta un model d'usuari per adult
+- [x] Autenticació: usuari/contrasenya per adults + token d'API per a clients — cada `Member` adult pot tenir `username`/`passwordHash` propis (`PUT /api/v1/households/{id}/members/{memberId}/credentials`); `MemberUserDetailsService` els autentica amb Basic auth juntament amb l'admin global (`AuthenticationManager` amb dos `DaoAuthenticationProvider`); el frontend té pantalla de login i pàgina "Compte" per configurar les credencials pròpies
 - [x] SSE `/api/v1/events` per a actualització en temps real entre dispositius — connectat des de `App.tsx` via `useHouseholdEvents`
 - [x] Export / import JSON de tota la llar — `GET /api/v1/households/{id}/export` i `POST /api/v1/households/import` (mòdul `export`)
 - [x] UI de les 4 pestanyes en català i castellà — `Menu`, `Shopping`, `Calendar`, `Chores` enrutades i amb claus i18n completes
 - [x] Afegir UI per al calendari, buscar i evaluar llibreries com https://www.untitledui.com/react/components/calendars i evaluarla com a adopció general — vegeu [ADR 0008](adr/0008-llibreria-ui-calendari.md): es descarta Untitled UI (de pagament, requereix Tailwind) i qualsevol llibreria de components general; s'adopta el nucli MIT de `FullCalendar` (`@fullcalendar/react` 6.1.x) només per a `Calendar.tsx`, amb vistes mes/setmana/llista i locales ca/es
-- **Fet quan**: la família substitueix la POC. Pendent només l'autenticació per adult individual.
+- **Fet quan**: la família substitueix la POC. ✅
 
 ## Fase 2 — Valor de domini
 
 - [x] `recipes`: receptes amb ingredients (nom, quantitat, unitat, categoria), racions, etiquetes — CRUD a `/api/v1/households/{id}/recipes`
 - [x] Menú ↔ receptes; generació de la compra des del menú via esdeveniment `MealPlanned` — `MealSlot.recipeId` opcional; `menu` publica `MealPlanned` (`@ApplicationModuleListener` a `shopping.domain.MealPlanListener`) que afegeix els ingredients a la llista per defecte sense duplicar-ne el nom
-- [ ] Compra: categories/passadissos, múltiples llistes, ítems recurrents, quantitats — el model ja admet `category`/`unit`/`quantity` a `recipes`, però `ShoppingItem` encara és només `name`+`done`; falta portar-ho a `shopping`
-- [ ] Recurrència (RRULE) en calendari i tasques; rotació de tasques entre membres
-- [ ] `notifications`: web push per recordatoris de tasques i esdeveniments
-- [ ] PWA offline real per la llista de la compra (cache + cua de sincronització)
+- [x] Compra: categories/passadissos, múltiples llistes, ítems recurrents, quantitats — `ShoppingItem` amb `quantity`/`unit`/`category`/`recurring`; `ShoppingList` amb CRUD complet (`/api/v1/households/{id}/shopping/lists`); UI a `Shopping.tsx` amb selector de llista
+- [x] `calendar`: experiència d'edició tipus Android (botó `+` flotant, detall del dia en clicar-hi, edició/eliminació d'esdeveniments des del detall) i esdeveniments recurrents (diari/setmanal/mensual/anual, interval i fi opcional) — `CalendarEvent.recurrenceFreq/-Interval/-Until`, expansió d'ocurrències a `CalendarService.list` (`GET /calendar`), `Calendar.tsx`
+- [x] Recurrència (RRULE) en tasques; rotació de tasques entre membres — `Chore.dueDate`/`recurrenceFreq`/`recurrenceInterval`/`rotationMemberIds` (`PUT /chores/{id}/recurrence`); marcar una tasca recurrent com a feta avança la data de venciment i rota l'assignat en lloc de deixar-la marcada (`Chore#setDone`)
+- [x] `notifications`: web push per recordatoris de tasques i esdeveniments
+- [x] PWA offline real per la llista de la compra (cache + cua de sincronització)
 - [x] UI de `recipes` al frontend (llistat/creació de receptes, selector de recepta al `Menu`) — pàgina `Recipes.tsx` i pestanya nova; `Menu.tsx` permet triar una recepta per àpat (a més del text lliure)
 
 ## Fase 3 — IA i MCP

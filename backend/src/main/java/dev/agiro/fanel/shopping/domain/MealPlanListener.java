@@ -36,7 +36,8 @@ class MealPlanListener {
                 .collect(Collectors.toSet());
         for (IngredientDto ingredient : recipe.ingredients()) {
             if (existing.add(ingredient.name().toLowerCase())) {
-                shopping.addItem(event.householdId(), list.id(), ingredient.name());
+                shopping.addItem(event.householdId(), list.id(), ingredient.name(),
+                        ingredient.quantity(), ingredient.unit(), ingredient.category(), false);
             }
         }
     }
