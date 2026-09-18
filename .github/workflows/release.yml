@@ -7,6 +7,25 @@ on:
         description: "Release version (semver X.Y.Z). Empty = pom version without -SNAPSHOT"
         required: false
         type: string
+      play_track:
+        description: "Also upload the AAB to this Play Console track (none = skip)"
+        required: false
+        type: choice
+        options:
+          - none
+          - internal
+          - alpha
+          - beta
+          - production
+        default: none
+      play_status:
+        description: "Play release status. While the app is still a draft in Play Console only 'draft' is accepted"
+        required: false
+        type: choice
+        options:
+          - draft
+          - completed
+        default: draft
 
 concurrency:
   group: release
@@ -221,6 +240,17 @@ jobs:
             --title "Fanel $TAG" \
             --generate-notes \
             --verify-tag
+
+  playstore:
+    needs: [prepare, publish]
+    if: inputs.play_track != 'none' && inputs.play_track != ''
+    uses: ./.github/workflows/playstore-publish.yml
+    with:
+      version: ${{ needs.prepare.outputs.version }}
+      track: ${{ inputs.play_track }}
+      status: ${{ inputs.play_status || 'draft' }}
+    secrets:
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
 
   # After a successful release, bump everything to the next -SNAPSHOT on the
   # source branch so the repository is ready for the following release.
