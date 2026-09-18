@@ -1,5 +1,8 @@
 name: Publish to Play Store
 
+# Uploads the .aab of an existing GitHub Release to a Play Console track.
+# Called automatically by release.yml (play_track input) and runnable by hand
+# to (re)publish a version later.
 on:
   workflow_dispatch:
     inputs:
@@ -17,6 +20,29 @@ on:
           - beta
           - production
         default: internal
+      status:
+        description: "Release status. While the app is still a draft in Play Console only 'draft' is accepted"
+        required: true
+        type: choice
+        options:
+          - draft
+          - completed
+        default: draft
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      track:
+        required: true
+        type: string
+      status:
+        required: false
+        type: string
+        default: draft
+    secrets:
+      PLAY_SERVICE_ACCOUNT_JSON:
+        required: true
 
 concurrency:
   group: playstore-publish
@@ -52,3 +78,4 @@ jobs:
           packageName: dev.agiro.fanel.android
           releaseFiles: dist/*.aab
           track: ${{ inputs.track }}
+          status: ${{ inputs.status }}

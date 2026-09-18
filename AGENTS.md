@@ -91,7 +91,7 @@ La release es fa amb la pipeline **Actions → Release → Run workflow**, indic
 1. `prepare`: posa la versió als poms Maven (`versions:set`) i a `android/app/build.gradle.kts` (`versionName` + `versionCode = major·10000 + minor·100 + patch`), fa commit `chore: release vX.Y.Z` i crea el tag `vX.Y.Z`.
 2. En paral·lel des del tag: **jar** (`mvn package -DskipTests`), **apk** (`./gradlew assembleRelease`, signat), **aab** (`./gradlew bundleRelease`, signat) i **docker** (build multi-arch `linux/amd64,linux/arm64` i push a Docker Hub amb tags `X.Y.Z` i `latest`).
 3. `publish`: crea la GitHub Release `vX.Y.Z` amb `fanel-X.Y.Z.jar`, `fanel-X.Y.Z.apk` i `fanel-X.Y.Z.aab` adjunts.
-4. (Opcional) **Actions → Publish to Play Store → Run workflow**: pujar un `.aab` d'una GitHub Release existent a un track del Play Console (`internal`, `alpha`, `beta` o `production`).
+4. (Opcional) `playstore`: si a l'input `play_track` s'indica un track (`internal`, `alpha`, `beta` o `production`; per defecte `none`), puja el `.aab` de la GitHub Release al Play Console amb l'estat `play_status` (`draft` per defecte). Mentre l'app encara sigui un *draft* al Play Console només s'accepta `draft` (si no: *"Only releases with status draft may be created on draft app"*); un cop publicada l'app, fer servir `completed`. La mateixa pujada es pot fer a mà més tard amb **Actions → Publish to Play Store → Run workflow** (workflow reutilitzable `playstore-publish.yml`).
 5. `bump`: torna a la branca i deixa tot a `X.Y.(Z+1)-SNAPSHOT` (`chore: prepare next development iteration`), llest per a la següent release.
 
 Secrets/variables necessaris a GitHub:
