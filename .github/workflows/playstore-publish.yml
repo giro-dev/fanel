@@ -1,0 +1,54 @@
+name: Publish to Play Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (semver X.Y.Z) of an existing GitHub Release"
+        required: true
+        type: string
+      track:
+        description: "Play Console track"
+        required: true
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - production
+        default: internal
+
+concurrency:
+  group: playstore-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve tag
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          TAG="v${VERSION#v}"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Download AAB from GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ env.TAG }}
+        run: |
+          mkdir -p dist
+          gh release download "$TAG" --repo "${{ github.repository }}" -p '*.aab' -D dist
+          ls -la dist
+
+      - name: Publish to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: dev.agiro.fanel.android
+          releaseFiles: dist/*.aab
+          track: ${{ inputs.track }}
