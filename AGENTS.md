@@ -88,13 +88,15 @@ Abans d'obrir un PR: `mvn -B verify` verd (inclou `ApplicationModules.verify()` 
 La release es fa amb la pipeline **Actions → Release → Run workflow**, indicant la versió semver `X.Y.Z` (s'executa des de la branca triada, normalment `main`):
 
 1. `prepare`: posa la versió als poms Maven (`versions:set`) i a `android/app/build.gradle.kts` (`versionName` + `versionCode = major·10000 + minor·100 + patch`), fa commit `chore: release vX.Y.Z` i crea el tag `vX.Y.Z`.
-2. En paral·lel des del tag: **jar** (`mvn package -DskipTests`), **apk** (`./gradlew assembleRelease`, signat) i **docker** (build multi-arch `linux/amd64,linux/arm64` i push a Docker Hub amb tags `X.Y.Z` i `latest`).
-3. `publish`: crea la GitHub Release `vX.Y.Z` amb `fanel-X.Y.Z.jar` i `fanel-X.Y.Z.apk` adjunts.
-4. `bump`: torna a la branca i deixa tot a `X.Y.(Z+1)-SNAPSHOT` (`chore: prepare next development iteration`), llest per a la següent release.
+2. En paral·lel des del tag: **jar** (`mvn package -DskipTests`), **apk** (`./gradlew assembleRelease`, signat), **aab** (`./gradlew bundleRelease`, signat) i **docker** (build multi-arch `linux/amd64,linux/arm64` i push a Docker Hub amb tags `X.Y.Z` i `latest`).
+3. `publish`: crea la GitHub Release `vX.Y.Z` amb `fanel-X.Y.Z.jar`, `fanel-X.Y.Z.apk` i `fanel-X.Y.Z.aab` adjunts.
+4. (Opcional) **Actions → Publish to Play Store → Run workflow**: pujar un `.aab` d'una GitHub Release existent a un track del Play Console (`internal`, `alpha`, `beta` o `production`).
+5. `bump`: torna a la branca i deixa tot a `X.Y.(Z+1)-SNAPSHOT` (`chore: prepare next development iteration`), llest per a la següent release.
 
 Secrets/variables necessaris a GitHub:
 - `DOCKERHUB_USERNAME` + `DOCKERHUB_TOKEN` (secrets, obligatoris). Imatge per defecte: `<usuari>/fanel`; es pot sobreescriure amb la variable `DOCKERHUB_IMAGE`.
-- `FANEL_KEYSTORE_BASE64`, `FANEL_KEYSTORE_PASSWORD`, `FANEL_KEY_ALIAS`, `FANEL_KEY_PASSWORD` (secrets, opcionals): clau real de signatura de l'APK. Si no hi són, es fa servir la clau self-signed de dev pujada al repo (`android/app/selfsigned.jks`). **Atenció**: la clau del repo és pública — qualsevol pot signar "actualitzacions" de l'app; per a distribució real cal generar una clau privada i posar-la als secrets abans de la primera release pública.
+- `FANEL_KEYSTORE_BASE64`, `FANEL_KEYSTORE_PASSWORD`, `FANEL_KEY_ALIAS`, `FANEL_KEY_PASSWORD` (secrets, opcionals): clau real de signatura de l'APK/AAB. Si no hi són, es fa servir la clau self-signed de dev pujada al repo (`android/app/selfsigned.jks`). **Atenció**: la clau del repo és pública — qualsevol pot signar "actualitzacions" de l'app; per a distribució real cal generar una clau privada i posar-la als secrets abans de la primera release pública.
+- `PLAY_SERVICE_ACCOUNT_JSON` (secret, opcional): JSON del compte de servei de Google Cloud amb permís a l'API Google Play Android Developer. Necessari per a la pipeline `Publish to Play Store`.
 - El push dels commits de versió el fa `github-actions[bot]`; si la branca té protecció que ho impedeix, cal exemptar-lo o crear la release des d'una branca sense protecció.
 
 `docker.yml` (GHCR, tag `latest`) queda només per a pushes a `main`; les versions etiquetades les publica `release.yml` a Docker Hub.
