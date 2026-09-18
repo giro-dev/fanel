@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { getAuthHeader } from '../auth/authStore'
 
 const TOPIC_KEYS: Record<string, string[]> = {
   menu: ['menu'],
@@ -13,13 +14,14 @@ export function useHouseholdEvents(householdId?: string) {
   const queryClient = useQueryClient()
   useEffect(() => {
     if (!householdId) return
-    const credentials = btoa(`${import.meta.env.VITE_API_USER ?? 'admin'}:${import.meta.env.VITE_API_PASSWORD ?? 'admin'}`)
+    const authHeader = getAuthHeader()
+    if (!authHeader) return
     // EventSource cannot send headers; use fetch-based streaming.
     const controller = new AbortController()
     void (async () => {
       try {
         const response = await fetch(`/api/v1/events?household=${householdId}`, {
-          headers: { authorization: `Basic ${credentials}`, accept: 'text/event-stream' },
+          headers: { authorization: authHeader, accept: 'text/event-stream' },
           signal: controller.signal,
         })
         if (!response.ok || !response.body) return

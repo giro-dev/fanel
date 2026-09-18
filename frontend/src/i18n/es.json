@@ -1,10 +1,56 @@
 {
-  "nav": { "menu": "Menú", "recipes": "Recetas", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas" },
+  "nav": { "menu": "Menú", "recipes": "Recetas", "calendar": "Calendario", "shopping": "Compra", "chores": "Tareas", "members": "Miembros" },
   "theme": { "label": "Cambiar tema", "light": "Tema claro", "dark": "Tema oscuro", "system": "Tema del sistema" },
+  "auth": { "title": "Inicia sesión", "username": "Usuario", "password": "Contraseña", "login": "Entrar", "submitting": "Entrando…", "invalid": "El usuario o la contraseña no son correctos.", "logout": "Cerrar sesión" },
   "households": { "title": "Hogares", "name": "Nombre", "locale": "Idioma", "timezone": "Zona horaria", "create": "Crear hogar", "empty": "Todavía no hay hogares." },
   "loading": "Cargando…",
   "error": "No se ha podido cargar.",
+  "offline": "Sin conexión",
+  "online": "Conexión restablecida",
   "placeholder": { "soon": "Próximamente." },
+  "assistant": {
+    "open": "Asistente",
+    "title": "Asistente de Fanel",
+    "send": "Enviar",
+    "placeholder": "Escribe un mensaje…",
+    "intro": "¡Hola! Puedo ayudarte con el menú, la compra, las recetas, el calendario y las tareas.",
+    "selectAgent": "Elige el agente",
+    "close": "Cerrar chat",
+    "noAgents": "Ningún agente disponible",
+    "imageAttached": "[Imagen adjunta]",
+    "attachImage": "Añadir imagen",
+    "createRecipe": "Crear receta",
+    "recipeCreated": "Receta creada correctamente.",
+    "general": {
+      "name": "Asistente general",
+      "description": "Chat con el asistente general del hogar."
+    },
+    "recipe-from-image": {
+      "name": "Receta desde imagen",
+      "description": "Extrae una receta a partir de una fotografía."
+    }
+  },
+  "login": {
+    "title": "Inicia sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Entrar",
+    "error": "Usuario o contraseña incorrectos."
+  },
+  "account": {
+    "title": "Cuenta",
+    "loggedInAs": "Sesión iniciada como {{username}}.",
+    "logout": "Cerrar sesión",
+    "setCredentialsFor": "Configura el usuario y la contraseña de {{name}}.",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "save": "Guardar",
+    "saved": "Credenciales guardadas.",
+    "selectAdult": "Elige \"¿Quién eres?\" como persona adulta para configurar tu usuario y contraseña.",
+    "enableNotifications": "Activar notificaciones",
+    "disableNotifications": "Desactivar notificaciones",
+    "notificationsEnabled": "Notificaciones activadas."
+  },
   "whoami": {
     "prompt": "¿Quién eres?",
     "switch": "Cambiar de miembro",
@@ -27,6 +73,9 @@
   "recipes": {
     "title": "Recetas",
     "namePlaceholder": "Nombre de la receta",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Cómo se hace la receta",
+    "notesPlaceholder": "Notas u otra información",
     "servings": "Raciones",
     "servingsCount_one": "{{count}} ración",
     "servingsCount_other": "{{count}} raciones",
@@ -34,6 +83,17 @@
     "ingredientName": "Ingrediente",
     "quantity": "Cantidad",
     "unit": "Unidad",
+    "steps": "Pasos",
+    "stepPlaceholder": "Paso {{number}}",
+    "addStep": "Añadir paso",
+    "image": "Imagen de la receta",
+    "preview": "Vista previa",
+    "newRecipe": "Nueva receta",
+    "searchPlaceholder": "Buscar recetas...",
+    "view": "Vista",
+    "list": "Lista",
+    "grid": "Tarjetas",
+    "noResults": "No se ha encontrado ninguna receta.",
     "addIngredient": "Añadir ingrediente",
     "create": "Crear receta"
   },
@@ -41,18 +101,100 @@
     "title": "Lista de la compra",
     "clearPurchased": "Vaciar comprados",
     "addPlaceholder": "Añadir ítem…",
-    "add": "Añadir"
+    "add": "Añadir",
+    "quantity": "Cantidad",
+    "unit": "Unidad",
+    "category": "Categoría / Pasillo",
+    "categoryPlaceholder": "ej. Fruta, Lácteos, Limpieza…",
+    "recurring": "Básico recurrente",
+    "recurringHelp": "No se elimina al vaciar los comprados",
+    "recurringBadge": "Recurrente",
+    "toggleRecurring": "Cambiar recurrencia",
+    "lists": "Listas",
+    "newList": "Nueva lista",
+    "listNamePlaceholder": "Nombre de la lista",
+    "createList": "Crear",
+    "renameList": "Cambiar nombre",
+    "deleteList": "Eliminar lista",
+    "confirmDeleteList": "¿Quieres eliminar la lista \"{{name}}\"?",
+    "groupByCategory": "Agrupar por pasillos",
+    "uncategorized": "Sin categoría",
+    "empty": "No hay ningún ítem en la lista."
   },
   "calendar": {
     "title": "Calendario",
     "titlePlaceholder": "Título del evento",
-    "add": "Añadir",
-    "confirmDelete": "¿Borrar \"{{title}}\"?"
+    "assignees": "Para quién",
+    "confirmDelete": "¿Borrar \"{{title}}\"?",
+    "newEvent": "Nuevo evento",
+    "editEvent": "Editar evento",
+    "addEvent": "Añadir evento",
+    "noEvents": "No hay eventos este día.",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "recurring": "Evento recurrente",
+    "repeat": "Se repite",
+    "repeatOptions": {
+      "none": "No se repite",
+      "DAILY": "Cada día",
+      "WEEKLY": "Cada semana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada año"
+    },
+    "repeatUnit": {
+      "DAILY": "días",
+      "WEEKLY": "semanas",
+      "MONTHLY": "meses",
+      "YEARLY": "años"
+    },
+    "every": "Cada",
+    "until": "Hasta (opcional)",
+    "recurringNote": "Los cambios y la eliminación afectan a toda la serie.",
+    "confirmDeleteSeries": "¿Borrar toda la serie \"{{title}}\"?"
   },
   "chores": {
     "title": "Tareas",
     "titlePlaceholder": "Título de la tarea",
     "unassigned": "Sin asignar",
-    "add": "Añadir"
+    "add": "Añadir",
+    "recurrence": "Recurrencia y rotación",
+    "dueDate": "Fecha de vencimiento",
+    "repeat": "Se repite",
+    "repeatOptions": {
+      "none": "No se repite",
+      "DAILY": "Cada día",
+      "WEEKLY": "Cada semana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada año"
+    },
+    "repeatUnit": {
+      "DAILY": "días",
+      "WEEKLY": "semanas",
+      "MONTHLY": "meses",
+      "YEARLY": "años"
+    },
+    "every": "Cada",
+    "rotation": "Rotación entre miembros",
+    "rotationHint": "Marca los miembros por los que quieres que rote la tarea, en el orden en que los marques.",
+    "save": "Guardar"
+  },
+  "members": {
+    "title": "Miembros",
+    "name": "Nombre",
+    "role": "Rol",
+    "color": "Color",
+    "add": "Añadir miembro",
+    "edit": "Editar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Eliminar a {{name}}?",
+    "guardians": "Adultos responsables",
+    "noGuardianCandidates": "Todavía no hay ningún adulto en el hogar.",
+    "roles": {
+      "ADMIN": "Administrador",
+      "ADULT": "Adulto",
+      "CHILD": "Niño/a"
+    }
   }
 }

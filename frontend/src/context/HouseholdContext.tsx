@@ -2,7 +2,15 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api/client'
 
-export type Member = { id: string; householdId: string; name: string; role: 'ADULT' | 'CHILD'; color?: string }
+export type Member = {
+  id: string
+  householdId: string
+  name: string
+  role: 'ADMIN' | 'ADULT' | 'CHILD'
+  color?: string
+  username?: string
+  guardianIds?: string[]
+}
 export type Household = { id: string; name: string; locale: string; timezone: string }
 
 type HouseholdContextValue = {

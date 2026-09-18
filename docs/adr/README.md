@@ -11,4 +11,5 @@ Format: [MADR](https://adr.github.io/madr/) reduït. Un fitxer per decisió, num
 | [0005](0005-multi-household.md) | Multi-household des de l'inici | Acceptat |
 | [0006](0006-spring-ai-mcp.md) | Spring AI amb proveïdor configurable; MCP server integrat | Acceptat |
 | [0007](0007-i18n.md) | i18n català + castellà des de l'inici | Acceptat |
-| [0008](0008-llibreria-ui-calendari.md) | Cap llibreria de components UI general; `react-big-calendar` només per al calendari | Acceptat |
+| [0008](0008-llibreria-ui-calendari.md) | Cap llibreria de components UI general; `FullCalendar` només per al calendari | Acceptat |
+|| [0009](0009-assistant-multiagent.md) | Assistent multiagent: un model/API per funció | Acceptat |

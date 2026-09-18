@@ -1,10 +1,56 @@
 {
-  "nav": { "menu": "Menú", "recipes": "Receptes", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques" },
+  "nav": { "menu": "Menú", "recipes": "Receptes", "calendar": "Calendari", "shopping": "Compra", "chores": "Tasques", "members": "Membres" },
   "theme": { "label": "Canviar tema", "light": "Tema clar", "dark": "Tema fosc", "system": "Tema del sistema" },
+  "auth": { "title": "Inicia la sessió", "username": "Usuari", "password": "Contrasenya", "login": "Entrar", "submitting": "Entrant…", "invalid": "L'usuari o la contrasenya no són correctes.", "logout": "Tancar la sessió" },
   "households": { "title": "Llars", "name": "Nom", "locale": "Idioma", "timezone": "Zona horària", "create": "Crear llar", "empty": "Encara no hi ha llars." },
   "loading": "Carregant…",
   "error": "No s'ha pogut carregar.",
+  "offline": "Sense connexió",
+  "online": "Connexió restablerta",
   "placeholder": { "soon": "Properament." },
+  "assistant": {
+    "open": "Assistent",
+    "title": "Assistent de Fanel",
+    "send": "Envia",
+    "placeholder": "Escriu un missatge…",
+    "intro": "Hola! Puc ajudar-te amb el menú, la compra, les receptes, el calendari i les tasques.",
+    "selectAgent": "Tria l'agent",
+    "close": "Tanca el xat",
+    "noAgents": "Cap agent disponible",
+    "imageAttached": "[Imatge adjunta]",
+    "attachImage": "Afegir imatge",
+    "createRecipe": "Crear recepta",
+    "recipeCreated": "Recepta creada correctament.",
+    "general": {
+      "name": "Assistent general",
+      "description": "Xat amb l'assistent general de la llar."
+    },
+    "recipe-from-image": {
+      "name": "Recepta des d'imatge",
+      "description": "Extreu una recepta a partir d'una fotografia."
+    }
+  },
+  "login": {
+    "title": "Inicia la sessió",
+    "username": "Usuari",
+    "password": "Contrasenya",
+    "submit": "Entrar",
+    "error": "Usuari o contrasenya incorrectes."
+  },
+  "account": {
+    "title": "Compte",
+    "loggedInAs": "Sessió iniciada com a {{username}}.",
+    "logout": "Tanca la sessió",
+    "setCredentialsFor": "Configura l'usuari i la contrasenya de {{name}}.",
+    "username": "Usuari",
+    "password": "Contrasenya",
+    "save": "Desa",
+    "saved": "Credencials desades.",
+    "selectAdult": "Tria \"Qui ets?\" com a persona adulta per configurar el teu usuari i contrasenya.",
+    "enableNotifications": "Activar notificacions",
+    "disableNotifications": "Desactivar notificacions",
+    "notificationsEnabled": "Notificacions activades."
+  },
   "whoami": {
     "prompt": "Qui ets?",
     "switch": "Canviar de membre",
@@ -27,6 +73,9 @@
   "recipes": {
     "title": "Receptes",
     "namePlaceholder": "Nom de la recepta",
+    "description": "Descripció",
+    "descriptionPlaceholder": "Com es fa la recepta",
+    "notesPlaceholder": "Notes o altres informacions",
     "servings": "Racions",
     "servingsCount_one": "{{count}} ració",
     "servingsCount_other": "{{count}} racions",
@@ -34,6 +83,17 @@
     "ingredientName": "Ingredient",
     "quantity": "Quantitat",
     "unit": "Unitat",
+    "steps": "Passos",
+    "stepPlaceholder": "Pas {{number}}",
+    "addStep": "Afegir pas",
+    "image": "Imatge de la recepta",
+    "preview": "Vista prèvia",
+    "newRecipe": "Nova recepta",
+    "searchPlaceholder": "Cerca receptes...",
+    "view": "Vista",
+    "list": "Llista",
+    "grid": "Targetes",
+    "noResults": "No s'ha trobat cap recepta.",
     "addIngredient": "Afegir ingredient",
     "create": "Crear recepta"
   },
@@ -41,18 +101,100 @@
     "title": "Llista de la compra",
     "clearPurchased": "Buida comprats",
     "addPlaceholder": "Afegir ítem…",
-    "add": "Afegir"
+    "add": "Afegir",
+    "quantity": "Quantitat",
+    "unit": "Unitat",
+    "category": "Categoria / Passadís",
+    "categoryPlaceholder": "ex. Fruita, Lactis, Neteja…",
+    "recurring": "Bàsic recurrent",
+    "recurringHelp": "No s'esborra en buidar els comprats",
+    "recurringBadge": "Recurrent",
+    "toggleRecurring": "Canviar recurrència",
+    "lists": "Llistes",
+    "newList": "Nova llista",
+    "listNamePlaceholder": "Nom de la llista",
+    "createList": "Crear",
+    "renameList": "Canviar nom",
+    "deleteList": "Eliminar llista",
+    "confirmDeleteList": "Vols eliminar la llista \"{{name}}\"?",
+    "groupByCategory": "Agrupar per passadissos",
+    "uncategorized": "Sense categoria",
+    "empty": "No hi ha cap ítem a la llista."
   },
   "calendar": {
     "title": "Calendari",
     "titlePlaceholder": "Títol de l'esdeveniment",
-    "add": "Afegir",
-    "confirmDelete": "Esborrar \"{{title}}\"?"
+    "assignees": "Per a qui",
+    "confirmDelete": "Esborrar \"{{title}}\"?",
+    "newEvent": "Nou esdeveniment",
+    "editEvent": "Editar esdeveniment",
+    "addEvent": "Afegir esdeveniment",
+    "noEvents": "Cap esdeveniment aquest dia.",
+    "save": "Desa",
+    "delete": "Elimina",
+    "recurring": "Esdeveniment recurrent",
+    "repeat": "Es repeteix",
+    "repeatOptions": {
+      "none": "No es repeteix",
+      "DAILY": "Cada dia",
+      "WEEKLY": "Cada setmana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada any"
+    },
+    "repeatUnit": {
+      "DAILY": "dies",
+      "WEEKLY": "setmanes",
+      "MONTHLY": "mesos",
+      "YEARLY": "anys"
+    },
+    "every": "Cada",
+    "until": "Fins a (opcional)",
+    "recurringNote": "Els canvis i l'eliminació afecten tota la sèrie.",
+    "confirmDeleteSeries": "Esborrar tota la sèrie \"{{title}}\"?"
   },
   "chores": {
     "title": "Tasques",
     "titlePlaceholder": "Títol de la tasca",
     "unassigned": "Sense assignar",
-    "add": "Afegir"
+    "add": "Afegir",
+    "recurrence": "Recurrència i rotació",
+    "dueDate": "Data de venciment",
+    "repeat": "Es repeteix",
+    "repeatOptions": {
+      "none": "No es repeteix",
+      "DAILY": "Cada dia",
+      "WEEKLY": "Cada setmana",
+      "MONTHLY": "Cada mes",
+      "YEARLY": "Cada any"
+    },
+    "repeatUnit": {
+      "DAILY": "dies",
+      "WEEKLY": "setmanes",
+      "MONTHLY": "mesos",
+      "YEARLY": "anys"
+    },
+    "every": "Cada",
+    "rotation": "Rotació entre membres",
+    "rotationHint": "Marca els membres pel qual vols que roti la tasca, en l'ordre en què els marquis.",
+    "save": "Desa"
+  },
+  "members": {
+    "title": "Membres",
+    "name": "Nom",
+    "role": "Rol",
+    "color": "Color",
+    "add": "Afegir membre",
+    "edit": "Editar",
+    "save": "Desa",
+    "cancel": "Cancel·la",
+    "delete": "Elimina",
+    "confirmDelete": "Eliminar {{name}}?",
+    "guardians": "Adults responsables",
+    "noGuardianCandidates": "Encara no hi ha cap adult a la llar.",
+    "roles": {
+      "ADMIN": "Administrador",
+      "ADULT": "Adult",
+      "CHILD": "Infant"
+    }
   }
 }

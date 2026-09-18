@@ -10,6 +10,17 @@ spring:
     locations: classpath:db/migration/common,classpath:db/migration/{vendor}
   jpa:
     open-in-view: false
+  ai:
+    mcp:
+      server:
+        enabled: false
+    ollama:
+      base-url: ${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        pull-model-strategy: never
+    openai:
+      api-key: ${SPRING_AI_OPENAI_API_KEY:}
+
 management:
   endpoints:
     web:
@@ -27,3 +38,33 @@ fanel:
     origins: ${FANEL_CORS_ORIGINS:http://localhost:5173}
   api:
     token: ${FANEL_API_TOKEN:}
+  vapid:
+    subject: ${FANEL_VAPID_SUBJECT:mailto:admin@example.com}
+    public-key: ${FANEL_VAPID_PUBLIC_KEY:}
+    private-key: ${FANEL_VAPID_PRIVATE_KEY:}
+  notifications:
+    reminder-hour: ${FANEL_NOTIFICATIONS_REMINDER_HOUR:8}
+  assistant:
+    agents:
+      general:
+        name-key: assistant.general.name
+        description-key: assistant.general.description
+        prompt-key: general
+        supports-media: false
+        tools:
+          - AssistantTools
+        model:
+          provider: openai
+          model: gpt-4o
+          temperature: 0.7
+      recipe-from-image:
+        name-key: assistant.recipe-from-image.name
+        description-key: assistant.recipe-from-image.description
+        prompt-key: recipe-from-image
+        supports-media: true
+        tools:
+          - AssistantTools
+        model:
+          provider: openai
+          model: gpt-4o-mini
+          temperature: 0.2

@@ -1,0 +1,14 @@
+services:
+  fanel:
+    image: ihipi/fanel:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: sqlite
+      FANEL_ADMIN_PASSWORD: canvia-moi
+    ports:
+      - "8080:8080"
+    volumes:
+      - fanel-data:/data
+    restart: unless-stopped
+
+volumes:
+  fanel-data:

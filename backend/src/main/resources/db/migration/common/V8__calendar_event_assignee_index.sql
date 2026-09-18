@@ -1,0 +1,1 @@
+CREATE INDEX idx_calendar_event_assignee_member ON calendar_event_assignee(member_id);

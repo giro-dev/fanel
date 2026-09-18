@@ -5,7 +5,6 @@ import dev.agiro.fanel.shopping.api.ShoppingItemDto;
 import dev.agiro.fanel.shopping.api.ShoppingListDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +26,29 @@ public class ShoppingController {
         return shopping.listLists(householdId);
     }
 
+    @PostMapping("/lists")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ShoppingListDto createList(@PathVariable UUID householdId, @Valid @RequestBody CreateList request) {
+        return shopping.createList(householdId, request.name());
+    }
+
+    @GetMapping("/lists/{listId}")
+    public ShoppingListDto getList(@PathVariable UUID householdId, @PathVariable UUID listId) {
+        return shopping.getList(householdId, listId);
+    }
+
+    @PutMapping("/lists/{listId}")
+    public ShoppingListDto updateList(@PathVariable UUID householdId, @PathVariable UUID listId,
+                                      @Valid @RequestBody UpdateList request) {
+        return shopping.updateList(householdId, listId, request.name());
+    }
+
+    @DeleteMapping("/lists/{listId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteList(@PathVariable UUID householdId, @PathVariable UUID listId) {
+        shopping.deleteList(householdId, listId);
+    }
+
     @GetMapping("/lists/default")
     public ShoppingListDto defaultList(@PathVariable UUID householdId) {
         return shopping.getDefaultList(householdId);
@@ -36,13 +58,15 @@ public class ShoppingController {
     @ResponseStatus(HttpStatus.CREATED)
     public ShoppingItemDto addItem(@PathVariable UUID householdId, @PathVariable UUID listId,
                                    @Valid @RequestBody AddItem request) {
-        return shopping.addItem(householdId, listId, request.name());
+        return shopping.addItem(householdId, listId, request.name(), request.quantity(), request.unit(),
+                request.category(), Boolean.TRUE.equals(request.recurring()));
     }
 
     @PatchMapping("/items/{itemId}")
-    public ShoppingItemDto setDone(@PathVariable UUID householdId, @PathVariable UUID itemId,
-                                   @Valid @RequestBody SetDone request) {
-        return shopping.setDone(householdId, itemId, request.done());
+    public ShoppingItemDto updateItem(@PathVariable UUID householdId, @PathVariable UUID itemId,
+                                      @RequestBody UpdateItem request) {
+        return shopping.updateItem(householdId, itemId, request.name(), request.quantity(), request.unit(),
+                request.category(), request.recurring(), request.done());
     }
 
     @DeleteMapping("/items/{itemId}")
@@ -56,6 +80,8 @@ public class ShoppingController {
         return Map.of("removed", shopping.clearPurchased(householdId, listId));
     }
 
-    public record AddItem(@NotBlank String name) {}
-    public record SetDone(@NotNull Boolean done) {}
+    public record CreateList(@NotBlank String name) {}
+    public record UpdateList(@NotBlank String name) {}
+    public record AddItem(@NotBlank String name, Double quantity, String unit, String category, Boolean recurring) {}
+    public record UpdateItem(String name, Double quantity, String unit, String category, Boolean recurring, Boolean done) {}
 }
