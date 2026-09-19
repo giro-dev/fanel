@@ -7,6 +7,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC="$ROOT/docs"
 OUT="$ROOT/docs-site/content/ca/docs"
 REPO_URL="https://github.com/giro-dev/fanel"
+PRIVACY_POLICY_SOURCE="privacy-policy.md"
 
 mkdir -p "$OUT/adr" "$OUT/roadmap"
 
@@ -50,5 +51,11 @@ done
   printf -- "---\ntitle: \"Pla original\"\nlinkTitle: \"PLA-ORIGINAL\"\nweight: 60\ndescription: Generat automàticament des de docs/PLA-ORIGINAL.md. No editis aquest fitxer directament.\n---\n\n"
   strip_h1 < "$SRC/PLA-ORIGINAL.md" | fix_links pla
 } > "$OUT/roadmap/pla-original.md"
+
+{
+  printf -- "---\ntitle: \"Privacy Policy\"\nlinkTitle: \"Privacitat\"\nweight: 70\ndescription: Generat automàticament des de docs/%s. No editis aquest fitxer directament.\n---\n\n" \
+    "$PRIVACY_POLICY_SOURCE"
+  strip_h1 < "$SRC/$PRIVACY_POLICY_SOURCE"
+} > "$OUT/privacy-policy.md"
 
 echo "Synced docs -> $OUT"
