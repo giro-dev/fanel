@@ -14,7 +14,7 @@ android {
         minSdk = 29
         targetSdk = 36
         versionCode = 201
-        versionName = "0.2.1-SNAPSHOT"
+        versionName = "0.2.1"
 
         buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
     }
