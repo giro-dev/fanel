@@ -13,8 +13,8 @@ android {
         applicationId = "dev.agiro.fanel.android"
         minSdk = 29
         targetSdk = 36
-        versionCode = 109
-        versionName = "0.1.9"
+        versionCode = 200
+        versionName = "0.2.0"
 
         buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
     }
