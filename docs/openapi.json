@@ -1,0 +1,3962 @@
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "title" : "OpenAPI definition",
+    "version" : "v0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost",
+    "description" : "Generated server url"
+  } ],
+  "paths" : {
+    "/api/v1/households/{id}/members/{memberId}/role" : {
+      "put" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "setRole",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "memberId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetRole"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}/members/{memberId}/pin" : {
+      "put" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "setPin",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "memberId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetPin"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}/members/{memberId}/credentials" : {
+      "put" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "setCredentials",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "memberId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetCredentials"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}/members/{childId}/guardians" : {
+      "put" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "setGuardians",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "childId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetGuardians"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/lists/{listId}" : {
+      "get" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "getList",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingListDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "updateList",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateList"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingListDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "deleteList",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes/{recipeId}" : {
+      "get" : {
+        "tags" : [ "recipes-controller" ],
+        "operationId" : "get",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "recipeId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RecipeDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "recipes-controller" ],
+        "operationId" : "update",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "recipeId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateRecipe"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RecipeDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "recipes-controller" ],
+        "operationId" : "delete",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "recipeId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/menu/slots" : {
+      "put" : {
+        "tags" : [ "menu-controller" ],
+        "operationId" : "setSlot",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "year",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "week",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetSlot"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MealSlotDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "menu-controller" ],
+        "operationId" : "clearSlot",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "year",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "week",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "dayOfWeek",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "mealType",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "BREAKFAST", "LUNCH", "SNACK", "DINNER" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/chores/{choreId}/recurrence" : {
+      "put" : {
+        "tags" : [ "chores-controller" ],
+        "operationId" : "updateRecurrence",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "choreId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateRecurrence"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChoreDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/calendar/subscriptions/{subscriptionId}" : {
+      "put" : {
+        "tags" : [ "calendar-subscription-controller" ],
+        "operationId" : "update_1",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "subscriptionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateSubscription"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CalendarSubscriptionDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "calendar-subscription-controller" ],
+        "operationId" : "delete_1",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "subscriptionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/automation/rules/{ruleId}" : {
+      "put" : {
+        "tags" : [ "automation-controller" ],
+        "operationId" : "update_2",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "ruleId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateRule"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AutomationRuleDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "automation-controller" ],
+        "operationId" : "delete_2",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "ruleId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/assistant/agents/{agentId}" : {
+      "put" : {
+        "tags" : [ "assistant-admin-controller" ],
+        "operationId" : "update_3",
+        "parameters" : [ {
+          "name" : "agentId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AgentConfigUpdate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AgentConfigDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "assistant-admin-controller" ],
+        "operationId" : "reset",
+        "parameters" : [ {
+          "name" : "agentId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/setup" : {
+      "get" : {
+        "tags" : [ "setup-controller" ],
+        "operationId" : "status",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SetupStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "setup-controller" ],
+        "operationId" : "setup",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetupRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households" : {
+      "get" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "list",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/HouseholdDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "create",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateHousehold"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HouseholdDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}/members" : {
+      "get" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "listMembers",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/MemberDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "addMember",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateMember"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}/members/{memberId}/verify-pin" : {
+      "post" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "verifyPin",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "memberId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetPin"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/lists" : {
+      "get" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "listLists",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ShoppingListDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "createList",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateList"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingListDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/lists/{listId}/items" : {
+      "post" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "addItem",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AddItem"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/lists/{listId}/clear-purchased" : {
+      "post" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "clearPurchased",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes" : {
+      "get" : {
+        "tags" : [ "recipes-controller" ],
+        "operationId" : "list_1",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/RecipeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "recipes-controller" ],
+        "operationId" : "create_1",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateRecipe"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RecipeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes/search" : {
+      "post" : {
+        "tags" : [ "recipes-controller" ],
+        "operationId" : "search",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "tag",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "ingredient",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 24
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "name"
+          }
+        }, {
+          "name" : "direction",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "asc"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FilterRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RecipePageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes/import" : {
+      "post" : {
+        "tags" : [ "recipe-import-controller" ],
+        "operationId" : "upload",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                },
+                "required" : [ "file" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImportSessionInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes/import/{importId}/confirm" : {
+      "post" : {
+        "tags" : [ "recipe-import-controller" ],
+        "operationId" : "confirm",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "importId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConfirmImport"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImportOutcome"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes/import/url" : {
+      "post" : {
+        "tags" : [ "recipe-import-controller" ],
+        "operationId" : "fromUrl",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UrlImport"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImportSessionInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/notifications/subscriptions" : {
+      "post" : {
+        "tags" : [ "notifications-controller" ],
+        "operationId" : "subscribe",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SubscribeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "notifications-controller" ],
+        "operationId" : "unsubscribe",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UnsubscribeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/chores" : {
+      "get" : {
+        "tags" : [ "chores-controller" ],
+        "operationId" : "list_2",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ChoreDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "chores-controller" ],
+        "operationId" : "create_2",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateChore"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChoreDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/calendar" : {
+      "get" : {
+        "tags" : [ "calendar-controller" ],
+        "operationId" : "list_3",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "from",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "to",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/CalendarEventDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "calendar-controller" ],
+        "operationId" : "create_3",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateEvent"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CalendarEventDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/calendar/subscriptions" : {
+      "get" : {
+        "tags" : [ "calendar-subscription-controller" ],
+        "operationId" : "list_4",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/CalendarSubscriptionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "calendar-subscription-controller" ],
+        "operationId" : "create_4",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateSubscription"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CalendarSubscriptionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/calendar/subscriptions/{subscriptionId}/sync" : {
+      "post" : {
+        "tags" : [ "calendar-subscription-controller" ],
+        "operationId" : "sync",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "subscriptionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CalendarSubscriptionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/calendar/import" : {
+      "post" : {
+        "tags" : [ "calendar-controller" ],
+        "operationId" : "importIcs",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "text/calendar" : {
+              "schema" : {
+                "type" : "string"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImportResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/automation/rules" : {
+      "get" : {
+        "tags" : [ "automation-controller" ],
+        "operationId" : "list_5",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AutomationRuleDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "automation-controller" ],
+        "operationId" : "create_5",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateRule"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AutomationRuleDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/automation/rules/{ruleId}/run" : {
+      "post" : {
+        "tags" : [ "automation-controller" ],
+        "operationId" : "run",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "ruleId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AutomationRuleDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/assistant/chat" : {
+      "post" : {
+        "tags" : [ "chat-controller" ],
+        "operationId" : "chat",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AgentRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AgentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/import" : {
+      "post" : {
+        "tags" : [ "export-controller" ],
+        "operationId" : "importHousehold",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/HouseholdExport"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HouseholdDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/assistant/agents/{agentId}/test" : {
+      "post" : {
+        "tags" : [ "assistant-admin-controller" ],
+        "operationId" : "test",
+        "parameters" : [ {
+          "name" : "agentId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AgentTestResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}/members/{memberId}" : {
+      "delete" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "deleteMember",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "memberId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "updateMember",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "memberId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateMember"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MemberDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/items/{itemId}" : {
+      "delete" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "removeItem",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "itemId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "updateItem",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "itemId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateItem"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/chores/{choreId}" : {
+      "delete" : {
+        "tags" : [ "chores-controller" ],
+        "operationId" : "delete_3",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "choreId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "chores-controller" ],
+        "operationId" : "update_4",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "choreId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateChore"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChoreDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/calendar/{eventId}" : {
+      "delete" : {
+        "tags" : [ "calendar-controller" ],
+        "operationId" : "delete_4",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "calendar-controller" ],
+        "operationId" : "update_5",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateEvent"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CalendarEventDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/vapid-public-key" : {
+      "get" : {
+        "tags" : [ "notifications-controller" ],
+        "operationId" : "vapidPublicKey",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me" : {
+      "get" : {
+        "tags" : [ "me-controller" ],
+        "operationId" : "me",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{id}" : {
+      "get" : {
+        "tags" : [ "household-controller" ],
+        "operationId" : "get_1",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HouseholdDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/lists/default" : {
+      "get" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "defaultList",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingListDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/menu" : {
+      "get" : {
+        "tags" : [ "menu-controller" ],
+        "operationId" : "getWeek",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "year",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "week",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MealPlanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/export" : {
+      "get" : {
+        "tags" : [ "export-controller" ],
+        "operationId" : "export",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HouseholdExport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/assistant/agents" : {
+      "get" : {
+        "tags" : [ "agent-controller" ],
+        "operationId" : "list_6",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AgentDefinition"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events" : {
+      "get" : {
+        "tags" : [ "sse-controller" ],
+        "operationId" : "subscribe_1",
+        "parameters" : [ {
+          "name" : "household",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/event-stream" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SseEmitter"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/providers" : {
+      "get" : {
+        "tags" : [ "auth-controller" ],
+        "operationId" : "providers",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/assistant/providers" : {
+      "get" : {
+        "tags" : [ "assistant-admin-controller" ],
+        "operationId" : "providers_1",
+        "parameters" : [ {
+          "name" : "refresh",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ProviderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/assistant/agents" : {
+      "get" : {
+        "tags" : [ "assistant-admin-controller" ],
+        "operationId" : "agents",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AgentConfigDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/recipes/import/{importId}" : {
+      "delete" : {
+        "tags" : [ "recipe-import-controller" ],
+        "operationId" : "discard",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "importId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "SetRole" : {
+        "type" : "object",
+        "properties" : {
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "ADULT", "CHILD" ]
+          }
+        },
+        "required" : [ "role" ]
+      },
+      "MemberDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "ADULT", "CHILD" ]
+          },
+          "color" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "guardianIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          },
+          "hasPin" : {
+            "type" : "boolean"
+          },
+          "hasCredentials" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "SetPin" : {
+        "type" : "object",
+        "properties" : {
+          "pin" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SetCredentials" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "password" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "password", "username" ]
+      },
+      "SetGuardians" : {
+        "type" : "object",
+        "properties" : {
+          "guardianIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        },
+        "required" : [ "guardianIds" ]
+      },
+      "UpdateList" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "ShoppingItemDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "quantity" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "unit" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "recurring" : {
+            "type" : "boolean"
+          },
+          "done" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ShoppingListDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ShoppingItemDto"
+            }
+          }
+        }
+      },
+      "CreateRecipe" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "servings" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "notes" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "ingredients" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IngredientDto"
+            }
+          },
+          "imageMimeType" : {
+            "type" : "string"
+          },
+          "imageData" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "IngredientDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "quantity" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "unit" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RecipeDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "servings" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "notes" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "imageMimeType" : {
+            "type" : "string"
+          },
+          "imageData" : {
+            "type" : "string"
+          },
+          "ingredients" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IngredientDto"
+            }
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "SetSlot" : {
+        "type" : "object",
+        "properties" : {
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "mealType" : {
+            "type" : "string",
+            "enum" : [ "BREAKFAST", "LUNCH", "SNACK", "DINNER" ]
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "recipeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [ "dayOfWeek", "mealType" ]
+      },
+      "MealSlotDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "mealType" : {
+            "type" : "string",
+            "enum" : [ "BREAKFAST", "LUNCH", "SNACK", "DINNER" ]
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "recipeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
+      "UpdateRecurrence" : {
+        "type" : "object",
+        "properties" : {
+          "dueDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "recurrenceFreq" : {
+            "type" : "string",
+            "enum" : [ "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ]
+          },
+          "recurrenceInterval" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "rotationMemberIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        }
+      },
+      "ChoreDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "assigneeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "done" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "dueDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "recurrenceFreq" : {
+            "type" : "string",
+            "enum" : [ "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ]
+          },
+          "recurrenceInterval" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "rotationMemberIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        }
+      },
+      "UpdateSubscription" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "color" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CalendarSubscriptionDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "color" : {
+            "type" : "string"
+          },
+          "lastSyncedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastError" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UpdateRule" : {
+        "type" : "object",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 7,
+            "minimum" : 1
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 23,
+            "minimum" : 0
+          }
+        }
+      },
+      "AutomationRuleDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "MENU_PROPOSAL", "SHOPPING_REMINDER" ]
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "lastRunAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "AgentConfigUpdate" : {
+        "type" : "object",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "provider" : {
+            "type" : "string"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "temperature" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "maxTokens" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "AgentConfigDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "nameKey" : {
+            "type" : "string"
+          },
+          "descriptionKey" : {
+            "type" : "string"
+          },
+          "supportsMedia" : {
+            "type" : "boolean"
+          },
+          "orchestrator" : {
+            "type" : "boolean"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "provider" : {
+            "type" : "string"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "temperature" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "maxTokens" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "defaults" : {
+            "$ref" : "#/components/schemas/ModelDefaults"
+          },
+          "overridden" : {
+            "type" : "boolean"
+          },
+          "available" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ModelDefaults" : {
+        "type" : "object",
+        "properties" : {
+          "provider" : {
+            "type" : "string"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "temperature" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "maxTokens" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SetupRequest" : {
+        "type" : "object",
+        "properties" : {
+          "householdName" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "locale" : {
+            "type" : "string"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "memberName" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "username" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "password" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "householdName", "memberName", "password", "username" ]
+      },
+      "CreateHousehold" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "locale" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "timezone" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "locale", "name", "timezone" ]
+      },
+      "HouseholdDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "locale" : {
+            "type" : "string"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "CreateMember" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "ADULT", "CHILD" ]
+          },
+          "color" : {
+            "type" : "string"
+          },
+          "pin" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "CreateList" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "AddItem" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "quantity" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "unit" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "recurring" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "FilterCondition" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/FilterNode"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "field" : {
+              "type" : "string"
+            },
+            "operator" : {
+              "type" : "string",
+              "enum" : [ "EQ", "NE", "GT", "GTE", "LT", "LTE", "LIKE", "IN", "BETWEEN", "IS_NULL", "IS_NOT_NULL", "JSON_CONTAINS", "JSON_CONTAINED_BY", "JSON_EXISTS", "JSON_EXISTS_ANY", "JSON_EXISTS_ALL", "JSON_PATH_EQ", "JSON_PATH_LIKE", "JSON_ARRAY_CONTAINS", "JSON_ARRAY_CONTAINS_ALL", "JSON_ARRAY_CONTAINS_ANY" ]
+            },
+            "value" : { },
+            "values" : {
+              "type" : "array",
+              "items" : { }
+            }
+          }
+        } ]
+      },
+      "FilterGroup" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/FilterNode"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "combinator" : {
+              "type" : "string",
+              "enum" : [ "AND", "OR" ],
+              "writeOnly" : true
+            },
+            "filters" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/FilterCondition"
+                }, {
+                  "$ref" : "#/components/schemas/FilterGroup"
+                } ]
+              },
+              "writeOnly" : true
+            },
+            "and" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/FilterCondition"
+                }, {
+                  "$ref" : "#/components/schemas/FilterGroup"
+                } ]
+              }
+            },
+            "or" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/FilterCondition"
+                }, {
+                  "$ref" : "#/components/schemas/FilterGroup"
+                } ]
+              }
+            }
+          }
+        } ]
+      },
+      "FilterNode" : { },
+      "FilterRequest" : {
+        "type" : "object",
+        "properties" : {
+          "filter" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/FilterCondition"
+            }, {
+              "$ref" : "#/components/schemas/FilterGroup"
+            } ]
+          }
+        },
+        "required" : [ "filter" ]
+      },
+      "RecipePageDto" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RecipeDto"
+            }
+          },
+          "totalHits" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "hasMore" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "CandidateInfo" : {
+        "type" : "object",
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "snippet" : {
+            "type" : "string"
+          },
+          "structured" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ImportSessionInfo" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "candidates" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CandidateInfo"
+            }
+          },
+          "aiAvailable" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ConfirmImport" : {
+        "type" : "object",
+        "properties" : {
+          "candidates" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "minItems" : 1
+          }
+        },
+        "required" : [ "candidates" ]
+      },
+      "ImportFailure" : {
+        "type" : "object",
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "reason" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ImportOutcome" : {
+        "type" : "object",
+        "properties" : {
+          "imported" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RecipeDto"
+            }
+          },
+          "failures" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ImportFailure"
+            }
+          }
+        }
+      },
+      "UrlImport" : {
+        "type" : "object",
+        "properties" : {
+          "url" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "url" ]
+      },
+      "PushKeys" : {
+        "type" : "object",
+        "properties" : {
+          "p256dh" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "auth" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "auth", "p256dh" ]
+      },
+      "SubscribeRequest" : {
+        "type" : "object",
+        "properties" : {
+          "endpoint" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "keys" : {
+            "$ref" : "#/components/schemas/PushKeys"
+          }
+        },
+        "required" : [ "endpoint" ]
+      },
+      "CreateChore" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "assigneeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "dueDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "recurrenceFreq" : {
+            "type" : "string",
+            "enum" : [ "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ]
+          },
+          "recurrenceInterval" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "rotationMemberIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        },
+        "required" : [ "title" ]
+      },
+      "CreateEvent" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "time" : {
+            "type" : "string"
+          },
+          "durationMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "addedBy" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "assigneeIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          },
+          "recurrenceFreq" : {
+            "type" : "string",
+            "enum" : [ "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ]
+          },
+          "recurrenceInterval" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "recurrenceUntil" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        },
+        "required" : [ "date", "title" ]
+      },
+      "CalendarEventDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "anchorDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "time" : {
+            "type" : "string"
+          },
+          "durationMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "addedBy" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "assigneeIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          },
+          "recurrenceFreq" : {
+            "type" : "string",
+            "enum" : [ "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ]
+          },
+          "recurrenceInterval" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "recurrenceUntil" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "source" : {
+            "type" : "string",
+            "enum" : [ "LOCAL", "ICS" ]
+          },
+          "subscriptionId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
+      "CreateSubscription" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "url" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "color" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "url" ]
+      },
+      "ImportResult" : {
+        "type" : "object",
+        "properties" : {
+          "imported" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "CreateRule" : {
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "MENU_PROPOSAL", "SHOPPING_REMINDER" ]
+          },
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 7,
+            "minimum" : 1
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 23,
+            "minimum" : 0
+          }
+        },
+        "required" : [ "dayOfWeek", "hour", "type" ]
+      },
+      "AgentRequest" : {
+        "type" : "object",
+        "properties" : {
+          "agentId" : {
+            "type" : "string"
+          },
+          "conversationId" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "attachments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Attachment"
+            }
+          },
+          "memberId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
+      "Attachment" : {
+        "type" : "object",
+        "properties" : {
+          "mimeType" : {
+            "type" : "string"
+          },
+          "data" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AgentResponse" : {
+        "type" : "object",
+        "properties" : {
+          "agentId" : {
+            "type" : "string"
+          },
+          "conversationId" : {
+            "type" : "string"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "toolCalls" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "delegations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Delegation"
+            }
+          }
+        }
+      },
+      "Delegation" : {
+        "type" : "object",
+        "properties" : {
+          "agentId" : {
+            "type" : "string"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "latencyMs" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "HouseholdExport" : {
+        "type" : "object",
+        "properties" : {
+          "household" : {
+            "$ref" : "#/components/schemas/HouseholdDto"
+          },
+          "members" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MemberDto"
+            }
+          },
+          "mealPlans" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MealPlanDto"
+            }
+          },
+          "shoppingLists" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ShoppingListDto"
+            }
+          },
+          "calendarEvents" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CalendarEventDto"
+            }
+          },
+          "chores" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ChoreDto"
+            }
+          },
+          "automationRules" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AutomationRuleDto"
+            }
+          },
+          "calendarSubscriptions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CalendarSubscriptionDto"
+            }
+          }
+        }
+      },
+      "MealPlanDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "householdId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "isoYear" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "isoWeek" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "slots" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MealSlotDto"
+            }
+          }
+        }
+      },
+      "AgentTestResult" : {
+        "type" : "object",
+        "properties" : {
+          "ok" : {
+            "type" : "boolean"
+          },
+          "latencyMs" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "error" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UpdateMember" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "color" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UpdateItem" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "quantity" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "unit" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "recurring" : {
+            "type" : "boolean"
+          },
+          "done" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "UpdateChore" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string"
+          },
+          "assigneeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "done" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "UpdateEvent" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "time" : {
+            "type" : "string"
+          },
+          "durationMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "assigneeIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          },
+          "recurrenceFreq" : {
+            "type" : "string",
+            "enum" : [ "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ]
+          },
+          "recurrenceInterval" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "recurrenceUntil" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }
+      },
+      "SetupStatus" : {
+        "type" : "object",
+        "properties" : {
+          "required" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "MeDto" : {
+        "type" : "object",
+        "properties" : {
+          "kind" : {
+            "type" : "string"
+          },
+          "member" : {
+            "$ref" : "#/components/schemas/MemberDto"
+          },
+          "household" : {
+            "$ref" : "#/components/schemas/HouseholdDto"
+          }
+        }
+      },
+      "AgentDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "nameKey" : {
+            "type" : "string"
+          },
+          "descriptionKey" : {
+            "type" : "string"
+          },
+          "supportsMedia" : {
+            "type" : "boolean"
+          },
+          "toolNames" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "toolDescription" : {
+            "type" : "string"
+          },
+          "orchestrator" : {
+            "type" : "boolean"
+          },
+          "model" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SseEmitter" : {
+        "type" : "object",
+        "properties" : {
+          "timeout" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "ProviderDto" : {
+        "type" : "object",
+        "properties" : {
+          "provider" : {
+            "type" : "string"
+          },
+          "available" : {
+            "type" : "boolean"
+          },
+          "models" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "error" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UnsubscribeRequest" : {
+        "type" : "object",
+        "properties" : {
+          "endpoint" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "endpoint" ]
+      }
+    }
+  }
+}

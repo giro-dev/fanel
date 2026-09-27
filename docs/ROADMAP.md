@@ -55,25 +55,31 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 
 ## Fase 3 — IA i MCP
 
-- [ ] `assistant`: tools `@Tool` sobre les APIs públiques dels mòduls (afegir a la compra, planificar àpat, llistar esdeveniments, assignar tasca…)
-- [ ] `ChatClient` amb memòria JDBC; proveïdor per configuració (Ollama / OpenAI / Anthropic), cap actiu per defecte
-- [ ] Xat a la UI ("planifica'm la setmana", "què falta pel sopar de dijous?")
+- [x] `assistant`: tools `@Tool` sobre les APIs públiques dels mòduls (`AssistantTools`: compra, menú, receptes, calendari, tasques)
+- [x] `ChatClient` amb memòria (de moment en memòria, no JDBC); proveïdor per configuració (Ollama / OpenAI / Anthropic), cap actiu per defecte
+- [x] Xat a la UI (`AssistantChat`, conversa única amb l'orquestrador)
+- [x] Orquestrador + subagents com a tools `delegate_to_*` (ADR 0011): l'orquestrador resol amb `AssistantTools` i delega tasques especialitzades; delegacions visibles a `AgentResponse.delegations`
+- [x] Panell d'admin `/assistent` (ADR 0011): configuració de proveïdor/model/temperatura/maxTokens per agent amb overrides persistits (`assistant_agent_config`), recàrrega en calent i descobriment dinàmic de models per proveïdor
 - [ ] **Servidor MCP** a `/mcp` (Streamable HTTP) exposant tools, resources (menú, llista) i prompts; tokens per household amb àmbits
-- [ ] `automation`: regles programades (proposta de menú el diumenge, recordatori de compra el divendres) reactives a esdeveniments
-- [ ] Importació ICS / CalDAV (lectura)
+- [x] `automation`: regles programades setmanals per household (`automation_rule`, scheduler horari amb zona horària de la llar); tipus `MENU_PROPOSAL` (agent `menu-planner` omple els dinars/sopars buits de la setmana vinent) i `SHOPPING_REMINDER` (push amb el compte de pendents via `NotificationRequested`); CRUD a `/api/v1/households/{id}/automation/rules` i pàgina `/automatitzacions`
+- [x] Importació ICS (lectura): subscripcions a URLs externes amb refresc periòdic (`calendar_subscription`, esdeveniments de només lectura `source=ICS`) i pujada puntual de fitxers `.ics` que crea esdeveniments locals editables; CalDAV no fet
 
 ## Fase 4 — Clients Android i escriptori
 
-- [ ] Client TypeScript generat des d'OpenAPI, compartit per web / Capacitor / Tauri
-- [ ] Capacitor → APK Android (push natiu, compartir text a la llista, widget bàsic)
-- [ ] Tauri → escriptori Linux / Windows / macOS
-- [ ] (Opcional) client Kotlin generat si es fa app nativa
+- [x] Client TypeScript generat des d'OpenAPI, compartit per web / Capacitor / Tauri: especificació a `docs/openapi.json` (regenerada per `OpenApiSpecSqliteIT`), tipus a `frontend/src/api/schema.d.ts` (`npm run gen:api`), client `openapi-fetch` a `src/api/typed.ts`; pàgines migrades progressivament
+- [x] APK Android — fet com a app nativa Kotlin/Compose (`android/`, vegeu android/README.md); push natiu, widget i compartir text a la llista pendents
+- [ ] Tauri → escriptori Linux / Windows / macOS (posposat: requereix toolchain Rust; la SPA necessita abans un ajust d'URL de servidor)
+- [ ] (Opcional) client Kotlin generat des d'OpenAPI per a l'app nativa (ara els models estan escrits a mà)
 
 ## Fase 5 — Maduresa
 
 - [ ] MCP client: Home Assistant, calendaris externs, supermercats
 - [ ] RAG sobre receptes (pgvector) si aporta valor
-- [ ] OIDC (Authelia/Authentik/Google), més idiomes, accessibilitat, mètriques, backups programats
+- [x] OIDC (Authelia/Authentik/Google): login extern opcional via `fanel.oidc.*`; membres resolts per username claim i fixats per `oidc_subject`; sessió només per al flux SSO (ADR 0010)
+- [ ] Més idiomes
+- [ ] Accessibilitat
+- [x] Mètriques: endpoint Prometheus `/actuator/prometheus` (micrometer-registry-prometheus, autenticat, s'activa amb `FANEL_METRICS_ACCESS=read-only`)
+- [x] Backups programats: `BackupScheduler` escriu l'export JSON de cada household a `FANEL_BACKUPS_DIR/<id>/<data>.json` cada dia a `FANEL_BACKUPS_HOUR` (zona horària del household) i poda més de `FANEL_BACKUPS_KEEP_DAYS` dies
 
 ## Riscos vigilats
 
