@@ -25,7 +25,15 @@ fun interface OperationHandler {
 class OutboxPusher(private val pendingDao: PendingOperationDao) {
     private val handlers = mutableMapOf<String, OperationHandler>()
 
-    private val _dropped = MutableSharedFlow<PendingOperationEntity>(extraBufferCapacity = 16)
+    /**
+     * Replays the last rejection so screens opened after a background sync still surface it;
+     * the buffer keeps room for bursts without suspending the pusher.
+     */
+    private val _dropped = MutableSharedFlow<PendingOperationEntity>(
+        replay = 1,
+        extraBufferCapacity = 15,
+        onBufferOverflow = kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
+    )
 
     /** Operations the server rejected as unrecoverable; emitted right after they are removed. */
     val dropped: SharedFlow<PendingOperationEntity> = _dropped

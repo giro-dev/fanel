@@ -48,6 +48,8 @@ fanel:
     origins: ${FANEL_CORS_ORIGINS:http://localhost:5173}
   api:
     token: ${FANEL_API_TOKEN:}
+  outbound:
+    allow-private-hosts: ${FANEL_OUTBOUND_ALLOW_PRIVATE_HOSTS:false}
   vapid:
     subject: ${FANEL_VAPID_SUBJECT:mailto:admin@example.com}
     public-key: ${FANEL_VAPID_PUBLIC_KEY:}

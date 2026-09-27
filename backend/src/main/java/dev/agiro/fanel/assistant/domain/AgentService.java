@@ -26,9 +26,9 @@ public class AgentService implements AssistantApi {
         this.properties = properties;
     }
 
+    /** Chat always resolves to the orchestrator; callers cannot pick a subagent directly. */
     public AgentResponse chat(UUID householdId, UUID memberId, AgentRequest request, Locale locale) {
-        String agentId = request.agentId() != null && !request.agentId().isBlank()
-                ? request.agentId() : properties.getOrchestratorId();
+        String agentId = properties.getOrchestratorId();
         Agent agent = registry.get(agentId)
                 .orElseThrow(() -> new EntityNotFoundException("Agent not found: " + agentId));
         return agent.execute(request, householdId, memberId, locale);

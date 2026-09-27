@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.agiro.fanel.assistant.domain.recipeimport.BookSection;
 import dev.agiro.fanel.assistant.domain.recipeimport.ImportedRecipe;
 import dev.agiro.fanel.assistant.domain.recipeimport.IngredientPayload;
+import dev.agiro.fanel.shared.net.OutboundUrlPolicy;
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,19 +31,23 @@ public class WebRecipeParser {
     private static final Logger log = LoggerFactory.getLogger(WebRecipeParser.class);
 
     private static final int TIMEOUT_MS = 15_000;
+    private static final int MAX_PAGE_BYTES = 5 * 1024 * 1024;
     private static final int MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+    private static final int MAX_REDIRECTS = 5;
     private static final String USER_AGENT = "Fanel/1.0 (recipe importer)";
 
     private final ObjectMapper mapper = new ObjectMapper();
+    private final OutboundUrlPolicy outbound;
+
+    public WebRecipeParser(OutboundUrlPolicy outbound) {
+        this.outbound = outbound;
+    }
 
     public List<BookSection> fetch(String url) {
-        URI uri = parseUrl(url);
+        URI uri = OutboundUrlPolicy.parseHttp(url);
         Document doc;
         try {
-            doc = Jsoup.connect(uri.toString())
-                    .userAgent(USER_AGENT)
-                    .timeout(TIMEOUT_MS)
-                    .get();
+            doc = fetchResponse(url, MAX_PAGE_BYTES).parse();
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not fetch the page: " + e.getMessage(), e);
         }
@@ -59,19 +65,35 @@ public class WebRecipeParser {
         return List.of(BookSection.unstructured("page", title.trim(), text));
     }
 
-    private URI parseUrl(String url) {
-        URI uri;
-        try {
-            uri = URI.create(url.trim());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid URL: " + url);
+    /**
+     * Fetches a URL enforcing the public-address policy on every redirect hop and bounding the
+     * buffered body. Redirects are followed manually because Jsoup cannot revalidate them.
+     */
+    private Connection.Response fetchResponse(String url, int maxBodyBytes) throws IOException {
+        String current = outbound.requireHttp(url).toString();
+        for (int hops = 0; ; hops++) {
+            Connection.Response response = Jsoup.connect(current)
+                    .userAgent(USER_AGENT)
+                    .timeout(TIMEOUT_MS)
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .maxBodySize(maxBodyBytes)
+                    .followRedirects(false)
+                    .execute();
+            String location = response.header("Location");
+            if (response.statusCode() >= 300 && response.statusCode() < 400 && location != null) {
+                if (hops >= MAX_REDIRECTS) {
+                    throw new IOException("Too many redirects");
+                }
+                current = outbound.requireHttp(
+                        URI.create(current).resolve(location).toString()).toString();
+                continue;
+            }
+            if (response.statusCode() / 100 != 2) {
+                throw new HttpStatusException("HTTP " + response.statusCode(), response.statusCode(), current);
+            }
+            return response;
         }
-        if (uri.getScheme() == null
-                || !(uri.getScheme().equalsIgnoreCase("http") || uri.getScheme().equalsIgnoreCase("https"))
-                || uri.getHost() == null) {
-            throw new IllegalArgumentException("Only http(s) URLs are supported");
-        }
-        return uri;
     }
 
     private List<BookSection> jsonLdRecipes(Document doc) {
@@ -139,12 +161,7 @@ public class WebRecipeParser {
         String imageUrl = imageUrl(node.get("image"), baseUri);
         if (imageUrl != null) {
             try {
-                Connection.Response response = Jsoup.connect(imageUrl)
-                        .userAgent(USER_AGENT)
-                        .timeout(TIMEOUT_MS)
-                        .ignoreContentType(true)
-                        .maxBodySize(MAX_IMAGE_BYTES)
-                        .execute();
+                Connection.Response response = fetchResponse(imageUrl, MAX_IMAGE_BYTES);
                 String mime = response.contentType();
                 if (mime != null && mime.startsWith("image/")) {
                     imageMime = mime.split(";")[0].trim();

@@ -140,12 +140,13 @@ abstract class AssistantAdminIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
 
+        // The chat endpoint always routes to the orchestrator; caller-supplied agentId is ignored.
         mvc.perform(post("/api/v1/households/" + householdId + "/assistant/chat")
                         .with(httpBasic("admin", "admin"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"agentId\":\"no-such-agent\",\"message\":\"Hola\"}"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("no-such-agent")));
+                .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("orchestrator")));
 
         mvc.perform(post("/api/v1/households/" + householdId + "/assistant/chat")
                         .with(httpBasic("admin", "admin"))

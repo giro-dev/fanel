@@ -2,6 +2,7 @@ package dev.agiro.fanel.assistant.infra.recipeimport;
 
 import com.sun.net.httpserver.HttpServer;
 import dev.agiro.fanel.assistant.domain.recipeimport.BookSection;
+import dev.agiro.fanel.shared.net.OutboundUrlPolicy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WebRecipeParserTest {
 
-    private final WebRecipeParser parser = new WebRecipeParser();
+    private final WebRecipeParser parser = new WebRecipeParser(new OutboundUrlPolicy(true));
     private HttpServer server;
 
     @AfterEach

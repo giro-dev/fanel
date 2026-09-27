@@ -8,6 +8,7 @@ import dev.agiro.fanel.calendar.infra.IcsFetcher;
 import dev.agiro.fanel.calendar.infra.IcsParser;
 import dev.agiro.fanel.household.api.HouseholdApi;
 import dev.agiro.fanel.shared.events.HouseholdEvent;
+import dev.agiro.fanel.shared.net.OutboundUrlPolicy;
 import dev.agiro.fanel.shared.web.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class CalendarSubscriptionService {
             publisher.publishEvent(new HouseholdEvent(subscription.getHouseholdId(), CalendarService.TOPIC));
         } catch (Exception e) {
             log.warn("Sync of calendar subscription {} ({}) failed: {}",
-                    subscription.getId(), subscription.getUrl(), e.toString());
+                    subscription.getId(), OutboundUrlPolicy.redact(subscription.getUrl()), e.toString());
             syncStore.markError(subscription.getId(), e.toString());
         }
     }
@@ -124,7 +125,7 @@ public class CalendarSubscriptionService {
 
     private CalendarSubscriptionDto toDto(CalendarSubscription subscription) {
         return new CalendarSubscriptionDto(subscription.getId(), subscription.getHouseholdId(),
-                subscription.getName(), subscription.getUrl(), subscription.getColor(),
+                subscription.getName(), OutboundUrlPolicy.redact(subscription.getUrl()), subscription.getColor(),
                 subscription.getLastSyncedAt(), subscription.getLastError());
     }
 }
