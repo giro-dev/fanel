@@ -63,6 +63,32 @@ abstract class AssistantAdminIT {
     }
 
     @Test
+    void reasoningEffortIsPersistedAndValidated() throws Exception {
+        mvc.perform(put(BASE + "/agents/menu-planner").with(httpBasic("admin", "admin"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"provider\":\"openai\",\"model\":\"gpt-5.6-luna\",\"reasoningEffort\":\"none\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.provider").value("openai"))
+                .andExpect(jsonPath("$.model").value("gpt-5.6-luna"))
+                .andExpect(jsonPath("$.reasoningEffort").value("none"));
+
+        mvc.perform(put(BASE + "/agents/menu-planner").with(httpBasic("admin", "admin"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reasoningEffort\":\"turbo\"}"))
+                .andExpect(status().isBadRequest());
+
+        // A blank effort clears the stored override value.
+        mvc.perform(put(BASE + "/agents/menu-planner").with(httpBasic("admin", "admin"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reasoningEffort\":\"\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reasoningEffort").value(org.hamcrest.Matchers.nullValue()));
+
+        mvc.perform(delete(BASE + "/agents/menu-planner").with(httpBasic("admin", "admin")))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     void invalidProviderIsRejectedAndUnknownAgentIs404() throws Exception {
         mvc.perform(put(BASE + "/agents/menu-planner").with(httpBasic("admin", "admin"))
                         .contentType(MediaType.APPLICATION_JSON)

@@ -994,6 +994,7 @@ export interface components {
             temperature?: number;
             /** Format: int32 */
             maxTokens?: number;
+            reasoningEffort?: string;
         };
         AgentConfigDto: {
             id?: string;
@@ -1008,6 +1009,7 @@ export interface components {
             temperature?: number;
             /** Format: int32 */
             maxTokens?: number;
+            reasoningEffort?: string;
             defaults?: components["schemas"]["ModelDefaults"];
             overridden?: boolean;
             available?: boolean;
@@ -1019,6 +1021,7 @@ export interface components {
             temperature?: number;
             /** Format: int32 */
             maxTokens?: number;
+            reasoningEffort?: string;
         };
         SetupRequest: {
             householdName: string;

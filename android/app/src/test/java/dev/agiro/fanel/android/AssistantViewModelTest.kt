@@ -24,6 +24,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -81,6 +83,51 @@ class AssistantViewModelTest {
         assertTrue(AssistantViewModel.wantsCreate("Afegeix-la al llibre"))
         assertTrue(AssistantViewModel.wantsCreate("guárdala"))
         assertFalse(AssistantViewModel.wantsCreate("Què porten els canelons?"))
+    }
+
+    @Test
+    fun problemDetailExtractsDetail() {
+        val body = """{"title":"Internal Server Error","detail":"400: Function tools with reasoning_effort are not supported"}"""
+        assertEquals(
+            "400: Function tools with reasoning_effort are not supported",
+            AssistantViewModel.problemDetail(body)
+        )
+    }
+
+    @Test
+    fun problemDetailFallsBackToTitle() {
+        assertEquals("X", AssistantViewModel.problemDetail("""{"title":"X"}"""))
+    }
+
+    @Test
+    fun problemDetailReturnsNullOnGarbage() {
+        assertNull(AssistantViewModel.problemDetail("not json"))
+        assertNull(AssistantViewModel.problemDetail(null))
+        assertNull(AssistantViewModel.problemDetail(""))
+    }
+
+    @Test
+    fun sendShowsServerProblemDetailOnHttpError() = runBlocking {
+        val errorBody = """{"title":"Internal Server Error","detail":"400: Function tools with reasoning_effort are not supported for gpt-5.6-luna"}"""
+            .toResponseBody("application/problem+json".toMediaType())
+        val assistantApi = FakeAssistantApi().apply {
+            failure = retrofit2.HttpException(
+                retrofit2.Response.error<AgentResponse>(500, errorBody)
+            )
+        }
+        val context = RuntimeEnvironment.getApplication()
+        val sessionStore = SessionStore(context).apply { householdId = "household-1" }
+        val vm = AssistantViewModel(context, assistantApi, recipesRepository(context, RecordingRecipesApi()), sessionStore)
+        val states = mutableListOf<AssistantUiState>()
+        val job = launch(UnconfinedTestDispatcher()) { vm.uiState.collect { states.add(it) } }
+
+        vm.send("Hola", null)
+
+        val last = states.last().messages.last()
+        assertEquals(ChatRole.ASSISTANT, last.role)
+        assertTrue(last.error)
+        assertTrue(last.text.contains("reasoning_effort are not supported for gpt-5.6-luna"))
+        job.cancel()
     }
 
     private fun recipesRepository(context: Context, api: RecipesApi): RecipesRepository {
@@ -237,8 +284,11 @@ private class FakeAssistantApi : AssistantApi {
 
     override suspend fun agents(householdId: String): List<AgentDto> = availableAgents
 
+    var failure: Throwable? = null
+
     override suspend fun chat(householdId: String, request: AgentRequest): AgentResponse {
         lastRequest = request
+        failure?.let { throw it }
         return response
     }
 }
