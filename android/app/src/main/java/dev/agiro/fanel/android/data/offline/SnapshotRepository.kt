@@ -52,14 +52,16 @@ abstract class SnapshotRepository<T>(
         snapshotDao.find(householdId, domain, key)?.let(::decode)
 
     override suspend fun sync(householdId: String) {
-        pusher.pushAll(householdId)
-        pull(householdId)
+        pusher.pushThen(householdId) { pull(householdId) }
     }
 
     protected abstract suspend fun pull(householdId: String)
 
     protected suspend fun cachedKeys(householdId: String): List<String> =
         snapshotDao.findAll(householdId, domain).map { it.key }
+
+    protected suspend fun pendingTargetIds(householdId: String): Set<String> =
+        pendingDao.pendingFor(householdId, domain).mapNotNullTo(HashSet()) { it.targetId }
 
     protected suspend fun write(householdId: String, value: T, key: String = DEFAULT_KEY) {
         snapshotDao.upsert(CachedSnapshotEntity(householdId, domain, key, gson.toJson(value), clock()))

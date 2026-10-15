@@ -136,8 +136,7 @@ class CalendarRepository(
 
     override suspend fun fullSync(householdId: String, from: String, to: String) {
         if (householdId.isBlank()) throw IllegalArgumentException("householdId is required")
-        pusher.pushAll(householdId)
-        pullVisibleRange(householdId, from, to)
+        pusher.pushThen(householdId) { pullVisibleRange(householdId, from, to) }
         val now = System.currentTimeMillis()
         syncPreferences.setLastSuccessfulSync(householdId, now)
         syncTimestamps.tryEmit(householdId to now)

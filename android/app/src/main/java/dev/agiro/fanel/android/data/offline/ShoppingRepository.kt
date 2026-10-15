@@ -100,18 +100,18 @@ class ShoppingRepository(
 
     /**
      * Replaces the snapshot with the server state, preserving locally created lists and items
-     * (ids with the local- prefix) that have no remote counterpart so unsynced work is never
-     * wiped by a pull.
+     * (ids with the local- prefix) that still have a pending operation and no remote counterpart.
      */
     override suspend fun pull(householdId: String) {
         val remote = api.listLists(householdId)
         val local = cached(householdId).orEmpty()
         val remoteIds = remote.mapTo(HashSet()) { it.id }
+        val pendingIds = pendingTargetIds(householdId)
         val merged = remote.map { list ->
             val unsyncedItems = local.firstOrNull { it.id == list.id }?.items.orEmpty()
-                .filter { isLocalId(it.id) }
+                .filter { isLocalId(it.id) && it.id in pendingIds }
             if (unsyncedItems.isEmpty()) list else list.copy(items = list.items.orEmpty() + unsyncedItems)
-        } + local.filter { isLocalId(it.id) && it.id !in remoteIds }
+        } + local.filter { isLocalId(it.id) && it.id !in remoteIds && it.id in pendingIds }
         write(householdId, merged)
     }
 
