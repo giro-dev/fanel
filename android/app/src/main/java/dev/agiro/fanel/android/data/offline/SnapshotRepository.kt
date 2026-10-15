@@ -52,8 +52,7 @@ abstract class SnapshotRepository<T>(
         snapshotDao.find(householdId, domain, key)?.let(::decode)
 
     override suspend fun sync(householdId: String) {
-        pusher.pushAll(householdId)
-        pull(householdId)
+        pusher.pushThen(householdId) { pull(householdId) }
     }
 
     protected abstract suspend fun pull(householdId: String)

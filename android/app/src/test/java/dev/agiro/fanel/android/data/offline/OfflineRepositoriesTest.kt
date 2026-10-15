@@ -12,7 +12,11 @@ import dev.agiro.fanel.android.data.remote.ShoppingApi
 import dev.agiro.fanel.android.data.remote.ShoppingItemDto
 import dev.agiro.fanel.android.data.remote.ShoppingListDto
 import dev.agiro.fanel.android.data.remote.UpdateItemRequest
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -122,6 +126,33 @@ class OfflineRepositoriesTest {
     }
 
     @Test
+    fun concurrentSyncsPushAddedItemOnlyOnce() = runBlocking {
+        val store = store()
+        val api = FakeShoppingApi()
+        val repository = ShoppingRepository(api, store.snapshotDao, store.pendingDao, store.pusher)
+        api.lists += ShoppingListDto("l-1", householdId, "Setmanal", emptyList())
+        repository.sync(householdId)
+        repository.addItem(householdId, "l-1", AddItemRequest("Ous", 12.0, "u", null, false))
+        val gate = CompletableDeferred<Unit>()
+        api.addItemGate = gate
+
+        coroutineScope {
+            val first = launch { repository.sync(householdId) }
+            val second = launch { repository.sync(householdId) }
+            delay(200)
+            gate.complete(Unit)
+            first.join()
+            second.join()
+        }
+
+        val remoteItems = api.lists.single().items.orEmpty()
+        assertEquals(1, remoteItems.size)
+        val cachedItems = repository.observeLists(householdId).first().single().items.orEmpty()
+        assertEquals(listOf(remoteItems.single().id), cachedItems.map { it.id })
+        assertEquals(0, repository.observePendingCount(householdId).first())
+    }
+
+    @Test
     fun pusherDropsUnrecoverableOperationsButKeepsTransientOnes() = runBlocking {
         val store = store()
         val api = FakeRecipesApi()
@@ -194,6 +225,7 @@ private class FakeShoppingApi : ShoppingApi {
     var offline = false
     var failWithStatus: Int? = null
     var lastAddListId: String? = null
+    var addItemGate: CompletableDeferred<Unit>? = null
 
     private fun gate() {
         if (offline) throw IOException("offline")
@@ -232,6 +264,7 @@ private class FakeShoppingApi : ShoppingApi {
 
     override suspend fun addItem(householdId: String, listId: String, request: AddItemRequest): ShoppingItemDto {
         gate()
+        addItemGate?.await()
         lastAddListId = listId
         val list = lists.first { it.id == listId }
         val created = ShoppingItemDto(

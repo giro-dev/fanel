@@ -5,6 +5,8 @@ import dev.agiro.fanel.android.data.local.PendingOperationDao
 import dev.agiro.fanel.android.data.local.PendingOperationEntity
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import retrofit2.HttpException
 import java.util.UUID
 
@@ -24,6 +26,7 @@ fun interface OperationHandler {
  */
 class OutboxPusher(private val pendingDao: PendingOperationDao) {
     private val handlers = mutableMapOf<String, OperationHandler>()
+    private val syncMutex = Mutex()
 
     /**
      * Replays the last rejection so screens opened after a background sync still surface it;
@@ -59,7 +62,21 @@ class OutboxPusher(private val pendingDao: PendingOperationDao) {
         pendingDao.deleteByTarget(householdId, domain, targetId)
     }
 
+    /**
+     * Pushes the outbox and then runs [afterPush] while holding the sync lock, so concurrent syncs
+     * never replay the same operation twice nor interleave a pull with a push.
+     */
+    suspend fun <T> pushThen(householdId: String, afterPush: suspend () -> T): T =
+        syncMutex.withLock {
+            pushPending(householdId)
+            afterPush()
+        }
+
     suspend fun pushAll(householdId: String) {
+        pushThen(householdId) {}
+    }
+
+    private suspend fun pushPending(householdId: String) {
         for (operation in pendingDao.pendingForHousehold(householdId)) {
             val handler = handlers[operation.domain] ?: continue
             val current = pendingDao.find(operation.id) ?: continue
