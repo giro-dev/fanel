@@ -12,6 +12,8 @@ const PROVIDER_LABELS: Record<string, string> = {
 
 const OTHER_MODEL = '__other__'
 
+const REASONING_EFFORTS = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh']
+
 function providerLabel(provider: string): string {
   return PROVIDER_LABELS[provider] ?? provider
 }
@@ -34,6 +36,7 @@ function AgentCard({ agent, providers, onSaved }: {
   const [freeModel, setFreeModel] = useState(false)
   const [temperature, setTemperature] = useState(agent.temperature ?? 0.7)
   const [maxTokens, setMaxTokens] = useState(agent.maxTokens != null ? String(agent.maxTokens) : '')
+  const [reasoningEffort, setReasoningEffort] = useState(agent.reasoningEffort ?? '')
   const [testResult, setTestResult] = useState<AgentTestResult | null>(null)
 
   useEffect(() => {
@@ -42,6 +45,7 @@ function AgentCard({ agent, providers, onSaved }: {
     setModel(agent.model ?? '')
     setTemperature(agent.temperature ?? 0.7)
     setMaxTokens(agent.maxTokens != null ? String(agent.maxTokens) : '')
+    setReasoningEffort(agent.reasoningEffort ?? '')
     setTestResult(null)
   }, [agent])
 
@@ -62,6 +66,7 @@ function AgentCard({ agent, providers, onSaved }: {
         model: model || undefined,
         temperature,
         maxTokens: maxTokens.trim() === '' ? undefined : Number(maxTokens),
+        reasoningEffort: provider === 'openai' ? reasoningEffort : undefined,
       },
     })),
     onSuccess: () => {
@@ -146,6 +151,16 @@ function AgentCard({ agent, providers, onSaved }: {
           <input type="number" min={1} value={maxTokens} placeholder="—"
                  onChange={(e) => setMaxTokens(e.target.value)} />
         </label>
+        {provider === 'openai' && (
+          <label>
+            {t('assistantSettings.reasoningEffort')}
+            <select value={reasoningEffort} onChange={(e) => setReasoningEffort(e.target.value)}>
+              <option value="">{t('assistantSettings.reasoningEffortDefault')}</option>
+              {REASONING_EFFORTS.map((effort) => <option key={effort} value={effort}>{effort}</option>)}
+            </select>
+            <small className="meta">{t('assistantSettings.reasoningEffortHint')}</small>
+          </label>
+        )}
       </div>
 
       <p className="meta">

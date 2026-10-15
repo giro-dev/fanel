@@ -7,6 +7,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.model.chat.client.autoconfigure.ChatClientBuilderConfigurer;
 import org.springframework.ai.tool.ToolCallback;
 import org.slf4j.Logger;
@@ -46,17 +47,7 @@ public class ChatClientFactory {
         ChatClient.Builder builder = ChatClient.builder(chatModel, observationRegistry, null, null, null);
         builder = configurer.configure(builder);
 
-        ChatOptions.Builder options = ChatOptions.builder();
-        if (profile.model() != null) {
-            options.model(profile.model());
-        }
-        if (profile.temperature() != null) {
-            options.temperature(profile.temperature());
-        }
-        if (profile.maxTokens() != null) {
-            options.maxTokens(profile.maxTokens());
-        }
-        builder.defaultOptions(options);
+        builder.defaultOptions(options(profile));
 
         if (systemPrompt != null && !systemPrompt.isBlank()) {
             builder.defaultSystem(systemPrompt);
@@ -72,6 +63,30 @@ public class ChatClientFactory {
         }
 
         return Optional.of(builder.build());
+    }
+
+    /**
+     * {@link ChatOptions} for the profile: provider-specific options for OpenAI (which supports
+     * {@code reasoning_effort}), generic options otherwise.
+     */
+    public static ChatOptions.Builder options(ModelProfile profile) {
+        ChatOptions.Builder options = "openai".equals(profile.provider())
+                ? OpenAiChatOptions.builder()
+                : ChatOptions.builder();
+        if (profile.model() != null) {
+            options.model(profile.model());
+        }
+        if (profile.temperature() != null) {
+            options.temperature(profile.temperature());
+        }
+        if (profile.maxTokens() != null) {
+            options.maxTokens(profile.maxTokens());
+        }
+        if (options instanceof OpenAiChatOptions.Builder openAi
+                && profile.reasoningEffort() != null) {
+            openAi.reasoningEffort(profile.reasoningEffort());
+        }
+        return options;
     }
 
     /** The provider's {@link ChatModel} bean, when the provider is usable on this instance. */

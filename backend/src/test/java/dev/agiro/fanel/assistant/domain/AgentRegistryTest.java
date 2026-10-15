@@ -50,11 +50,11 @@ class AgentRegistryTest {
         properties.setOrchestratorId("orchestrator");
         Map<String, AgentProperties.AgentConfig> agents = new LinkedHashMap<>();
         agents.put("orchestrator", config(false, List.of("AssistantTools", "Subagents"), null,
-                new ModelProfile("openai", "gpt-4o", 0.3, null)));
+                new ModelProfile("openai", "gpt-4o", 0.3, null, null)));
         agents.put("menu-planner", config(false, List.of("AssistantTools"), "Plan menus",
-                new ModelProfile("openai", "gpt-4o-mini", 0.5, null)));
+                new ModelProfile("openai", "gpt-4o-mini", 0.5, null, null)));
         agents.put("recipe-from-image", config(true, List.of("AssistantTools"), "Extract recipes",
-                new ModelProfile("openai", "gpt-4o-mini", 0.2, null)));
+                new ModelProfile("openai", "gpt-4o-mini", 0.2, null, null)));
         properties.setAgents(agents);
 
         overrides.clear();
@@ -69,7 +69,9 @@ class AgentRegistryTest {
                     override.getProvider() != null ? override.getProvider() : defaults.provider(),
                     override.getModel() != null ? override.getModel() : defaults.model(),
                     override.getTemperature() != null ? override.getTemperature() : defaults.temperature(),
-                    override.getMaxTokens() != null ? override.getMaxTokens() : defaults.maxTokens());
+                    override.getMaxTokens() != null ? override.getMaxTokens() : defaults.maxTokens(),
+                    override.getReasoningEffort() != null ? override.getReasoningEffort()
+                            : defaults.reasoningEffort());
         });
         when(chatClientFactory.build(any(), any(), anyList(), anyList()))
                 .thenReturn(Optional.of(mock(ChatClient.class)));
@@ -100,7 +102,7 @@ class AgentRegistryTest {
         assertThat(registry.get("menu-planner")).isEmpty();
         assertThat(registry.get("recipe-from-image")).isPresent();
 
-        ModelProfile orchestratorProfile = new ModelProfile("openai", "gpt-4o", 0.3, null);
+        ModelProfile orchestratorProfile = new ModelProfile("openai", "gpt-4o", 0.3, null, null);
         verify(chatClientFactory).build(eq(orchestratorProfile), isNull(), anyList(),
                 org.mockito.ArgumentMatchers.<List<ToolCallback>>argThat(callbacks -> callbacks.size() == 1));
     }
@@ -119,7 +121,7 @@ class AgentRegistryTest {
         ArgumentCaptor<ModelProfile> captor = ArgumentCaptor.forClass(ModelProfile.class);
         verify(chatClientFactory, org.mockito.Mockito.times(3)).build(captor.capture(), any(), anyList(), anyList());
         assertThat(captor.getAllValues())
-                .contains(new ModelProfile("ollama", "llama3.2", 0.4, null));
+                .contains(new ModelProfile("ollama", "llama3.2", 0.4, null, null));
     }
 
     @Test
