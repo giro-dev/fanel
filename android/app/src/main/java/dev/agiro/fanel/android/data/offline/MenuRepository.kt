@@ -98,9 +98,8 @@ class MenuRepository(
         val key = weekKey(year, week)
         val remote = api.getWeek(householdId, year, week)
         val remoteIds = remote.slots.orEmpty().mapTo(HashSet()) { it.id }
-        val pendingIds = pendingTargetIds(householdId)
         val unsynced = cached(householdId, key)?.slots.orEmpty()
-            .filter { isLocalId(it.id) && it.id !in remoteIds && it.id in pendingIds }
+            .filter { isLocalId(it.id) && it.id !in remoteIds }
         write(householdId, remote.copy(slots = remote.slots.orEmpty() + unsynced), key)
     }
 

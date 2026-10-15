@@ -60,9 +60,6 @@ abstract class SnapshotRepository<T>(
     protected suspend fun cachedKeys(householdId: String): List<String> =
         snapshotDao.findAll(householdId, domain).map { it.key }
 
-    protected suspend fun pendingTargetIds(householdId: String): Set<String> =
-        pendingDao.pendingFor(householdId, domain).mapNotNullTo(HashSet()) { it.targetId }
-
     protected suspend fun write(householdId: String, value: T, key: String = DEFAULT_KEY) {
         snapshotDao.upsert(CachedSnapshotEntity(householdId, domain, key, gson.toJson(value), clock()))
     }

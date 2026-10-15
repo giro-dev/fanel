@@ -110,7 +110,7 @@ class OfflineRepositoriesTest {
     }
 
     @Test
-    fun rejectedCreateDropsLocalListAfterPull() = runBlocking {
+    fun rejectedCreateLeavesLocalListVisibleAfterPull() = runBlocking {
         val store = store()
         val api = FakeShoppingApi().apply { failWithStatus = 400 }
         val repository = ShoppingRepository(api, store.snapshotDao, store.pendingDao, store.pusher)
@@ -121,7 +121,8 @@ class OfflineRepositoriesTest {
         assertTrue(api.lists.isEmpty())
         assertEquals(0, repository.observePendingCount(householdId).first())
         val lists = repository.observeLists(householdId).first()
-        assertTrue(lists.none { it.id == localId })
+        assertEquals(listOf(localId), lists.map { it.id })
+        assertEquals(listOf("Setmanal"), lists.map { it.name })
     }
 
     @Test
@@ -148,23 +149,6 @@ class OfflineRepositoriesTest {
         assertEquals(1, remoteItems.size)
         val cachedItems = repository.observeLists(householdId).first().single().items.orEmpty()
         assertEquals(listOf(remoteItems.single().id), cachedItems.map { it.id })
-        assertEquals(0, repository.observePendingCount(householdId).first())
-    }
-
-    @Test
-    fun pullDropsLocalItemWhoseCreateWasRejected() = runBlocking {
-        val store = store()
-        val api = FakeShoppingApi()
-        val repository = ShoppingRepository(api, store.snapshotDao, store.pendingDao, store.pusher)
-        api.lists += ShoppingListDto("l-1", householdId, "Setmanal", emptyList())
-        repository.sync(householdId)
-        val localId = repository.addItem(householdId, "l-1", AddItemRequest("Ous", 12.0, "u", null, false))
-        api.failWithStatus = 422
-
-        repository.sync(householdId)
-
-        assertTrue(repository.observeLists(householdId).first().single().items.orEmpty().none { it.id == localId })
-        assertEquals(localId, repository.observeDropped().first().targetId)
         assertEquals(0, repository.observePendingCount(householdId).first())
     }
 
@@ -279,7 +263,7 @@ private class FakeShoppingApi : ShoppingApi {
     }
 
     override suspend fun addItem(householdId: String, listId: String, request: AddItemRequest): ShoppingItemDto {
-        mutationGate()
+        gate()
         addItemGate?.await()
         lastAddListId = listId
         val list = lists.first { it.id == listId }

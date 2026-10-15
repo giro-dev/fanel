@@ -54,9 +54,7 @@ class RecipesRepository(
     override suspend fun pull(householdId: String) {
         val remote = api.list(householdId)
         val remoteIds = remote.mapTo(HashSet()) { it.id }
-        val pendingIds = pendingTargetIds(householdId)
-        val unsynced = cached(householdId).orEmpty()
-            .filter { isLocalId(it.id) && it.id !in remoteIds && it.id in pendingIds }
+        val unsynced = cached(householdId).orEmpty().filter { isLocalId(it.id) && it.id !in remoteIds }
         write(householdId, remote + unsynced)
     }
 
