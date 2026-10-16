@@ -93,7 +93,7 @@ public class AssistantTools {
         return shopping.getDefaultList(householdId);
     }
 
-    @Tool(description = "Add an item to a shopping list. If listId is omitted, the default list is used.")
+    @Tool(description = "Add a NEW item to a shopping list. If listId is omitted, the default list is used. Do not use it to modify items that already exist; use updateShoppingItem instead.")
     public ShoppingItemDto addShoppingItem(UUID householdId,
                                            @ToolParam(description = "Name of the item") String name,
                                            @ToolParam(description = "Optional list id") UUID listId,
@@ -102,6 +102,23 @@ public class AssistantTools {
                                            @ToolParam(description = "Optional category or aisle") String category) {
         UUID targetList = listId != null ? listId : shopping.getDefaultList(householdId).id();
         return shopping.addItem(householdId, targetList, name, quantity, unit, category, false);
+    }
+
+    @Tool(description = "Update an existing shopping list item: change its name, quantity, unit or category, or mark it as done/undone. Only the provided fields change. Use this (not addShoppingItem) for items that already exist, e.g. to categorize the list.")
+    public ShoppingItemDto updateShoppingItem(UUID householdId,
+                                              @ToolParam(description = "Id of the existing item") UUID itemId,
+                                              @ToolParam(description = "Optional new name") String name,
+                                              @ToolParam(description = "Optional new quantity") Double quantity,
+                                              @ToolParam(description = "Optional new unit") String unit,
+                                              @ToolParam(description = "Optional new category or aisle") String category,
+                                              @ToolParam(description = "Optional done flag") Boolean done) {
+        return shopping.updateItem(householdId, itemId, name, quantity, unit, category, null, done);
+    }
+
+    @Tool(description = "Remove an item from a shopping list, e.g. a duplicate.")
+    public void removeShoppingItem(UUID householdId,
+                                   @ToolParam(description = "Id of the item to remove") UUID itemId) {
+        shopping.removeItem(householdId, itemId);
     }
 
     @Tool(description = "Get the meal plan for a given ISO week")
