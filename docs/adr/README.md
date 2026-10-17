@@ -12,4 +12,7 @@ Format: [MADR](https://adr.github.io/madr/) reduït. Un fitxer per decisió, num
 | [0006](0006-spring-ai-mcp.md) | Spring AI amb proveïdor configurable; MCP server integrat | Acceptat |
 | [0007](0007-i18n.md) | i18n català + castellà des de l'inici | Acceptat |
 | [0008](0008-llibreria-ui-calendari.md) | Cap llibreria de components UI general; `FullCalendar` només per al calendari | Acceptat |
-|| [0009](0009-assistant-multiagent.md) | Assistent multiagent: un model/API per funció | Acceptat |
+| [0009](0009-assistant-multiagent.md) | Assistent multiagent: un model/API per funció | Acceptat |
+| [0010](0010-oidc-opcional.md) | Login extern opcional via OIDC | Acceptat |
+| [0011](0011-orquestrador-i-config-models.md) | Assistent orquestrat i configuració de models per agent | Acceptat |
+| [0012](0012-acces-remot-wireguard.md) | Accés remot transparent amb WireGuard | Acceptat |

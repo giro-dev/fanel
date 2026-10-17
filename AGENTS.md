@@ -24,6 +24,8 @@ Roadmap i fases: [`docs/ROADMAP.md`](docs/ROADMAP.md). Decisions: [`docs/adr/`](
 | 9 | **Assistent multiagent** amb **un model/API per funció**: cada agent té el seu `ModelProfile` (Ollama, OpenAI, Anthropic…) i les tools compartides del mòdul `assistant`. | [0009](docs/adr/0009-assistant-multiagent.md) |
 | 10 | **Login extern opcional via OIDC** (`fanel.oidc.*`): sessió només per al flux SSO; Basic/Bearer queden stateless; membres resolts per claim d'usuari i fixats per `oidc_subject`. | [0010](docs/adr/0010-oidc-opcional.md) |
 | 11 | **Assistent orquestrat**: un `orchestrator` és l'únic agent del xat i delega a subagents via tools `delegate_to_*`; configuració de models per agent al catàleg yml + overrides globals a BD editables pel panell d'admin (`/assistent`). Credencials només per env. | [0011](docs/adr/0011-orquestrador-i-config-models.md) |
+| 12 | **Accés remot opcional via WireGuard**: enrolament d'un sol ús amb QR, túnel de peers gestionat des del servidor i desplegament autoallotjat sense afegir un contenidor. | [0012](docs/adr/0012-acces-remot-wireguard.md) |
+| 12 | **Accés remot transparent amb WireGuard**: mòdul opt-in que emparella peers amb QR d'un sol ús, TLS/SPKI i reconcilia peers al servidor; la topologia Docker conserva una única imatge. | [0012](docs/adr/0012-acces-remot-wireguard.md) |
 
 ## Estructura del repositori
 

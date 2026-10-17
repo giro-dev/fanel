@@ -70,6 +70,7 @@ Origen: POC "Panel familiar" (menú setmanal 7 dies × 4 àpats, calendari, comp
 - [x] APK Android — fet com a app nativa Kotlin/Compose (`android/`, vegeu android/README.md); push natiu, widget i compartir text a la llista pendents
 - [ ] Tauri → escriptori Linux / Windows / macOS (posposat: requereix toolchain Rust; la SPA necessita abans un ajust d'URL de servidor)
 - [ ] (Opcional) client Kotlin generat des d'OpenAPI per a l'app nativa (ara els models estan escrits a mà)
+- [x] Accés remot transparent amb WireGuard: emparellament per QR d'un sol ús, panell web de peers, TLS/SPKI i topologia autoallotjada documentada (ADR 0012); el client Android amb túnel integrat queda en una entrega separada.
 
 ## Fase 5 — Maduresa
 

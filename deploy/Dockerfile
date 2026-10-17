@@ -6,6 +6,8 @@ COPY . .
 RUN ls backend/target/fanel-backend-*.jar >/dev/null 2>&1 || mvn -B -ntp package -DskipTests
 
 FROM eclipse-temurin:25-jre-alpine
+RUN apk add --no-cache wireguard-tools-wg libcap-utils \
+    && setcap cap_net_admin+ep /usr/bin/wg
 RUN addgroup -S -g 101 fanel && adduser -S -D -u 100 -h /app -G fanel fanel
 WORKDIR /app
 COPY --from=build /build/backend/target/fanel-backend-*.jar app.jar
