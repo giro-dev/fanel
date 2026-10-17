@@ -1,6 +1,7 @@
 package dev.agiro.fanel.android
 
 import android.content.Context
+import android.content.Intent
 import androidx.room.Room
 import dev.agiro.fanel.android.data.CalendarDraft
 import dev.agiro.fanel.android.data.CalendarRepositoryContract
@@ -25,6 +26,12 @@ import dev.agiro.fanel.android.data.remote.VerifyPinResponse
 import dev.agiro.fanel.android.sync.HouseholdEvents
 import dev.agiro.fanel.android.sync.HouseholdSync
 import dev.agiro.fanel.android.sync.HouseholdSyncContract
+import dev.agiro.fanel.android.wireguard.ConnectionStateHolder
+import dev.agiro.fanel.android.wireguard.TunnelController
+import dev.agiro.fanel.android.wireguard.TunnelStatus
+import dev.agiro.fanel.android.wireguard.WgConfig
+import dev.agiro.fanel.android.wireguard.WgConfigRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import dev.agiro.fanel.android.sync.SyncSchedulerContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -107,6 +114,18 @@ class FakeAppContainer(
 ) : AppContainerContract {
     private val store = OfflineTestStore(context)
     override val authStore = AuthStore()
+    override val wgConfigRepository = object : WgConfigRepository {
+        override val current: WgConfig? = null
+        override suspend fun save(c: WgConfig) = Unit
+        override suspend fun clear() = Unit
+    }
+    override val connectionStateHolder = ConnectionStateHolder()
+    override val tunnelController = object : TunnelController {
+        override val status = MutableStateFlow<TunnelStatus>(TunnelStatus.DOWN)
+        override suspend fun up(config: WgConfig) = TunnelStatus.DOWN
+        override suspend fun down() = Unit
+        override fun permissionIntent(): Intent? = null
+    }
     override val recipesApi: RecipesApi get() = throw UnsupportedOperationException()
     override val menuApi: MenuApi get() = throw UnsupportedOperationException()
     override val shoppingApi: ShoppingApi get() = throw UnsupportedOperationException()
@@ -121,4 +140,10 @@ class FakeAppContainer(
     override val householdSync: HouseholdSyncContract = HouseholdSync(calendarRepository, listOf(membersRepository))
 
     override fun refreshConnection() = Unit
+    override fun enterPairedMode() = Unit
+    override fun startConnectionResolution() = Unit
+    override fun unpair() = Unit
+    override fun onForeground() = Unit
+    override fun onBackground() = Unit
+    override suspend fun revokeWgPeer(publicKey: String) = Unit
 }

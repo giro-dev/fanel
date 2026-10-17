@@ -7,7 +7,8 @@
     "chores": "Tasques",
     "members": "Membres",
     "automation": "Automatitzacions",
-    "assistantSettings": "Assistent"
+    "assistantSettings": "Assistent",
+    "wireguard": "Dispositius"
   },
   "theme": {
     "label": "Canviar tema",
@@ -119,6 +120,38 @@
     "testing": "Provant…",
     "testOk": "{{latency}} ms — {{text}}",
     "testError": "Error: {{error}}"
+  },
+  "wireguard": {
+    "title": "Dispositius WireGuard",
+    "disabled": "WireGuard està desactivat en aquesta instal·lació.",
+    "docs": "Consulta la guia d'instal·lació",
+    "interface": "Interfície",
+    "network": "Xarxa",
+    "endpoint": "Endpoint",
+    "reachability": "Interfície",
+    "reachable": "Accessible",
+    "unreachable": "No accessible",
+    "pairingTitle": "Vincula un dispositiu",
+    "createToken": "Genera codi de vinculació",
+    "qrAlt": "Codi QR per vincular un dispositiu",
+    "expiresIn": "Caduca d'aquí a {{countdown}}",
+    "expired": "Codi caducat",
+    "openPairingLink": "Obre l'enllaç de vinculació",
+    "peersTitle": "Dispositius vinculats",
+    "noPeers": "Encara no hi ha dispositius vinculats.",
+    "device": "Dispositiu",
+    "address": "Adreça",
+    "status": "Estat",
+    "handshake": "Darrer handshake",
+    "created": "Creat",
+    "actions": "Accions",
+    "never": "Mai",
+    "revoke": "Revoca",
+    "confirmRevoke": "Vols revocar el dispositiu {{name}}?",
+    "peerStatus": {
+      "ACTIVE": "Actiu",
+      "REVOKED": "Revocat"
+    }
   },
   "account": {
     "title": "Compte",

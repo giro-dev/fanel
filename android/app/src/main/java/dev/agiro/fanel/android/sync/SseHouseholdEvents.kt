@@ -10,14 +10,19 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import okhttp3.Call
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-class SseHouseholdEvents(baseUrl: String, authStore: AuthStore) : HouseholdEvents {
+class SseHouseholdEvents(
+    baseUrl: String,
+    authStore: AuthStore,
+    sharedClient: OkHttpClient? = null,
+) : HouseholdEvents {
     private val eventsUrl = "${baseUrl.trimEnd('/')}/api/v1/events"
-    private val client = ApiFactory.okHttpClient(authStore).newBuilder()
+    private val client = (sharedClient ?: ApiFactory.okHttpClient(authStore)).newBuilder()
         .readTimeout(0, TimeUnit.SECONDS)
         .build()
 

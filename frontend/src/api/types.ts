@@ -62,3 +62,23 @@ export type AgentConfig = components['schemas']['AgentConfigDto'] & {
 export type ProviderInfo = components['schemas']['ProviderDto'] & { error?: string | null }
 export type AgentTestResult = components['schemas']['AgentTestResult']
 export type ImportResult = components['schemas']['ImportResult']
+export type WireGuardPairingToken = components['schemas']['PairingTokenResponse'] & {
+  payload: string
+  qrPngBase64: string
+  expiresAt: string
+}
+export type WireGuardPeer = components['schemas']['PeerDto'] & {
+  id: string
+  deviceName: string
+  assignedIp: string
+  status: 'ACTIVE' | 'REVOKED'
+  createdAt: string
+  lastHandshakeAt?: string | null
+}
+export type WireGuardStatus = components['schemas']['WireGuardStatus'] & {
+  enabled: boolean
+  interfaceName: string
+  interfaceReachable: boolean
+  endpoint?: string | null
+  network: string
+}

@@ -22,9 +22,10 @@ Skeleton d'un client Android nadiu per al calendari, alineat amb el backend actu
 
 ## Configuració ràpida
 
-1. A la primera arrencada, la pantalla de setup demana la URL del servidor i credencials (usuari + contrasenya, o token d'API) i després deixa triar la llar.
+1. A la primera arrencada, pots introduir manualment la URL del servidor i les credencials (usuari + contrasenya, o token d'API) i després triar la llar. També pots vincular el servidor amb el botó QR; aquest flux inicial requereix el Wi-Fi de casa.
 2. Les credencials es guarden xifrades amb Android Keystore (`CredentialCipher`); la sessió (URL + llar) a `SessionStore`.
-3. Executa `./gradlew assembleDebug` dins d'`android/`. `API_BASE_URL` a `app/build.gradle.kts` només és la URL per defecte del formulari de setup.
+3. Un cop vinculada, l'app utilitza HTTPS fixat per SPKI i tria automàticament la URL LAN o el túnel WireGuard. La configuració WireGuard es pot eliminar a **Configuració → Desvincula el dispositiu**; tancar sessió no la revoca. Per als detalls de topologia i resolució de problemes, consulta [`docs/wireguard.md`](../docs/wireguard.md).
+4. Executa `./gradlew assembleDebug` dins d'`android/`. `API_BASE_URL` a `app/build.gradle.kts` només és la URL per defecte del formulari de setup.
 
 ## Offline-first
 

@@ -1219,6 +1219,23 @@ legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); padding: 0 0
 .agent-test-result.error { color: var(--danger); }
 .assistant-via { color: var(--muted); font-size: 0.75rem; margin-top: 0.35rem; font-style: italic; }
 
+.wireguard-status { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin: 0 0 1.5rem; }
+.wireguard-status div { min-width: 9rem; }
+.wireguard-status dt { color: var(--muted); font-size: 0.8rem; }
+.wireguard-status dd { margin: 0.2rem 0 0; font-weight: 600; }
+.wireguard-pairing, .wireguard-peers { margin-top: 1.75rem; }
+.wireguard-pairing h2, .wireguard-peers h2 { margin-bottom: 0.75rem; }
+.wireguard-qr { display: flex; align-items: flex-start; gap: 1rem; margin-top: 1rem; }
+.wireguard-qr img { width: 16rem; max-width: 100%; height: auto; image-rendering: pixelated; }
+.wireguard-qr code { display: block; overflow-wrap: anywhere; color: var(--muted); }
+.wireguard-table { width: 100%; min-width: 42rem; border-collapse: collapse; font-size: 0.9rem; }
+.wireguard-table th, .wireguard-table td { border-bottom: 1px solid var(--line); padding: 0.6rem; text-align: left; }
+.wireguard-table th { color: var(--muted); font-size: 0.8rem; }
+
+@media (max-width: 640px) {
+  .wireguard-qr { flex-direction: column; }
+}
+
 @media (max-width: 640px) {
   .agent-card { max-width: none; }
   .subagent-row .agent-card { max-width: none; }

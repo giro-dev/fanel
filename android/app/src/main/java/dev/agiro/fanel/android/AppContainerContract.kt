@@ -14,6 +14,9 @@ import dev.agiro.fanel.android.data.remote.RecipesApi
 import dev.agiro.fanel.android.data.remote.ShoppingApi
 import dev.agiro.fanel.android.sync.HouseholdEvents
 import dev.agiro.fanel.android.sync.HouseholdSyncContract
+import dev.agiro.fanel.android.wireguard.ConnectionStateHolder
+import dev.agiro.fanel.android.wireguard.TunnelController
+import dev.agiro.fanel.android.wireguard.WgConfigRepository
 
 interface AppContainerContract {
     val authStore: AuthStore
@@ -32,5 +35,14 @@ interface AppContainerContract {
     val shoppingRepository: ShoppingRepository
     val choresRepository: ChoresRepository
     val householdSync: HouseholdSyncContract
+    val wgConfigRepository: WgConfigRepository
+    val connectionStateHolder: ConnectionStateHolder
+    val tunnelController: TunnelController
+    fun enterPairedMode()
+    fun startConnectionResolution()
+    fun unpair()
+    fun onForeground()
+    fun onBackground()
     fun refreshConnection()
+    suspend fun revokeWgPeer(publicKey: String)
 }

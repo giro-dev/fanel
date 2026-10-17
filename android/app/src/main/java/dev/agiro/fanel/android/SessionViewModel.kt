@@ -9,6 +9,8 @@ import dev.agiro.fanel.android.data.remote.ApiFactory
 import dev.agiro.fanel.android.data.remote.HouseholdDto
 import dev.agiro.fanel.android.data.remote.MemberDto
 import dev.agiro.fanel.android.data.remote.VerifyPinRequest
+import dev.agiro.fanel.android.wireguard.LOGICAL_BASE_URL
+import dev.agiro.fanel.android.wireguard.ConnectionStateHolder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +28,7 @@ data class SessionUiState(
     val errorRes: Int? = null,
     val households: List<HouseholdDto>? = null,
     val configured: Boolean = false,
+    val paired: Boolean = false,
     val sessionKey: String = "",
     val householdName: String = "",
     val memberId: String = "",
@@ -38,8 +41,12 @@ class SessionViewModel(
 ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(initialState())
     val uiState: StateFlow<SessionUiState> = _uiState.asStateFlow()
+    val connectionStateHolder: ConnectionStateHolder
+        get() = container.connectionStateHolder
 
-    fun updateServerUrl(value: String) = _uiState.update { it.copy(serverUrl = value, errorRes = null) }
+    fun updateServerUrl(value: String) = _uiState.update {
+        if (it.paired) it else it.copy(serverUrl = value, errorRes = null)
+    }
     fun updateUsername(value: String) = _uiState.update { it.copy(username = value, errorRes = null) }
     fun updatePassword(value: String) = _uiState.update { it.copy(password = value, errorRes = null) }
     fun updateApiToken(value: String) = _uiState.update { it.copy(apiToken = value, errorRes = null) }
@@ -56,29 +63,43 @@ class SessionViewModel(
         _uiState.update { it.copy(connecting = true, errorRes = null, households = null) }
         viewModelScope.launch {
             try {
-                val url = normalizeUrl(state.serverUrl)
-                val probe = AuthStore()
-                if (state.apiToken.isNotBlank()) {
-                    probe.setBearerToken(state.apiToken.trim())
+                val paired = container.wgConfigRepository.current != null
+                val url = if (paired) LOGICAL_BASE_URL else normalizeUrl(state.serverUrl)
+                val households = if (paired) {
+                    setCredentials(container.authStore, state)
+                    container.sessionStore.serverUrl = LOGICAL_BASE_URL
+                    container.refreshConnection()
+                    container.householdApi.list()
                 } else {
-                    probe.setBasicCredentials(state.username.trim(), state.password)
+                    val probe = AuthStore()
+                    setCredentials(probe, state)
+                    val result = ApiFactory.householdApi(url, probe).list()
+                    setCredentials(container.authStore, state)
+                    result
                 }
-                val households = ApiFactory.householdApi(url, probe).list()
-
-                if (state.apiToken.isNotBlank()) {
-                    container.authStore.setBearerToken(state.apiToken.trim())
-                } else {
-                    container.authStore.setBasicCredentials(state.username.trim(), state.password)
-                }
-                container.sessionStore.serverUrl = url
+                if (!paired) container.sessionStore.serverUrl = url
                 container.refreshConnection()
 
                 _uiState.update {
-                    it.copy(connecting = false, households = households, errorRes = null)
+                    it.copy(
+                        connecting = false,
+                        serverUrl = if (paired) url else it.serverUrl,
+                        paired = paired,
+                        households = households,
+                        errorRes = null
+                    )
                 }
             } catch (_: HttpException) {
+                if (container.wgConfigRepository.current != null) {
+                    container.authStore.clear()
+                    container.refreshConnection()
+                }
                 _uiState.update { it.copy(connecting = false, errorRes = R.string.setup_auth_error) }
             } catch (_: Exception) {
+                if (container.wgConfigRepository.current != null) {
+                    container.authStore.clear()
+                    container.refreshConnection()
+                }
                 _uiState.update { it.copy(connecting = false, errorRes = R.string.setup_connection_error) }
             }
         }
@@ -130,6 +151,22 @@ class SessionViewModel(
     fun logout() {
         container.authStore.clear()
         container.sessionStore.clear()
+        container.refreshConnection()
+        _uiState.value = initialState()
+    }
+
+    fun paired() {
+        _uiState.update {
+            it.copy(serverUrl = LOGICAL_BASE_URL, paired = true, errorRes = null)
+        }
+    }
+
+    fun unpaired() {
+        container.authStore.clear()
+        val serverUrl = container.sessionStore.serverUrl
+        container.sessionStore.clear()
+        container.sessionStore.serverUrl = serverUrl
+        container.refreshConnection()
         _uiState.value = initialState()
     }
 
@@ -138,6 +175,7 @@ class SessionViewModel(
         val configured = store.householdId.isNotBlank() && container.authStore.isConfigured
         return SessionUiState(
             serverUrl = store.serverUrl,
+            paired = container.wgConfigRepository.current != null,
             configured = configured,
             sessionKey = if (configured) "${store.serverUrl}|${store.householdId}" else "",
             householdName = store.householdName,
@@ -150,6 +188,14 @@ class SessionViewModel(
         var url = raw.trim()
         if (!url.endsWith("/")) url += "/"
         return url
+    }
+
+    private fun setCredentials(store: AuthStore, state: SessionUiState) {
+        if (state.apiToken.isNotBlank()) {
+            store.setBearerToken(state.apiToken.trim())
+        } else {
+            store.setBasicCredentials(state.username.trim(), state.password)
+        }
     }
 
     class Factory(private val application: Application) : ViewModelProvider.Factory {

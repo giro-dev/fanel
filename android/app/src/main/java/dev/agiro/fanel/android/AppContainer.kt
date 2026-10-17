@@ -22,10 +22,57 @@ import dev.agiro.fanel.android.sync.HouseholdEvents
 import dev.agiro.fanel.android.sync.HouseholdSync
 import dev.agiro.fanel.android.sync.HouseholdSyncContract
 import dev.agiro.fanel.android.sync.SseHouseholdEvents
+import dev.agiro.fanel.android.wireguard.AndroidNetworkMonitor
+import dev.agiro.fanel.android.wireguard.BaseUrlInterceptor
+import dev.agiro.fanel.android.wireguard.ConnectionMode
+import dev.agiro.fanel.android.wireguard.ConnectionModeResolver
+import dev.agiro.fanel.android.wireguard.ConnectionState
+import dev.agiro.fanel.android.wireguard.ConnectionStateHolder
+import dev.agiro.fanel.android.wireguard.IdentityProber
+import dev.agiro.fanel.android.wireguard.LOGICAL_BASE_URL
+import dev.agiro.fanel.android.wireguard.RetryOnModeChangeInterceptor
+import dev.agiro.fanel.android.wireguard.TunnelController
+import dev.agiro.fanel.android.wireguard.WgConfigRepository
+import dev.agiro.fanel.android.wireguard.WgTunnelManager
+import dev.agiro.fanel.android.wireguard.DataStoreWgConfigRepository
+import dev.agiro.fanel.android.wireguard.routedWgApi
+import dev.agiro.fanel.android.wireguard.pinnedWgApi
+import dev.agiro.fanel.android.wireguard.pinned
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 class AppContainer(context: Context) : AppContainerContract {
     override val sessionStore = SessionStore(context.applicationContext)
     override val authStore = AuthStore(context.applicationContext)
+    override val wgConfigRepository: WgConfigRepository = DataStoreWgConfigRepository(context.applicationContext)
+    override val connectionStateHolder = ConnectionStateHolder()
+    override val tunnelController: TunnelController = WgTunnelManager(context.applicationContext)
+    private val applicationContext = context.applicationContext
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var resolver: ConnectionModeResolver? = null
+    private var sharedPairedClient: OkHttpClient? = null
+
+    init {
+        if (wgConfigRepository.current != null) {
+            sessionStore.enterPairedMode()
+            startResolver()
+        }
+        appScope.launch {
+            var previousMode = connectionStateHolder.state.value.mode
+            connectionStateHolder.state.collect { state ->
+                if (state.mode != previousMode) {
+                    sharedPairedClient?.dispatcher?.cancelAll()
+                    sharedPairedClient?.connectionPool?.evictAll()
+                    previousMode = state.mode
+                }
+            }
+        }
+    }
 
     private val database = Room.databaseBuilder(
         context.applicationContext,
@@ -95,6 +142,67 @@ class AppContainer(context: Context) : AppContainerContract {
         offline = buildOfflineRepositories()
     }
 
+    override fun enterPairedMode() {
+        sessionStore.enterPairedMode()
+        refreshConnection()
+    }
+
+    override fun startConnectionResolution() {
+        startResolver()
+    }
+
+    override fun unpair() {
+        resolver?.stop()
+        resolver = null
+        sharedPairedClient?.dispatcher?.cancelAll()
+        sharedPairedClient?.connectionPool?.evictAll()
+        sharedPairedClient = null
+        sessionStore.exitPairedMode()
+        connectionStateHolder.set(ConnectionState(ConnectionMode.UNKNOWN))
+        refreshConnection()
+    }
+
+    override fun onForeground() {
+        resolver?.onForeground()
+    }
+
+    override fun onBackground() {
+        resolver?.onBackground()
+    }
+
+    override suspend fun revokeWgPeer(publicKey: String) {
+        val client = pairedClient() ?: return
+        routedWgApi(client).revokeMe(publicKey)
+    }
+
+    private fun startResolver() {
+        if (resolver != null) return
+        resolver = ConnectionModeResolver(
+            network = AndroidNetworkMonitor(applicationContext),
+            prober = IdentityProber { url, pin -> pinnedWgApi(url, pin).identity().serverId },
+            tunnel = tunnelController,
+            config = { wgConfigRepository.current },
+            holder = connectionStateHolder,
+            scope = appScope,
+        )
+    }
+
+    @Synchronized
+    private fun pairedClient(): OkHttpClient? {
+        if (sessionStore.serverUrl != LOGICAL_BASE_URL) return null
+        sharedPairedClient?.let { return it }
+        val config = wgConfigRepository.current ?: return null
+        return OkHttpClient.Builder()
+            .addInterceptor(RetryOnModeChangeInterceptor(connectionStateHolder))
+            .addInterceptor(BaseUrlInterceptor(connectionStateHolder) { wgConfigRepository.current })
+            .addInterceptor(ApiFactory.authInterceptor(authStore))
+            .addInterceptor(ApiFactory.loggingInterceptor())
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .pinned(config.spkiSha256)
+            .build()
+            .also { sharedPairedClient = it }
+    }
+
     private class OfflineRepositories(
         val members: MembersRepository,
         val recipes: RecipesRepository,
@@ -119,28 +227,28 @@ class AppContainer(context: Context) : AppContainerContract {
     }
 
     private fun buildHouseholdApi(): HouseholdApi =
-        ApiFactory.householdApi(sessionStore.serverUrl, authStore)
+        ApiFactory.householdApi(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildRecipesApi(): RecipesApi =
-        ApiFactory.recipesApi(sessionStore.serverUrl, authStore)
+        ApiFactory.recipesApi(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildMenuApi(): MenuApi =
-        ApiFactory.menuApi(sessionStore.serverUrl, authStore)
+        ApiFactory.menuApi(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildShoppingApi(): ShoppingApi =
-        ApiFactory.shoppingApi(sessionStore.serverUrl, authStore)
+        ApiFactory.shoppingApi(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildChoresApi(): ChoresApi =
-        ApiFactory.choresApi(sessionStore.serverUrl, authStore)
+        ApiFactory.choresApi(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildAssistantApi(): AssistantApi =
-        ApiFactory.assistantApi(sessionStore.serverUrl, authStore)
+        ApiFactory.assistantApi(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildHouseholdEvents(): HouseholdEvents =
-        SseHouseholdEvents(sessionStore.serverUrl, authStore)
+        SseHouseholdEvents(sessionStore.serverUrl, authStore, pairedClient())
 
     private fun buildCalendarRepository(): CalendarRepositoryContract = CalendarRepository(
-        api = ApiFactory.calendarApi(sessionStore.serverUrl, authStore),
+        api = ApiFactory.calendarApi(sessionStore.serverUrl, authStore, pairedClient()),
         eventDao = database.calendarEventDao(),
         pusher = pusher,
         syncPreferences = syncPreferences
