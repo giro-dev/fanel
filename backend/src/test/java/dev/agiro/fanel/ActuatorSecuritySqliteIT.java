@@ -40,6 +40,11 @@ class ActuatorSecuritySqliteIT {
     }
 
     @Test
+    void wireGuardIdentityIsHiddenWhenIntegrationIsDisabled() throws Exception {
+        mvc.perform(get("/api/v1/health/identity")).andExpect(status().isNotFound());
+    }
+
+    @Test
     void prometheusRequiresAuthentication() throws Exception {
         mvc.perform(get("/actuator/prometheus")).andExpect(status().isUnauthorized());
     }

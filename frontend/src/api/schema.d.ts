@@ -180,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/wg/enroll": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["enroll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -532,6 +548,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/wg/pairing-tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/assistant/agents/{agentId}/test": {
         parameters: {
             query?: never;
@@ -724,6 +756,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/health/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["identity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/events": {
         parameters: {
             query?: never;
@@ -748,6 +796,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["providers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/wg/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["status_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/wg/peers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["peers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -788,6 +868,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/wg/peers/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["revokeMe"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/households/{householdId}/recipes/import/{importId}": {
         parameters: {
             query?: never;
@@ -799,6 +895,22 @@ export interface paths {
         put?: never;
         post?: never;
         delete: operations["discard"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/wg/peers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["revoke"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1019,6 +1131,23 @@ export interface components {
             temperature?: number;
             /** Format: int32 */
             maxTokens?: number;
+        };
+        EnrollRequest: {
+            token?: string;
+            publicKey?: string;
+            deviceName?: string;
+        };
+        EnrollResponse: {
+            peerId?: string;
+            assignedAddress?: string;
+            serverPublicKey?: string;
+            presharedKey?: string;
+            endpoint?: string;
+            allowedIps?: string;
+            /** Format: int32 */
+            persistentKeepalive?: number;
+            tunnelBaseUrl?: string;
+            lanBaseUrl?: string;
         };
         SetupRequest: {
             householdName: string;
@@ -1241,6 +1370,12 @@ export interface components {
             isoWeek?: number;
             slots?: components["schemas"]["MealSlotDto"][];
         };
+        PairingTokenResponse: {
+            payload?: string;
+            qrPngBase64?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+        };
         AgentTestResult: {
             ok?: boolean;
             /** Format: int64 */
@@ -1300,9 +1435,37 @@ export interface components {
             orchestrator?: boolean;
             model?: string;
         };
+        ServerIdentity: {
+            /** Format: uuid */
+            serverId?: string;
+        };
         SseEmitter: {
             /** Format: int64 */
             timeout?: number;
+        };
+        WireGuardStatus: {
+            enabled?: boolean;
+            interfaceName?: string;
+            serverPublicKey?: string;
+            interfaceReachable?: boolean;
+            endpoint?: string;
+            network?: string;
+        };
+        PeerDto: {
+            /** Format: uuid */
+            id?: string;
+            deviceName?: string;
+            publicKey?: string;
+            assignedIp?: string;
+            status?: string;
+            /** Format: uuid */
+            ownerMemberId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            revokedAt?: string;
+            /** Format: date-time */
+            lastHandshakeAt?: string;
         };
         ProviderDto: {
             provider?: string;
@@ -1792,6 +1955,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    enroll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnrollRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EnrollResponse"];
+                };
             };
         };
     };
@@ -2588,6 +2775,26 @@ export interface operations {
             };
         };
     };
+    createToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PairingTokenResponse"];
+                };
+            };
+        };
+    };
     test: {
         parameters: {
             query?: never;
@@ -2957,6 +3164,26 @@ export interface operations {
             };
         };
     };
+    identity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ServerIdentity"];
+                };
+            };
+        };
+    };
     subscribe_1: {
         parameters: {
             query: {
@@ -2997,6 +3224,46 @@ export interface operations {
                     "*/*": {
                         [key: string]: string;
                     }[];
+                };
+            };
+        };
+    };
+    status_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WireGuardStatus"];
+                };
+            };
+        };
+    };
+    peers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PeerDto"][];
                 };
             };
         };
@@ -3043,6 +3310,26 @@ export interface operations {
             };
         };
     };
+    revokeMe: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Fanel-Wg-Public-Key"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     discard: {
         parameters: {
             query?: never;
@@ -3050,6 +3337,26 @@ export interface operations {
             path: {
                 householdId: string;
                 importId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    revoke: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
             cookie?: never;
         };

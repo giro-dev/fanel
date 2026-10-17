@@ -69,6 +69,30 @@ fanel:
     reminder-hour: ${FANEL_NOTIFICATIONS_REMINDER_HOUR:8}
   calendar:
     ics-refresh-minutes: ${FANEL_CALENDAR_ICS_REFRESH_MINUTES:60}
+  wireguard:
+    enabled: ${FANEL_WG_ENABLED:false}
+    interface-name: ${FANEL_WG_INTERFACE:wg0}
+    network: ${FANEL_WG_NETWORK:10.8.0.0/24}
+    server-address: ${FANEL_WG_SERVER_ADDRESS:10.8.0.1}
+    endpoint: ${FANEL_WG_ENDPOINT:}
+    lan-base-url: ${FANEL_WG_LAN_BASE_URL:}
+    tunnel-base-url: ${FANEL_WG_TUNNEL_BASE_URL:https://10.8.0.1:8443}
+    allowed-ips-for-client: ${FANEL_WG_ALLOWED_IPS:10.8.0.0/24}
+    persistent-keepalive: ${FANEL_WG_KEEPALIVE:25}
+    use-preshared-key: ${FANEL_WG_USE_PSK:true}
+    psk-encryption-key: ${FANEL_WG_PSK_KEY:}
+    wg-command: ${FANEL_WG_COMMAND:/usr/bin/wg}
+    command-timeout: ${FANEL_WG_COMMAND_TIMEOUT:5s}
+    pairing-token-ttl: ${FANEL_WG_PAIRING_TOKEN_TTL:10m}
+    tls-spki-sha256: ${FANEL_WG_TLS_SPKI_SHA256:}
+    server-id: ${FANEL_WG_SERVER_ID:}
+    reconcile-interval: ${FANEL_WG_RECONCILE_INTERVAL:5m}
+    remove-unknown-peers: ${FANEL_WG_REMOVE_UNKNOWN_PEERS:false}
+    enroll-private-only: ${FANEL_WG_ENROLL_PRIVATE_ONLY:false}
+    trusted-proxies: ${FANEL_WG_TRUSTED_PROXIES:}
+    enroll-rate-limit-per-minute: ${FANEL_WG_ENROLL_RATE_LIMIT_PER_MINUTE:5}
+    enforce-tunnel-peer: ${FANEL_WG_ENFORCE_TUNNEL_PEER:true}
+    allow-admin-from-tunnel: ${FANEL_WG_ALLOW_ADMIN_FROM_TUNNEL:false}
   assistant:
     orchestrator-id: orchestrator
     agents:

@@ -59,7 +59,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index.html", "/assets/**", "/manifest.webmanifest", "/sw.js",
                                 "/actuator/health/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/setup", "/api/v1/auth/providers").permitAll()
+                        .requestMatchers("/api/v1/setup", "/api/v1/auth/providers",
+                                "/api/v1/wg/enroll", "/api/v1/health/identity").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/**", "/login").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
