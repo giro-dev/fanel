@@ -134,6 +134,16 @@ Executa el helper amb una llista d'arguments, no amb shell, i valida estrictamen
 
 Un administrador global obre **Dispositius**, genera un codi de vinculació i escaneja el QR des del client. El token només s'utilitza una vegada i caduca; el QR inclou tant la URL LAN com la del túnel i l'empremta TLS. Després de la vinculació, l'usuari inicia sessió amb les credencials habituals. La pàgina mostra els peers registrats i permet revocar-los; també es pot eliminar el peer del dispositiu des del mateix client.
 
+### Client Android
+
+1. A la pantalla inicial, toca **Vincula amb el servidor (QR)** i escaneja el codi generat a **Dispositius**. Comprova l'identificador del servidor i l'adreça LAN abans de confirmar.
+2. La vinculació inicial s'ha de fer connectat al Wi-Fi de casa perquè el client enrola la clau pública a la URL LAN. La clau privada es genera i es desa al dispositiu xifrada amb Android Keystore; no s'envia al servidor.
+3. Accepta el permís de VPN d'Android. El túnel només inclou el paquet de Fanel i l'app manté les credencials d'inici de sessió habituals. Per a una instal·lació ja vinculada, la URL del servidor queda oculta; els usuaris sense vinculació continuen podent introduir-la manualment.
+4. La configuració mostra si s'està fent servir la **xarxa local**, el **túnel remot**, si el dispositiu és **fora de línia** o si hi ha un error. En entrar a la LAN, el client prefereix HTTPS local i desactiva el túnel; fora de casa valida la identitat del servidor pel túnel abans d'enviar-hi peticions.
+5. Per eliminar la vinculació, obre la configuració i toca **Desvincula el dispositiu**. El client intenta revocar el peer al servidor, atura la VPN i esborra la configuració xifrada. Tancar la sessió no elimina la vinculació.
+
+Si apareix **Dispositiu revocat o servidor no accessible**, comprova el túnel, la connexió a Internet i que el peer continuï actiu al panell **Dispositius**; després toca **Torna a vincular**. Android només permet una VPN activa alhora. Si la vinculació inicial no arriba al servidor, connecta't al Wi-Fi de casa i torna a escanejar un codi vigent.
+
 ## Topologia B: túnel cap a la LAN (documentació)
 
 En aquesta variant Fanel pot estar en un altre host de la LAN. A la configuració del client WireGuard, `AllowedIPs` inclou la xarxa del túnel **i** la IP LAN de Fanel com a `/32`, per exemple `10.8.0.0/24, 192.168.1.50/32`; `FANEL_WG_LAN_BASE_URL` és la URL LAN. El servidor WireGuard ha d'habilitar `ip_forward` i configurar una ruta de retorn a `10.8.0.0/24` al router/LAN o fer masquerade cap a la LAN. El tallafoc només ha de permetre el trànsit necessari cap a l'host Fanel. Aquesta topologia no és configurada automàticament pel compose d'exemple i requereix revisar l'encaminament i les regles de la xarxa local.

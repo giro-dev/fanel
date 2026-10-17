@@ -65,6 +65,9 @@ dels peers) es mantenen totes.
     amb SharedPreferences); l'emparellament per QR és una opció més de `SetupScreen` (el flux manual d'URL continua existint);
     després de vincular, l'usuari inicia sessió igual que ara (l'autenticació no es toca). URL base lògica: `https://fanel.invalid/`.
 13. **Mòdul nou `wireguard`** (Spring Modulith) i ADR 0012 que el documenta.
+14. **Client Android implementat**: el QR `fanel://pair` s'escaneja amb Google Code Scanner o es rep com a deep link; l'usuari confirma l'identificador i l'host LAN abans d'enrolar. La configuració WireGuard es desa en Preferences DataStore, amb la clau privada i la PSK xifrades separadament amb AES-GCM i l'àlies Keystore `fanel_wg`.
+15. **Connexió transparent**: totes les APIs i SSE comparteixen el client OkHttp fixat per SPKI i l'URL lògica `https://fanel.invalid/`; el client reescriu la ruta només després que el resolver comprovi la identitat del servidor. En primer lloc prova la LAN; quan no hi és, valida i activa el túnel dividit per app. Canviar de mode cancel·la les peticions obertes perquè SSE i HTTP es reconnectin.
+16. **Cicle de vida Android**: `ProcessLifecycleOwner` atura el túnel després de cinc minuts en segon pla i torna a resoldre la connexió en tornar al primer pla. El `WorkManager` existent no activa WireGuard. La sessió i el flux manual d'URL continuen separats de la vinculació; tancar sessió no elimina el peer.
 
 ## Topologia B (alternativa, només documentada)
 
