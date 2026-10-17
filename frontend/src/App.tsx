@@ -12,6 +12,7 @@ import { Chores } from './pages/Chores'
 import { Members } from './pages/Members'
 import { Automation } from './pages/Automation'
 import { AssistantSettings } from './pages/AssistantSettings'
+import { WireGuard } from './pages/WireGuard'
 import { Account } from './pages/Account'
 import { Login } from './pages/Login'
 import { Setup } from './pages/Setup'
@@ -91,6 +92,14 @@ const icons = {
       <path d="M18.5 15l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" />
     </svg>
   ),
+  wireguard: (
+    <svg viewBox="0 0 24 24" width="1.15rem" height="1.15rem" {...stroke}>
+      <circle cx="5" cy="12" r="2.5" />
+      <circle cx="19" cy="6" r="2.5" />
+      <circle cx="19" cy="18" r="2.5" />
+      <path d="m7.3 10.9 9.4-3.8M7.3 13.1l9.4 3.8" />
+    </svg>
+  ),
   logout: (
     <svg viewBox="0 0 24 24" width="1.15rem" height="1.15rem" {...stroke}>
       <path d="M9 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H9" />
@@ -121,12 +130,14 @@ function Shell() {
           {nav.map(([path, label, icon]) => (
             <NavLink key={path} to={path}>{icon}<span>{label}</span></NavLink>
           ))}
+          {canManageHouseholds && <NavLink to="/dispositius">{icons.wireguard}<span>{t('nav.wireguard')}</span></NavLink>}
         </nav>
         <div className="sidebar-footer">
           <HouseholdSwitcher />
           <div className="footer-actions">
             {canManageHouseholds && <NavLink to="/households">{icons.households}<span>{t('households.title')}</span></NavLink>}
             {canManageHouseholds && <NavLink to="/assistent">{icons.assistant}<span>{t('nav.assistantSettings')}</span></NavLink>}
+            {canManageHouseholds && <NavLink to="/dispositius">{icons.wireguard}<span>{t('nav.wireguard')}</span></NavLink>}
             <NavLink to="/compte" aria-label={t('account.title')} className="icon-link">{icons.account}</NavLink>
             <button type="button" className="icon-link" aria-label={t('account.logout')} onClick={logout}>{icons.logout}</button>
             <ThemeToggle />
@@ -140,6 +151,7 @@ function Shell() {
           <HouseholdSwitcher />
           {canManageHouseholds && <NavLink to="/households" aria-label={t('households.title')} className="icon-link">{icons.households}</NavLink>}
           {canManageHouseholds && <NavLink to="/assistent" aria-label={t('nav.assistantSettings')} className="icon-link">{icons.assistant}</NavLink>}
+          {canManageHouseholds && <NavLink to="/dispositius" aria-label={t('nav.wireguard')} className="icon-link">{icons.wireguard}</NavLink>}
           <NavLink to="/compte" aria-label={t('account.title')} className="icon-link">{icons.account}</NavLink>
           <button type="button" className="icon-link" aria-label={t('account.logout')} onClick={logout}>{icons.logout}</button>
           <ThemeToggle />
@@ -159,6 +171,7 @@ function Shell() {
           <Route path="/membres" element={<Members />} />
           <Route path="/automatitzacions" element={<Automation />} />
           <Route path="/assistent" element={<AssistantSettings />} />
+          <Route path="/dispositius" element={<WireGuard />} />
           <Route path="*" element={<Placeholder title="Fanel" />} />
         </Routes>
       </main>

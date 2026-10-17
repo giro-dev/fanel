@@ -7,7 +7,8 @@
     "chores": "Tareas",
     "members": "Miembros",
     "automation": "Automatizaciones",
-    "assistantSettings": "Asistente"
+    "assistantSettings": "Asistente",
+    "wireguard": "Dispositivos"
   },
   "theme": {
     "label": "Cambiar tema",
@@ -119,6 +120,38 @@
     "testing": "Probando…",
     "testOk": "{{latency}} ms — {{text}}",
     "testError": "Error: {{error}}"
+  },
+  "wireguard": {
+    "title": "Dispositivos WireGuard",
+    "disabled": "WireGuard está desactivado en esta instalación.",
+    "docs": "Consulta la guía de instalación",
+    "interface": "Interfaz",
+    "network": "Red",
+    "endpoint": "Endpoint",
+    "reachability": "Interfaz",
+    "reachable": "Accesible",
+    "unreachable": "No accesible",
+    "pairingTitle": "Vincula un dispositivo",
+    "createToken": "Generar código de vinculación",
+    "qrAlt": "Código QR para vincular un dispositivo",
+    "expiresIn": "Caduca en {{countdown}}",
+    "expired": "Código caducado",
+    "openPairingLink": "Abrir el enlace de vinculación",
+    "peersTitle": "Dispositivos vinculados",
+    "noPeers": "Todavía no hay dispositivos vinculados.",
+    "device": "Dispositivo",
+    "address": "Dirección",
+    "status": "Estado",
+    "handshake": "Último handshake",
+    "created": "Creado",
+    "actions": "Acciones",
+    "never": "Nunca",
+    "revoke": "Revocar",
+    "confirmRevoke": "¿Quieres revocar el dispositivo {{name}}?",
+    "peerStatus": {
+      "ACTIVE": "Activo",
+      "REVOKED": "Revocado"
+    }
   },
   "account": {
     "title": "Cuenta",
