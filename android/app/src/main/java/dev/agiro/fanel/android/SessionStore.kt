@@ -29,7 +29,30 @@ class SessionStore(context: Context) {
         get() = prefs.getBoolean(KEY_ASSISTANT_DEV, false)
         set(value) = prefs.edit().putBoolean(KEY_ASSISTANT_DEV, value).apply()
 
-    fun clear() = prefs.edit().clear().apply()
+    fun enterPairedMode() {
+        if (serverUrl != LOGICAL_BASE_URL) {
+            prefs.edit().putString(KEY_UNPAIRED_SERVER_URL, serverUrl).apply()
+        }
+        serverUrl = LOGICAL_BASE_URL
+    }
+
+    fun exitPairedMode() {
+        val previous = prefs.getString(KEY_UNPAIRED_SERVER_URL, null)
+        prefs.edit().remove(KEY_UNPAIRED_SERVER_URL).apply()
+        serverUrl = previous ?: BuildConfig.API_BASE_URL
+    }
+
+    fun clear() {
+        val paired = serverUrl == LOGICAL_BASE_URL
+        val previousUrl = prefs.getString(KEY_UNPAIRED_SERVER_URL, null)
+        prefs.edit().clear().apply()
+        if (paired) {
+            prefs.edit()
+                .putString(KEY_SERVER_URL, LOGICAL_BASE_URL)
+                .putString(KEY_UNPAIRED_SERVER_URL, previousUrl)
+                .apply()
+        }
+    }
 
     private companion object {
         const val PREFS_NAME = "fanel_session"
@@ -39,5 +62,7 @@ class SessionStore(context: Context) {
         const val KEY_MEMBER_ID = "member_id"
         const val KEY_MEMBER_NAME = "member_name"
         const val KEY_ASSISTANT_DEV = "assistant_dev"
+        const val KEY_UNPAIRED_SERVER_URL = "unpaired_server_url"
+        const val LOGICAL_BASE_URL = "https://fanel.invalid/"
     }
 }

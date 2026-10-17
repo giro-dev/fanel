@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -34,15 +35,27 @@ import dev.agiro.fanel.android.R
 import dev.agiro.fanel.android.SessionViewModel
 import dev.agiro.fanel.android.data.remote.HouseholdDto
 import dev.agiro.fanel.android.data.remote.MemberDto
+import dev.agiro.fanel.android.wireguard.ConnectionError
+import dev.agiro.fanel.android.wireguard.ConnectionMode
+import dev.agiro.fanel.android.wireguard.ConnectionStateHolder
+import dev.agiro.fanel.android.wireguard.PairingViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsDialog(viewModel: SessionViewModel, onDismiss: () -> Unit) {
+fun SettingsDialog(
+    viewModel: SessionViewModel,
+    pairingViewModel: PairingViewModel,
+    connectionStateHolder: ConnectionStateHolder,
+    onDismiss: () -> Unit,
+) {
     var households by remember { mutableStateOf<List<HouseholdDto>?>(null) }
     var members by remember { mutableStateOf<List<MemberDto>?>(null) }
     var loadFailed by remember { mutableStateOf(false) }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val connection by connectionStateHolder.state.collectAsStateWithLifecycle()
+    val pairing by pairingViewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    var confirmUnpair by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         households = runCatching { viewModel.listHouseholds() }
@@ -61,6 +74,31 @@ fun SettingsDialog(viewModel: SessionViewModel, onDismiss: () -> Unit) {
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
+                if (state.paired) {
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Text(
+                        text = stringResource(connectionModeString(connection.mode)),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    connection.error?.let { error ->
+                        Text(
+                            text = stringResource(connectionErrorString(error)),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                    if (connection.error == ConnectionError.NO_HANDSHAKE) {
+                        TextButton(onClick = { confirmUnpair = true }) {
+                            Text(stringResource(R.string.wg_repair))
+                        }
+                    }
+                    Button(
+                        onClick = { confirmUnpair = true },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.wg_unpair))
+                    }
+                }
                 HorizontalDivider()
                 when {
                     households == null && !loadFailed -> CircularProgressIndicator(
@@ -123,6 +161,46 @@ fun SettingsDialog(viewModel: SessionViewModel, onDismiss: () -> Unit) {
             }
         }
     )
+
+    if (confirmUnpair && pairing.paired) {
+        AlertDialog(
+            onDismissRequest = { confirmUnpair = false },
+            title = { Text(stringResource(R.string.wg_unpair_title)) },
+            text = { Text(stringResource(R.string.wg_unpair_confirm)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmUnpair = false
+                    pairingViewModel.unpair {
+                        viewModel.unpaired()
+                        onDismiss()
+                    }
+                }) {
+                    Text(stringResource(R.string.wg_unpair))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmUnpair = false }) {
+                    Text(stringResource(R.string.pair_cancel))
+                }
+            },
+        )
+    }
+}
+
+private fun connectionModeString(mode: ConnectionMode): Int = when (mode) {
+    ConnectionMode.UNKNOWN -> R.string.wg_mode_unknown
+    ConnectionMode.LAN -> R.string.wg_mode_lan
+    ConnectionMode.REMOTE -> R.string.wg_mode_remote
+    ConnectionMode.OFFLINE -> R.string.wg_mode_offline
+    ConnectionMode.ERROR -> R.string.wg_mode_error
+}
+
+private fun connectionErrorString(error: ConnectionError): Int = when (error) {
+    ConnectionError.NO_HANDSHAKE -> R.string.wg_error_no_handshake
+    ConnectionError.VPN_PERMISSION -> R.string.wg_error_vpn_permission
+    ConnectionError.OTHER_VPN -> R.string.wg_error_other_vpn
+    ConnectionError.SERVER_MISMATCH -> R.string.wg_error_server_mismatch
+    ConnectionError.UNREACHABLE -> R.string.wg_error_unreachable
 }
 
 @Composable

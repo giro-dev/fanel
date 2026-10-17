@@ -1,6 +1,7 @@
 package dev.agiro.fanel.android
 
 import android.os.Bundle
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -37,29 +38,75 @@ import dev.agiro.fanel.android.ui.recipes.RecipesScreen
 import dev.agiro.fanel.android.ui.settings.SettingsDialog
 import dev.agiro.fanel.android.ui.shopping.ShoppingScreen
 import dev.agiro.fanel.android.ui.setup.SetupScreen
+import dev.agiro.fanel.android.wireguard.PairingViewModel
 
 class MainActivity : ComponentActivity() {
     private val sessionViewModel by viewModels<SessionViewModel> {
         SessionViewModel.Factory(application)
     }
+    private val pairingViewModel by viewModels<PairingViewModel> {
+        PairingViewModel.Factory(application)
+    }
+    private var pairingLink by mutableStateOf<String?>(null)
+    private var forceSetup by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        acceptPairingIntent(intent)
         setContent {
             FanelTheme {
-                FanelApp(sessionViewModel)
+                FanelApp(sessionViewModel, pairingViewModel)
             }
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        acceptPairingIntent(intent)
+    }
+
+    private fun acceptPairingIntent(intent: Intent) {
+        val data = intent.data
+        if (data?.scheme == "fanel" && data.host == "pair") {
+            pairingLink = data.toString()
+            forceSetup = true
+        }
+    }
+
     @Composable
-    private fun FanelApp(sessionViewModel: SessionViewModel) {
+    private fun FanelApp(
+        sessionViewModel: SessionViewModel,
+        pairingViewModel: PairingViewModel,
+    ) {
         val session by sessionViewModel.uiState.collectAsStateWithLifecycle()
+        val pairing by pairingViewModel.state.collectAsStateWithLifecycle()
         var showSettings by remember { mutableStateOf(false) }
         var section by remember { mutableStateOf(AppSection.CALENDAR) }
 
-        if (!session.configured) {
-            SetupScreen(sessionViewModel)
+        androidx.compose.runtime.LaunchedEffect(
+            pairing.paired,
+            pairing.pendingPayload,
+            pairing.error,
+            pairing.working,
+            pairingLink,
+        ) {
+            if (pairing.paired && pairing.pendingPayload == null &&
+                pairing.error == null && !pairing.working && pairingLink == null
+            ) {
+                sessionViewModel.paired()
+                if (session.configured) forceSetup = false
+            }
+        }
+
+        if (!session.configured || forceSetup) {
+            SetupScreen(
+                viewModel = sessionViewModel,
+                pairingViewModel = pairingViewModel,
+                pairingLink = pairingLink,
+                onPairingLinkHandled = { pairingLink = null },
+                onPairingFlowClosed = { forceSetup = false },
+            )
         } else {
             key(session.sessionKey) {
                 val calendarViewModel: CalendarViewModel = viewModel(
@@ -191,7 +238,12 @@ class MainActivity : ComponentActivity() {
         }
 
         if (showSettings) {
-            SettingsDialog(sessionViewModel) { showSettings = false }
+            SettingsDialog(
+                viewModel = sessionViewModel,
+                pairingViewModel = pairingViewModel,
+                connectionStateHolder = (application as FanelApplication).appContainer.connectionStateHolder,
+                onDismiss = { showSettings = false },
+            )
         }
     }
 }

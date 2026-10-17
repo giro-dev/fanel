@@ -71,6 +71,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.2")
+    implementation("androidx.lifecycle:lifecycle-process:2.9.2")
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
     implementation(platform("androidx.compose:compose-bom:2026.06.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -85,6 +87,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.12.0")
     implementation("com.squareup.retrofit2:converter-gson:2.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.wireguard.android:tunnel:1.0.20260102")
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.mikepenz:multiplatform-markdown-renderer-android:0.41.0")
     implementation("com.mikepenz:multiplatform-markdown-renderer-m3-android:0.41.0")
@@ -93,4 +97,5 @@ dependencies {
     testImplementation("androidx.work:work-testing:2.10.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }

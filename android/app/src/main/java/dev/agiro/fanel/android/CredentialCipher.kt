@@ -9,11 +9,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-object CredentialCipher {
-    private const val KEY_ALIAS = "fanel_auth"
-    private const val GCM_IV_LENGTH = 12
-    private const val GCM_TAG_LENGTH = 128
-
+class KeystoreCipher(private val keyAlias: String) {
     fun encrypt(plainText: String): String {
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key())
@@ -30,11 +26,11 @@ object CredentialCipher {
 
     private fun key(): SecretKey {
         val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-        (keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry)?.let { return it.secretKey }
+        (keyStore.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry)?.let { return it.secretKey }
         val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
         generator.init(
             KeyGenParameterSpec.Builder(
-                KEY_ALIAS,
+                keyAlias,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
@@ -44,4 +40,17 @@ object CredentialCipher {
         )
         return generator.generateKey()
     }
+
+    private companion object {
+        const val GCM_IV_LENGTH = 12
+        const val GCM_TAG_LENGTH = 128
+    }
+}
+
+object CredentialCipher {
+    private val cipher = KeystoreCipher("fanel_auth")
+
+    fun encrypt(plainText: String): String = cipher.encrypt(plainText)
+
+    fun decrypt(encoded: String): String = cipher.decrypt(encoded)
 }
