@@ -7,7 +7,9 @@ data class ShoppingItemDto(
     val unit: String?,
     val category: String?,
     val recurring: Boolean,
-    val done: Boolean
+    val done: Boolean,
+    val productId: String? = null,
+    val categoryId: String? = null
 )
 
 data class ShoppingListDto(

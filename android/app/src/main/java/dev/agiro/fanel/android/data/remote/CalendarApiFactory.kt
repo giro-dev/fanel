@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 object ApiFactory {
@@ -41,6 +42,7 @@ object ApiFactory {
         .addInterceptor { chain ->
             val builder = chain.request().newBuilder()
             authStore.apply(builder)
+            builder.header("Accept-Language", Locale.getDefault().toLanguageTag())
             chain.proceed(builder.build())
         }
         .addInterceptor(

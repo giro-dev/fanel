@@ -22,21 +22,11 @@ type ShoppingList = {
   items: Item[]
 }
 
-const COMMON_CATEGORIES = [
-  'Fruita i verdura',
-  'Lactis i ous',
-  'Carnisseria',
-  'Peixateria',
-  'Forn i pa',
-  'Begudes',
-  'Neteja',
-  'Higiene',
-  'Congelats',
-  'Rebost',
-]
+type CatalogCategory = { id: string; name: string }
+type CatalogProduct = { id: string; name: string; category?: string | null }
 
 export function Shopping() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const online = useNetworkStatus()
   const { household } = useHousehold()
   const queryClient = useQueryClient()
@@ -58,11 +48,25 @@ export function Shopping() {
   const [editListName, setEditListName] = useState('')
 
   const listsQuery = useQuery({
-    queryKey: ['shopping', 'lists', household?.id],
+    queryKey: ['shopping', 'lists', household?.id, i18n.language],
     queryFn: async () => {
       return api<ShoppingList[]>(`/households/${household!.id}/shopping/lists`)
     },
     enabled: !!household,
+  })
+
+  const categoriesQuery = useQuery({
+    queryKey: ['shopping', 'categories', household?.id, i18n.language],
+    queryFn: () => api<CatalogCategory[]>(`/households/${household!.id}/shopping/categories`),
+    enabled: !!household,
+    staleTime: 5 * 60_000,
+  })
+
+  const productsQuery = useQuery({
+    queryKey: ['shopping', 'products', household?.id, i18n.language],
+    queryFn: () => api<CatalogProduct[]>(`/households/${household!.id}/shopping/products`),
+    enabled: !!household,
+    staleTime: 5 * 60_000,
   })
 
   const lists = useMemo(() => listsQuery.data ?? [], [listsQuery.data])
@@ -345,11 +349,22 @@ export function Shopping() {
           }}
         >
           <input
+            list="shopping-products"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setName(value)
+              const product = productsQuery.data?.find((p) => p.name === value)
+              if (product?.category && !category.trim()) setCategory(product.category)
+            }}
             placeholder={t('shopping.addPlaceholder')}
             required
           />
+          <datalist id="shopping-products">
+            {(productsQuery.data ?? []).map((p) => (
+              <option key={p.id} value={p.name} />
+            ))}
+          </datalist>
           <input
             type="number"
             step="any"
@@ -369,8 +384,8 @@ export function Shopping() {
             placeholder={t('shopping.categoryPlaceholder')}
           />
           <datalist id="shopping-categories">
-            {COMMON_CATEGORIES.map((c) => (
-              <option key={c} value={c} />
+            {(categoriesQuery.data ?? []).map((c) => (
+              <option key={c.id} value={c.name} />
             ))}
           </datalist>
 

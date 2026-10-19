@@ -564,6 +564,22 @@ export interface paths {
         patch: operations["updateMember"];
         trace?: never;
     };
+    "/api/v1/households/{householdId}/shopping/products/{productId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updateProduct"];
+        trace?: never;
+    };
     "/api/v1/households/{householdId}/shopping/items/{itemId}": {
         parameters: {
             query?: never;
@@ -660,6 +676,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/households/{householdId}/shopping/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listProducts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/households/{householdId}/shopping/lists/default": {
         parameters: {
             query?: never;
@@ -668,6 +700,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["defaultList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/households/{householdId}/shopping/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listCategories"];
         put?: never;
         post?: never;
         delete?: never;
@@ -851,6 +899,10 @@ export interface components {
             category?: string;
             recurring?: boolean;
             done?: boolean;
+            /** Format: uuid */
+            productId?: string;
+            /** Format: uuid */
+            categoryId?: string;
         };
         ShoppingListDto: {
             /** Format: uuid */
@@ -1252,6 +1304,24 @@ export interface components {
             name?: string;
             color?: string;
         };
+        UpdateProduct: {
+            nameCa?: string;
+            nameEs?: string;
+            /** Format: uuid */
+            categoryId?: string;
+        };
+        ShoppingProductDto: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            nameCa?: string;
+            nameEs?: string;
+            /** Format: uuid */
+            categoryId?: string;
+            category?: string;
+            translated?: boolean;
+            shared?: boolean;
+        };
         UpdateItem: {
             name?: string;
             /** Format: double */
@@ -1289,6 +1359,15 @@ export interface components {
             kind?: string;
             member?: components["schemas"]["MemberDto"];
             household?: components["schemas"]["HouseholdDto"];
+        };
+        ShoppingCategoryDto: {
+            /** Format: uuid */
+            id?: string;
+            code?: string;
+            name?: string;
+            nameCa?: string;
+            nameEs?: string;
+            shared?: boolean;
         };
         AgentDefinition: {
             id?: string;
@@ -2658,6 +2737,33 @@ export interface operations {
             };
         };
     };
+    updateProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                householdId: string;
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProduct"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ShoppingProductDto"];
+                };
+            };
+        };
+    };
     removeItem: {
         parameters: {
             query?: never;
@@ -2866,6 +2972,28 @@ export interface operations {
             };
         };
     };
+    listProducts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                householdId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ShoppingProductDto"][];
+                };
+            };
+        };
+    };
     defaultList: {
         parameters: {
             query?: never;
@@ -2884,6 +3012,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ShoppingListDto"];
+                };
+            };
+        };
+    };
+    listCategories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                householdId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ShoppingCategoryDto"][];
                 };
             };
         };
