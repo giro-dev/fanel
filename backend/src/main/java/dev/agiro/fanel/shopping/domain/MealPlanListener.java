@@ -5,11 +5,13 @@ import dev.agiro.fanel.recipes.api.IngredientDto;
 import dev.agiro.fanel.recipes.api.RecipeDto;
 import dev.agiro.fanel.recipes.api.RecipesApi;
 import dev.agiro.fanel.shopping.api.ShoppingApi;
+import dev.agiro.fanel.shopping.api.ShoppingItemDto;
 import dev.agiro.fanel.shopping.api.ShoppingListDto;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -31,14 +33,20 @@ class MealPlanListener {
     void on(MealPlanned event) {
         RecipeDto recipe = recipes.get(event.householdId(), event.recipeId());
         ShoppingListDto list = shopping.getDefaultList(event.householdId());
-        Set<String> existing = list.items().stream()
-                .map(item -> item.name().toLowerCase())
+        Set<UUID> pending = list.items().stream()
+                .filter(item -> !item.done() && item.productId() != null)
+                .map(ShoppingItemDto::productId)
+                .collect(Collectors.toSet());
+        Set<UUID> purchased = list.items().stream()
+                .filter(item -> item.done() && item.productId() != null)
+                .map(ShoppingItemDto::productId)
                 .collect(Collectors.toSet());
         for (IngredientDto ingredient : recipe.ingredients()) {
-            if (existing.add(ingredient.name().toLowerCase())) {
-                shopping.addItem(event.householdId(), list.id(), ingredient.name(),
-                        ingredient.quantity(), ingredient.unit(), ingredient.category(), false);
-            }
+            UUID productId = shopping.matchProduct(event.householdId(), ingredient.name()).orElse(null);
+            if (productId != null && (pending.contains(productId) || purchased.contains(productId))) continue;
+            ShoppingItemDto added = shopping.addItem(event.householdId(), list.id(), ingredient.name(),
+                    ingredient.quantity(), ingredient.unit(), ingredient.category(), false);
+            if (added.productId() != null) pending.add(added.productId());
         }
     }
 }

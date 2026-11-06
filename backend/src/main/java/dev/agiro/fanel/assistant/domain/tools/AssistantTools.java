@@ -13,6 +13,7 @@ import dev.agiro.fanel.recipes.api.IngredientDto;
 import dev.agiro.fanel.recipes.api.RecipeDto;
 import dev.agiro.fanel.recipes.api.RecipesApi;
 import dev.agiro.fanel.shopping.api.ShoppingApi;
+import dev.agiro.fanel.shopping.api.ShoppingCategoryDto;
 import dev.agiro.fanel.shopping.api.ShoppingItemDto;
 import dev.agiro.fanel.shopping.api.ShoppingListDto;
 import org.slf4j.Logger;
@@ -93,13 +94,18 @@ public class AssistantTools {
         return shopping.getDefaultList(householdId);
     }
 
+    @Tool(description = "List the bilingual shopping categories (Catalan/Spanish names) available to the household")
+    public List<ShoppingCategoryDto> listShoppingCategories(UUID householdId) {
+        return shopping.listCategories(householdId);
+    }
+
     @Tool(description = "Add a NEW item to a shopping list. If listId is omitted, the default list is used. Do not use it to modify items that already exist; use updateShoppingItem instead.")
     public ShoppingItemDto addShoppingItem(UUID householdId,
-                                           @ToolParam(description = "Name of the item") String name,
+                                           @ToolParam(description = "Name of the item, in Catalan or Spanish; it is matched to the bilingual catalog and an existing item of the same product is reused") String name,
                                            @ToolParam(description = "Optional list id") UUID listId,
                                            @ToolParam(description = "Optional quantity") Double quantity,
                                            @ToolParam(description = "Optional unit") String unit,
-                                           @ToolParam(description = "Optional category or aisle") String category) {
+                                           @ToolParam(description = "Optional category or aisle; prefer one of the catalog categories (listShoppingCategories)") String category) {
         UUID targetList = listId != null ? listId : shopping.getDefaultList(householdId).id();
         return shopping.addItem(householdId, targetList, name, quantity, unit, category, false);
     }

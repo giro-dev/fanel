@@ -1970,6 +1970,51 @@
         }
       }
     },
+    "/api/v1/households/{householdId}/shopping/products/{productId}" : {
+      "patch" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "updateProduct",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateProduct"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ShoppingProductDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/households/{householdId}/shopping/items/{itemId}" : {
       "delete" : {
         "tags" : [ "shopping-controller" ],
@@ -2249,6 +2294,36 @@
         }
       }
     },
+    "/api/v1/households/{householdId}/shopping/products" : {
+      "get" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "listProducts",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ShoppingProductDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/households/{householdId}/shopping/lists/default" : {
       "get" : {
         "tags" : [ "shopping-controller" ],
@@ -2269,6 +2344,36 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ShoppingListDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/households/{householdId}/shopping/categories" : {
+      "get" : {
+        "tags" : [ "shopping-controller" ],
+        "operationId" : "listCategories",
+        "parameters" : [ {
+          "name" : "householdId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ShoppingCategoryDto"
+                  }
                 }
               }
             }
@@ -2632,6 +2737,14 @@
           },
           "done" : {
             "type" : "boolean"
+          },
+          "productId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "categoryId" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -3787,6 +3900,52 @@
           }
         }
       },
+      "UpdateProduct" : {
+        "type" : "object",
+        "properties" : {
+          "nameCa" : {
+            "type" : "string"
+          },
+          "nameEs" : {
+            "type" : "string"
+          },
+          "categoryId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
+      "ShoppingProductDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "nameCa" : {
+            "type" : "string"
+          },
+          "nameEs" : {
+            "type" : "string"
+          },
+          "categoryId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "translated" : {
+            "type" : "boolean"
+          },
+          "shared" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "UpdateItem" : {
         "type" : "object",
         "properties" : {
@@ -3883,6 +4042,30 @@
           },
           "household" : {
             "$ref" : "#/components/schemas/HouseholdDto"
+          }
+        }
+      },
+      "ShoppingCategoryDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "nameCa" : {
+            "type" : "string"
+          },
+          "nameEs" : {
+            "type" : "string"
+          },
+          "shared" : {
+            "type" : "boolean"
           }
         }
       },

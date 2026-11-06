@@ -107,6 +107,17 @@ fanel:
           provider: openai
           model: gpt-4o-mini
           temperature: 0.2
+      product-translator:
+        name-key: assistant.product-translator.name
+        description-key: assistant.product-translator.description
+        prompt-key: product-translator
+        supports-media: false
+        tool-description: "Translate a new shopping product name between Catalan and Spanish and pick its category (JSON). Used internally by the shopping catalog; not meant for user-facing delegation."
+        tools: []
+        model:
+          provider: openai
+          model: gpt-4o-mini
+          temperature: 0.0
       menu-planner:
         name-key: assistant.menu-planner.name
         description-key: assistant.menu-planner.description

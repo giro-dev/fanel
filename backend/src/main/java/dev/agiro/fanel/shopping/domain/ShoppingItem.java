@@ -15,6 +15,12 @@ public class ShoppingItem extends UuidEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "list_id", nullable = false)
     private ShoppingList list;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private ShoppingProduct product;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private ShoppingCategory categoryRef;
     private String name;
     private Double quantity;
     private String unit;
@@ -41,6 +47,8 @@ public class ShoppingItem extends UuidEntity {
     }
 
     public ShoppingList getList() { return list; }
+    public ShoppingProduct getProduct() { return product; }
+    public ShoppingCategory getCategoryRef() { return categoryRef; }
     public String getName() { return name; }
     public Double getQuantity() { return quantity; }
     public String getUnit() { return unit; }
@@ -50,6 +58,23 @@ public class ShoppingItem extends UuidEntity {
     public Instant getCreatedAt() { return createdAt; }
 
     public void setName(String name) { this.name = name; }
+    public void setProduct(ShoppingProduct product) { this.product = product; }
+    public void setCategoryRef(ShoppingCategory categoryRef) { this.categoryRef = categoryRef; }
+
+    /** The category picked for this item, or else the product's default one. */
+    public ShoppingCategory effectiveCategory() {
+        if (categoryRef != null) return categoryRef;
+        return product != null ? product.getCategory() : null;
+    }
+
+    public String localizedName(String language) {
+        return product != null ? product.name(language) : name;
+    }
+
+    public String localizedCategory(String language) {
+        ShoppingCategory effective = effectiveCategory();
+        return effective != null ? effective.name(language) : category;
+    }
     public void setQuantity(Double quantity) { this.quantity = quantity; }
     public void setUnit(String unit) { this.unit = unit; }
     public void setCategory(String category) { this.category = category; }

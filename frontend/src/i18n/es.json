@@ -89,6 +89,10 @@
     "recipe-extractor": {
       "name": "Extractor de recetas",
       "description": "Estructura texto en bruto de recetas (uso interno en la importación de libros)."
+    },
+    "product-translator": {
+      "name": "Traductor de productos",
+      "description": "Traduce entre catalán y castellano los productos nuevos de la compra y los categoriza (uso interno)."
     }
   },
   "assistantSettings": {

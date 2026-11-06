@@ -163,7 +163,10 @@ class ShoppingRepository(
 
     private suspend fun replaceItem(householdId: String, itemId: String, item: ShoppingItemDto) {
         mutate(householdId, empty = ::emptyList) { lists ->
-            lists.map { list -> list.copy(items = list.items?.map { if (it.id == itemId) item else it }) }
+            lists.map { list ->
+                // The server reuses the existing item of the same product, so ids can collide.
+                list.copy(items = list.items?.map { if (it.id == itemId) item else it }?.distinctBy { it.id })
+            }
         }
     }
 

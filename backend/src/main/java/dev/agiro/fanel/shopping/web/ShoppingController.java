@@ -2,8 +2,10 @@ package dev.agiro.fanel.shopping.web;
 
 import dev.agiro.fanel.shared.web.EntityNotFoundException;
 import dev.agiro.fanel.shopping.api.ShoppingApi;
+import dev.agiro.fanel.shopping.api.ShoppingCategoryDto;
 import dev.agiro.fanel.shopping.api.ShoppingItemDto;
 import dev.agiro.fanel.shopping.api.ShoppingListDto;
+import dev.agiro.fanel.shopping.api.ShoppingProductDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
@@ -82,6 +84,24 @@ public class ShoppingController {
         return Map.of("removed", shopping.clearPurchased(householdId, listId));
     }
 
+    @GetMapping("/categories")
+    public List<ShoppingCategoryDto> listCategories(@PathVariable UUID householdId) {
+        return shopping.listCategories(householdId);
+    }
+
+    @GetMapping("/products")
+    public List<ShoppingProductDto> listProducts(@PathVariable UUID householdId) {
+        return shopping.listProducts(householdId);
+    }
+
+    @PatchMapping("/products/{productId}")
+    public ShoppingProductDto updateProduct(@PathVariable UUID householdId, @PathVariable UUID productId,
+                                            @RequestBody UpdateProduct request) {
+        return shopping.updateProduct(householdId, productId, request.nameCa(), request.nameEs(),
+                request.categoryId());
+    }
+
+    public record UpdateProduct(String nameCa, String nameEs, UUID categoryId) {}
     public record CreateList(@NotBlank String name) {}
     public record UpdateList(@NotBlank String name) {}
     public record AddItem(@NotBlank String name, Double quantity, String unit, String category, Boolean recurring) {}
