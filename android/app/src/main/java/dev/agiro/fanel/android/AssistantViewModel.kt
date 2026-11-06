@@ -152,10 +152,13 @@ class AssistantViewModel(
                 }
                 .onFailure { e ->
                     Log.w(TAG, "Assistant chat request failed", e)
+                    val generic = getApplication<Application>().getString(R.string.assistant_chat_error)
+                    val detail = (e as? retrofit2.HttpException)
+                        ?.let { problemDetail(it.response()?.errorBody()?.string()) }
                     _messages.update {
                         it + ChatMessage(
                             ChatRole.ASSISTANT,
-                            getApplication<Application>().getString(R.string.assistant_chat_error),
+                            if (detail.isNullOrBlank()) generic else "$generic: $detail",
                             error = true
                         )
                     }
@@ -249,6 +252,18 @@ class AssistantViewModel(
             val first = trimmed.indexOf('{')
             val last = trimmed.lastIndexOf('}')
             return if (first >= 0 && last > first) trimmed.substring(first, last + 1) else null
+        }
+
+        /** Extracts the RFC 9457 `detail` (fallback `title`) from an error response body. */
+        fun problemDetail(body: String?): String? {
+            if (body.isNullOrBlank()) return null
+            return try {
+                val parsed = gson.fromJson(body, Map::class.java)
+                (parsed?.get("detail") as? String)?.ifBlank { null }
+                    ?: (parsed?.get("title") as? String)?.ifBlank { null }
+            } catch (_: Exception) {
+                null
+            }
         }
 
         private fun normalize(text: String): String =

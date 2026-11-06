@@ -26,7 +26,7 @@ S'adopta l'opció **1**: subagents exposats com a tools de Spring AI.
 
 4. **Delegacions a la resposta**: `AgentResponse` porta `delegations: [{agentId, text}]` amb el text en brut del subagent. Això preserva el JSON estructurat (p. ex. la proposta de recepta de `recipe-from-image`) sense dependre que l'orquestrador el reprodueixi literalment; la UI el parseja des de la delegació.
 
-5. **Catàleg + overrides**: el yml (`fanel.assistant.agents.*`) continua sent el catàleg (claus i18n, `prompt-key`, `supports-media`, `tools`, `tool-description`, defaults del model). La taula `assistant_agent_config` guarda només overrides globals (enabled, provider, model, temperature, maxTokens) editables únicament pel global admin. Config efectiva = defaults ⊕ override.
+5. **Catàleg + overrides**: el yml (`fanel.assistant.agents.*`) continua sent el catàleg (claus i18n, `prompt-key`, `supports-media`, `tools`, `tool-description`, defaults del model). La taula `assistant_agent_config` guarda només overrides globals (enabled, provider, model, temperature, maxTokens, reasoningEffort) editables únicament pel global admin. `reasoningEffort` només s'aplica al proveïdor `openai` (OpenAiChatOptions): els models de raonament (p. ex. gpt-5.x) requereixen `none` per poder fer servir tools a `/v1/chat/completions`. Config efectiva = defaults ⊕ override.
 
 6. **Credencials només per env**: el panell no mostra ni guarda claus. `ProviderAvailability` decideix si un proveïdor és usable: OpenAI/Anthropic requereixen bean + API key no buida (Spring AI auto-configura el ChatModel encara que no hi hagi credencial), Ollama només el bean.
 

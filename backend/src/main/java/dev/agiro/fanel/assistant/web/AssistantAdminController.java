@@ -15,7 +15,6 @@ import dev.agiro.fanel.shared.security.CurrentAccess;
 import dev.agiro.fanel.shared.web.EntityNotFoundException;
 import dev.agiro.fanel.shared.web.ForbiddenException;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -109,21 +108,11 @@ public class AssistantAdminController {
             return new AgentTestResult(false, 0, null,
                     "No ChatModel available for provider '" + (profile != null ? profile.provider() : null) + "'");
         }
-        ChatOptions.Builder options = ChatOptions.builder();
-        if (profile.model() != null) {
-            options.model(profile.model());
-        }
-        if (profile.temperature() != null) {
-            options.temperature(profile.temperature());
-        }
-        if (profile.maxTokens() != null) {
-            options.maxTokens(profile.maxTokens());
-        }
         long start = System.nanoTime();
         try {
             String text = org.springframework.ai.chat.client.ChatClient.create(model.get())
                     .prompt()
-                    .options(options)
+                    .options(ChatClientFactory.options(profile))
                     .user(PING_MESSAGE)
                     .call()
                     .content();
@@ -147,11 +136,13 @@ public class AssistantAdminController {
                 effective != null ? effective.model() : null,
                 effective != null ? effective.temperature() : null,
                 effective != null ? effective.maxTokens() : null,
+                effective != null ? effective.reasoningEffort() : null,
                 new AgentConfigDto.ModelDefaults(
                         defaults != null ? defaults.provider() : null,
                         defaults != null ? defaults.model() : null,
                         defaults != null ? defaults.temperature() : null,
-                        defaults != null ? defaults.maxTokens() : null),
+                        defaults != null ? defaults.maxTokens() : null,
+                        defaults != null ? defaults.reasoningEffort() : null),
                 override != null,
                 registry.get(id).isPresent());
     }

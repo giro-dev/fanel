@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @Service
 public class AgentConfigService {
     private static final Set<String> PROVIDERS = Set.of("openai", "ollama", "anthropic");
+    private static final Set<String> REASONING_EFFORTS =
+            Set.of("none", "minimal", "low", "medium", "high", "xhigh");
 
     private final AgentConfigRepository repository;
     private final AgentProperties properties;
@@ -69,7 +71,7 @@ public class AgentConfigService {
         }
         if (defaults == null) {
             return new ModelProfile(override.getProvider(), override.getModel(),
-                    override.getTemperature(), override.getMaxTokens());
+                    override.getTemperature(), override.getMaxTokens(), override.getReasoningEffort());
         }
         if (override == null) {
             return defaults;
@@ -78,7 +80,9 @@ public class AgentConfigService {
                 override.getProvider() != null ? override.getProvider() : defaults.provider(),
                 override.getModel() != null ? override.getModel() : defaults.model(),
                 override.getTemperature() != null ? override.getTemperature() : defaults.temperature(),
-                override.getMaxTokens() != null ? override.getMaxTokens() : defaults.maxTokens());
+                override.getMaxTokens() != null ? override.getMaxTokens() : defaults.maxTokens(),
+                override.getReasoningEffort() != null ? override.getReasoningEffort()
+                        : defaults.reasoningEffort());
     }
 
     private void apply(AgentConfigEntity entity, AgentConfigUpdate update) {
@@ -114,6 +118,18 @@ public class AgentConfigService {
                 throw new IllegalArgumentException("maxTokens must be positive");
             }
             entity.setMaxTokens(update.maxTokens());
+        }
+        if (update.reasoningEffort() != null) {
+            if (update.reasoningEffort().isBlank()) {
+                entity.setReasoningEffort(null);
+            } else {
+                String effort = update.reasoningEffort().toLowerCase();
+                if (!REASONING_EFFORTS.contains(effort)) {
+                    throw new IllegalArgumentException("Unknown reasoning effort: "
+                            + update.reasoningEffort() + " (expected one of " + REASONING_EFFORTS + ")");
+                }
+                entity.setReasoningEffort(effort);
+            }
         }
     }
 

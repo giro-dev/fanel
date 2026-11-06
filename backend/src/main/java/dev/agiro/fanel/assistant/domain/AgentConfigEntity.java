@@ -26,6 +26,8 @@ public class AgentConfigEntity {
     private Double temperature;
     @Column(name = "max_tokens")
     private Integer maxTokens;
+    @Column(name = "reasoning_effort", length = 16)
+    private String reasoningEffort;
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
     @Column(name = "updated_by", length = 128)
@@ -43,6 +45,7 @@ public class AgentConfigEntity {
     public String getModel() { return model; }
     public Double getTemperature() { return temperature; }
     public Integer getMaxTokens() { return maxTokens; }
+    public String getReasoningEffort() { return reasoningEffort; }
     public Instant getUpdatedAt() { return updatedAt; }
     public String getUpdatedBy() { return updatedBy; }
 
@@ -51,6 +54,7 @@ public class AgentConfigEntity {
     public void setModel(String model) { this.model = model; }
     public void setTemperature(Double temperature) { this.temperature = temperature; }
     public void setMaxTokens(Integer maxTokens) { this.maxTokens = maxTokens; }
+    public void setReasoningEffort(String reasoningEffort) { this.reasoningEffort = reasoningEffort; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
     public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
 }

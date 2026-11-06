@@ -58,6 +58,7 @@ export type AgentConfig = components['schemas']['AgentConfigDto'] & {
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
+  reasoningEffort?: string | null
 }
 export type ProviderInfo = components['schemas']['ProviderDto'] & { error?: string | null }
 export type AgentTestResult = components['schemas']['AgentTestResult']

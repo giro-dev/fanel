@@ -3119,6 +3119,9 @@
           "maxTokens" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "reasoningEffort" : {
+            "type" : "string"
           }
         }
       },
@@ -3157,6 +3160,9 @@
             "type" : "integer",
             "format" : "int32"
           },
+          "reasoningEffort" : {
+            "type" : "string"
+          },
           "defaults" : {
             "$ref" : "#/components/schemas/ModelDefaults"
           },
@@ -3184,6 +3190,9 @@
           "maxTokens" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "reasoningEffort" : {
+            "type" : "string"
           }
         }
       },
